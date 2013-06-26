@@ -1,4 +1,4 @@
-ruzne poznamky, co jsem mel po papirech sepsane sem.
+Ruzne poznamky, co jsem mel po papirech sepsane sem.
 
 
 Material - Shader patří do Node ne do Geometry aby šly full-screen animace
