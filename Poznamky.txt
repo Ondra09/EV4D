@@ -1,0 +1,51 @@
+ruzne poznamky, co jsem mel po papirech sepsane sem.
+
+
+Material - Shader patří do Node ne do Geometry aby šly full-screen animace
+
+Instancing na úrovni geometry a = new Geometry() b = a.ShareData(B)
+
+UV - nejsou součástí Geometry ale effect, geometrie neví jakým způsobem se na ní mapuje textura
+    mělo by umožnit různé efekty s různým mapováním
+    -- ale to umožní i když je součástí, může jich mít víc
+
+
+Teoreticky vse v 1 VBO
+
+
+
+
+
+---------------------------------        ---------------------------------------
+
+Průchod RTT:
+
+1. Scene Iterator zvolí objekty (1+2 v jednom?)             2 průchody -> kreslí objekt 2x s různým materiálem
+2. Explorer co nastaví flagy                                -> (ne)musí být za sebou ale     -- pozn necitelne pravdepobne nemusí
+3. Renderer nastaví cíl jako texturu + kreslí
+
+---------------------------------
+
+Priorita průchodů řídí renderer
+1. preprocess
+2. process
+3. post process
+radit dle ID? nebo strom acyklický závislostí ideálně
+
+----------------------------------
+
+Technique má svůj explorer, který říká jak se mají zvolené objekty vybrat
+visitor to dá do fronty objekty (objekt, materiál) volbou
+visitoru sajistíme různé techniky
+
+pokud bue mít nějaká technika daný jiný RTT, tak se (flay) [do] toho RTT dají na všechny potomky v podstromu
+
+Manager Rendertargetů
+
+----------------------------------
+
+Renderer - zná použité materiály -> ty se setřídí (pre/pro/post) a podle toho kreslí
+(global/local)
+- materiál má nastavenou kameru
+Material -> sceneRoot? -> SceneNode a kreslí vše co je pod ním
+
