@@ -50,3 +50,5 @@ Renderer - zná použité materiály -> ty se setřídí (pre/pro/post) a podle 
 - materiál má nastavenou kameru
 Material -> sceneRoot? -> SceneNode a kreslí vše co je pod ním
 
+Zamyselt se nad kamerou, kam a jak patri do scene graph
+
