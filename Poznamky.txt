@@ -52,3 +52,5 @@ Material -> sceneRoot? -> SceneNode a kreslí vše co je pod ním
 
 Zamyselt se nad kamerou, kam a jak patri do scene graph
 
+Ctivo:
+http://www.gamedev.net/topic/349829-scene-graph-resources/
