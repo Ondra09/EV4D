@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{002A2DE9-8BB6-484D-9802-7E4AD4084715}") = "Ev4D", "Ev4D.visualdproj", "{C90748B2-719F-45D2-8FF8-326E815AF96D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C90748B2-719F-45D2-8FF8-326E815AF96D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C90748B2-719F-45D2-8FF8-326E815AF96D}.Debug|Win32.Build.0 = Debug|Win32
+		{C90748B2-719F-45D2-8FF8-326E815AF96D}.Release|Win32.ActiveCfg = Release|Win32
+		{C90748B2-719F-45D2-8FF8-326E815AF96D}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
