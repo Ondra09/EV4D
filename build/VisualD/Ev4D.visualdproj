@@ -189,9 +189,9 @@
   <filesToClean>*.obj;*.cmd;*.build;*.json;*.dep</filesToClean>
  </Config>
  <Folder name="Ev4D">
-  <Folder name="ev4D">
-   <Folder name="renderSystem" />
-   <Folder name="sceneGraph">
+  <Folder name="ev4d">
+   <Folder name="rendersystem" />
+   <Folder name="scenegraph">
     <Folder name="spatials">
      <File path="..\..\import\ev4D\sceneGraph\spatials\arraylist.d" />
     </Folder>
