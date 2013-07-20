@@ -192,7 +192,9 @@
   <Folder name="ev4D">
    <Folder name="renderSystem" />
    <Folder name="sceneGraph">
-    <Folder name="spatials" />
+    <Folder name="spatials">
+     <File path="..\..\import\ev4D\sceneGraph\spatials\arraylist.d" />
+    </Folder>
     <File path="..\..\import\EV4D\SceneGraph\group.d" />
    </Folder>
    <File path="..\..\import\EV4D\main.d" />

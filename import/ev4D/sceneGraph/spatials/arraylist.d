@@ -14,3 +14,4 @@ alias array arraylist;
 // arraylist iterator implementations
 
 
+//mrknout na video a vnem ty metody z phobosu a nastudovat je: http://www.youtube.com/watch?v=yMNMV9JlkcQ

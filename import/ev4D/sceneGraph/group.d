@@ -9,3 +9,4 @@ struct group (T)
 	T spatial;
 
 };
+
