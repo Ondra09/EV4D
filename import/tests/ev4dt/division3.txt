@@ -1,0 +1,11 @@
+
+import std.stdio;
+
+void main()
+{
+	int largeNumber = 8462696833;
+	
+	int sqL = sqrt(largeNumber);
+	
+	
+}
