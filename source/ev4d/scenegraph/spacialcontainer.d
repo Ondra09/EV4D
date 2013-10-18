@@ -7,7 +7,7 @@ if(isForwardRange!R)
     StateType[stateSize] _state;
     size_t _n;
 
-    this(R* range) @safe pure nothrow
+    this(R* range) @safe pure nothrow // @safe pure nothrow should be default to most functions
     {
         _range = range;
     }
@@ -42,3 +42,4 @@ conditionalRange(alias fun, State...)(State initial)
 	// this retype state to type of return... :)
     return typeof(return)(state);
 }
+

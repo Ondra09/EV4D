@@ -1,6 +1,8 @@
 ------------------
 Ruzne poznamky, co jsem mel po papirech sepsane sem.
 
+Material patri jak do listu tak do node, pak se aplikuje na cely podstrom.
+
 
 Material - Shader patří do Node ne do Geometry aby šly full-screen animace
 

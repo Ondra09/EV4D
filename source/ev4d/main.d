@@ -1,16 +1,17 @@
 module ev4D.main;
 
 import std.stdio;
-import ev4D.sceneGraph.group;
+import ev4d.scenegraph.scenegraphobject;
 
 int main(string[] argv)
 {
 	writeln("Hello D-World!");
 
-	group!int f;
-	f.spatial = 7;
+	Group!int f;
+	//f.spatial = 7;
 
 
 	getchar();
 	return 0;
 }
+
