@@ -9,10 +9,9 @@ class SceneGraphObject
 }
 
 class Group(T...) : SceneGraphObject
-if (isTuple!T)
 {
     /// Spatial data structures
-    T sds;
+    Tuple!(T) sds;
 
     static if (T.length)
     {

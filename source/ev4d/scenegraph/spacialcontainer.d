@@ -18,7 +18,6 @@ if(isForwardRange!R)
 
     @property StateType front()
     {
-        ;
     }
 
     @property typeof(this) save()

@@ -1,6 +1,6 @@
 module ev4d.scenegraph.dummystructure;
 
-import ev4D.scenegraph.scenegraphobject;
+import ev4d.scenegraph.scenegraphobject;
 
 /// dummy test spatial structure
 class DummyStructure

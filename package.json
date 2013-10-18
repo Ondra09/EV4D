@@ -1,12 +1,12 @@
 {
-	"name": "EV4D",
+	"name": "ev4d",
 	"description": "EV4D Scene Managment Engine",
 	"homepage": "https://github.com/Ondra09/EV4D",
 	"copyright": "Copyright © 2013, Ondrej Pokorny",
+    "targetType":"executable",
 	"authors": [
 		"Ondrej Pokorny"
 	],
 	"dependencies": {
-	},
-    "targetPath": "bin"
+	} 
 }

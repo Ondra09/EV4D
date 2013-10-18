@@ -1,4 +1,3 @@
-module ev4D.main;
 
 import std.stdio;
 import ev4d.scenegraph.scenegraphobject;
