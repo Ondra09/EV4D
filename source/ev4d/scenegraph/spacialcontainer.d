@@ -30,6 +30,7 @@ if(isForwardRange!R)
 
 /// Ditto
 ConditionalRange!(fun, R, State.length)
+/// @param alias fun is function to inject as decision
 conditionalRange(alias fun, State...)(State initial)
 
 {
@@ -38,6 +39,14 @@ conditionalRange(alias fun, State...)(State initial)
     {
         state[i] = initial[i];
     }
+	// this retype state to type of return... :)
+    return typeof(return)(state);
+}
+
+ConditionalRange!(fun, R, State.length)
+conditionalRange(string fun, State...)(State initial)
+{
+    CommonType!(State)[State.length] state;
 	// this retype state to type of return... :)
     return typeof(return)(state);
 }
