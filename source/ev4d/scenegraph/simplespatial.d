@@ -1,5 +1,5 @@
 
-module ev4d.scenegraph.dummystructure;
+module ev4d.scenegraph.simplespatial;
 
 import ev4d.scenegraph.scenegraphobject;
 import gl3n.linalg;
@@ -10,7 +10,7 @@ import std.stdio;
 }
 
 /// dummy test spatial structure
-class DummyStructure
+class SimpleSpatial
 {
 private: 
     SceneGraphObject children[];
@@ -58,6 +58,22 @@ public:
         }
     }
 
+    ///
+    int opApply(int delegate(ref SceneGraphObject) dg)
+    {
+        int result = 0;
+
+        foreach(child; children)
+        {
+            result = dg(child);
+        }
+
+        if (result)
+            return result;
+
+        return result;
+    }
+
     mat4 getTransform()
     {
         if (dirtyTransform)
@@ -73,23 +89,23 @@ public:
         return transformation;
     }
 
-    DummyIterator createIterator()
+    SimpleSpatialIterator createIterator()
     {
-        return DummyIterator();
+        return SimpleSpatialIterator();
     }
 
     int a;
 }
 
 /// dummy test iterator
-struct DummyIterator 
+struct SimpleSpatialIterator 
 {
 private:
     size_t index;
-    DummyStructure _dummy;
+    SimpleSpatial _dummy;
 
 public:
-	this(DummyStructure dummy)
+	this(SimpleSpatial dummy)
 	{
         index = 0;
         _dummy = dummy;
@@ -97,22 +113,19 @@ public:
 
     @property bool empty() const
     {
-        return (_dummy is null );
+        return (index == _dummy.children.length);
     }
 
-    DummyStructure next()
+    SceneGraphObject next()
     {
 
-        return null;
+        return _dummy.children[index++];
     }
 
-    void recomputeTransformations()
-    {
-
-    }
+    
 }
 
-void recomputeTransformations(DummyStructure dummy)
+void recomputeTransformations(SimpleSpatial dummy)
 {
 }
 

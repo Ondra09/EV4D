@@ -2,15 +2,16 @@
 import std.stdio;
 
 import ev4d.scenegraph.scenegraphobject;
-import ev4d.scenegraph.dummystructure;
+import ev4d.scenegraph.simplespatial;
 
 int main(string[] argv)
 {
 	writeln("Hello D-World!");
 
-	Group!(DummyStructure, "dummy") g0 = new Group!(DummyStructure, "dummy");
-    g0.sds.dummy = new DummyStructure();
-    g0.sds.dummy.a = 5;
+	Group!(SimpleSpatial, "dummy") g0 = new Group!(SimpleSpatial, "dummy");
+    g0.sds.dummy = new SimpleSpatial();
+    g0.dummy.a = 5;
+    g0.aaa();
     //Array!(size_t).Payload faaa;
     //Group!(int, char) g1 = new Group!(int, char);
     //g1.sds[0] = 5;
@@ -18,7 +19,7 @@ int main(string[] argv)
 
     //g0.sds.dummy.addChild(g1);
 
-    g0.setTraversalCondition(true);
+    //g0.setTraversalCondition(true);
     
     writeln("foreach g0");
     //foreach (i, T; g0)
@@ -30,7 +31,7 @@ int main(string[] argv)
     writeln("ffff"); 
     foreach (it; g0)
     {
-        //writeln(it);
+        writeln(it);
     }
 
     Leaf lf =new Leaf();

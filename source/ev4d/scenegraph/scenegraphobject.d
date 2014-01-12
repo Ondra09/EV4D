@@ -5,12 +5,13 @@ import std.typecons;
 import std.typetuple;
 import std.stdio;
 import std.variant;
-import ev4d.scenegraph.dummystructure;
-import std.traits; 
+import std.traits;
+
 class SceneGraphObject
 {
     abstract void getLeafs();
 }
+
 mixin template make_method(T, string name = null)
 {
     //mixin("void pes(T t){writeln(\"Cokl\", t"~"); }");
@@ -29,13 +30,89 @@ mixin template make_method(T, string name = null)
 
 class Group(T...) : SceneGraphObject
 {
+    static assert (T.length == 1 || T.length == 2);
+    static if (T.length == 2)
+    {
+        static assert (is(typeof(T[1]) : string));
+    }
+
+    Tuple!(T) sds;
+
+    alias sds this;
+
+    void aaa()
+    {
+        writeln("aaa");
+    }
+
+    /// function traverse sdss and instancies returns 
+    /// iterator for particular one according to proper type
+    override void getLeafs()
+    {
+        foreach(s; sds)
+        {
+            s.getLeafs();
+        }
+    }
+
+    /// Sets traversal condition and apply to all children if recursivly == true
+    void setTraversalCondition(bool recursively = true)
+    {
+        foreach(s; sds)
+        {
+            s.setTraversalCondition(recursively);
+        }
+    }
+
+    ///
+    int opApply(int delegate(ref ) dg)
+    {
+        ;
+    }
+
+    /*auto getIterators()
+    {
+        foreach(s; sds)
+        {
+            return s.createIterator();
+        }
+    }*/
+}
+/**
+    Empty structure only for unitttests.
+*/
+struct DummySpatialStructure
+{
+    void getLeafs(){}
+    void setTraversalCondition(bool recursively){}
+}
+
+unittest
+{
+    auto g0 = new Group!(DummySpatialStructure)();
+    auto g1 = new Group!(DummySpatialStructure, "test")();
+}
+
+/++
+class Group(T...) : SceneGraphObject
+{
     /// Spatial data structures
     //public RefCounted!(Tuple!(T), RefCountedAutoInitialize.no) sds;
 
+static if (T.length == 2 && is(typeof(T[1]) : string) )
+{
+    bool a = true;
+}else
+{
+    bool a = false;
+}
     Tuple!(T) sds;
+
     alias Types =TypeTuple!(sds.Types);
 
     alias sds this;
+
+    void aaa(){writeln("bbb", a);}
 
     static if (T.length)
     {
@@ -74,13 +151,13 @@ class Group(T...) : SceneGraphObject
             s.getLeafs();
         }
     }
-    auto getIterators()
+    /*auto getIterators()
     {
         foreach(s; sds)
         {
             return s.createIterator();
         }
-    }
+    }*/
     /*
     /// input range
     struct Range
@@ -112,14 +189,14 @@ class Group(T...) : SceneGraphObject
     {
         return Range(sds);
     }*/
-}
+}+/
 
 class Leaf : SceneGraphObject
 {
     static int a = 0;
     override void getLeafs()
     {
-        writeln("Leaf kokot", a++);
+        writeln("Leaf", a++);
     }
 }
 
