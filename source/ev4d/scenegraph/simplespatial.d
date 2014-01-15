@@ -47,10 +47,10 @@ public:
         {
             //writeln(this, children);
         }
-        foreach(scg; children)
+        /*foreach(scg; children)
         {
             scg.getLeafs();
-        }
+        }*/
     }
     
     ///
