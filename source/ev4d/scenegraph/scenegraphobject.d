@@ -7,6 +7,9 @@ import std.stdio;
 import std.variant;
 import std.traits;
 
+
+alias Comp = bool delegate(SceneGraphObject);
+
 class SceneGraphObject
 {
     abstract void getLeafs();
@@ -47,28 +50,20 @@ class Group(T...) : SceneGraphObject
 
     /// function traverse sdss and instancies returns 
     /// iterator for particular one according to proper type
-    override void getLeafs()
+  /*  override void getLeafs()
     {
         foreach(s; sds)
         {
             s.getLeafs();
         }
     }
-
-    /// Sets traversal condition and apply to all children if recursivly == true
-    void setTraversalCondition(bool recursively = true)
-    {
-        foreach(s; sds)
-        {
-            s.setTraversalCondition(recursively);
-        }
-    }
-
+*/
     ///
-    int opApply(int delegate(ref ) dg)
+    /*int opApply(int delegate(ref ) dg)
     {
-        ;
-    }
+        dg (sds[0]);
+        return 0;
+    }*/
 
     /*auto getIterators()
     {
@@ -78,13 +73,13 @@ class Group(T...) : SceneGraphObject
         }
     }*/
 }
+
 /**
     Empty structure only for unitttests.
 */
 struct DummySpatialStructure
 {
     void getLeafs(){}
-    void setTraversalCondition(bool recursively){}
 }
 
 unittest

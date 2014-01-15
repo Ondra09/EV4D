@@ -39,7 +39,7 @@ int main(string[] argv)
     g0.dummy.addChild(new Leaf());
 
     //g0.traverseSubnodes();
-    g0.getLeafs();
+    g0.getLeafs((sc => 1>0 ) );
 
     g0.dummy.scale.set(4, 2, 6);
     g0.dummy.translation.set(7, 2, 3);
