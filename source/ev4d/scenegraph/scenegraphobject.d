@@ -8,6 +8,7 @@ import std.variant;
 import std.traits;
 
 /++
+alias Comp = bool delegate(SceneGraphObject);
 class SceneGraphObject
 {
     abstract void getLeafs();
