@@ -7,11 +7,16 @@ import std.stdio;
 import std.variant;
 import std.traits;
 
+<<<<<<< HEAD
 /++
+=======
+
 alias Comp = bool delegate(SceneGraphObject);
+
+>>>>>>> FETCH_HEAD
 class SceneGraphObject
 {
-    abstract void getLeafs();
+    abstract void getLeafs(Comp);
 }
 
 mixin template make_method(T, string name = null)
@@ -49,21 +54,42 @@ class Group(T...) : SceneGraphObject
 
     /// function traverse sdss and instancies returns 
     /// iterator for particular one according to proper type
-    override void getLeafs()
+    override void getLeafs(Comp cmp)
     {
+<<<<<<< HEAD
         foreach(s; sds)
         {
             s.getLeafs();
         }
     }
 }+/
+=======
+        sds[0].getLeafs(cmp);
+    }
+
+    ///
+    /*int opApply(int delegate(ref ) dg)
+    {
+        dg (sds[0]);
+        return 0;
+    }*/
+
+    /*auto getIterators()
+    {
+        foreach(s; sds)
+        {
+            return s.createIterator();
+        }
+    }*/
+}
+
+>>>>>>> FETCH_HEAD
 /**
     Empty structure only for unitttests.
 
 struct DummySpatialStructure
 {
-    void getLeafs(){}
-    void setTraversalCondition(bool recursively){}
+    void getLeafs(Comp){}
 }
 
 unittest
@@ -173,7 +199,7 @@ static if (T.length == 2 && is(typeof(T[1]) : string) )
 class Leaf : SceneGraphObject
 {
     static int a = 0;
-    override void getLeafs()
+    override void getLeafs(Comp)
     {
         writeln("Leaf", a++);
     }
