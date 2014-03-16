@@ -4,6 +4,7 @@ module ev4d.scenegraph.simplespatial;
 import ev4d.scenegraph.scenegraphobject;
 import gl3n.linalg;
 
+/++
 debug 
 {
 import std.stdio;
@@ -128,4 +129,4 @@ public:
 void recomputeTransformations(SimpleSpatial dummy)
 {
 }
-
++/

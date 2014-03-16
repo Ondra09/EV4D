@@ -3,8 +3,38 @@ import std.stdio;
 
 import ev4d.scenegraph.scenegraphobject;
 import ev4d.scenegraph.simplespatial;
+import ev4d.scenegraph.bvh;
+import ev4d.scenegraph.hierarchygraph;
+
 
 int main(string[] argv)
+{
+
+    HGraph!int a0;
+    HGraph!int a1;
+
+    a0.leaf = 7;
+    a1.leaf = 23;
+
+    a0.children ~= a1;
+
+    int[] arr;
+    //arr = a0.traverse();
+    writeln(arr);
+/++
+    int[] arrb = [ 0 ];
+    foreach (i; 0..100) // it grows capacity = 2*capacity+1
+    {
+        arrb ~= i;
+        writeln(arrb.capacity);
+    }+/
+
+    getchar();
+    return 0;
+}
+
+/++
+int oldmain(string[] argv)
 {
 	writeln("Hello D-World!");
 
@@ -47,7 +77,21 @@ int main(string[] argv)
 
     writeln(g0.dummy.getTransform());
 
+    writeln("Travrse nodes");
+
+    BoundingVolumeHierarchy a0;
+    BoundingVolumeHierarchy a1;
+
+    a0.numero = 7;
+    a1.numero = 23;
+
+    a0.children ~= a1;
+
+    int[] arr;
+    a0.traverse(arr);
+    writeln(arr);
+
 	getchar();
 	return 0;
 }
-
++/
