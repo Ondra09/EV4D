@@ -41,25 +41,21 @@ public:
     {
         return;
     }
-    
-    bool conditionHolds()
-    {
-        return true;
-    }
-    
-    void getLeafs()
+       
+    void getLeafs(Comp cmp)
     {
         debug
         {
             //writeln(this, children);
         }
-        foreach(scg; children)
+        /*foreach(scg; children)
         {
             scg.getLeafs();
-        }
+        }*/
     }
-
+    
     ///
+    /*
     int opApply(int delegate(ref SceneGraphObject) dg)
     {
         int result = 0;
@@ -73,7 +69,7 @@ public:
             return result;
 
         return result;
-    }
+    }*/
 
     mat4 getTransform()
     {
