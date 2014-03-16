@@ -7,13 +7,11 @@ import std.stdio;
 import std.variant;
 import std.traits;
 
-<<<<<<< HEAD
 /++
-=======
+
 
 alias Comp = bool delegate(SceneGraphObject);
 
->>>>>>> FETCH_HEAD
 class SceneGraphObject
 {
     abstract void getLeafs(Comp);
@@ -56,14 +54,13 @@ class Group(T...) : SceneGraphObject
     /// iterator for particular one according to proper type
     override void getLeafs(Comp cmp)
     {
-<<<<<<< HEAD
+
         foreach(s; sds)
         {
             s.getLeafs();
         }
     }
-}+/
-=======
+}
         sds[0].getLeafs(cmp);
     }
 
@@ -82,8 +79,8 @@ class Group(T...) : SceneGraphObject
         }
     }*/
 }
++/
 
->>>>>>> FETCH_HEAD
 /**
     Empty structure only for unitttests.
 
