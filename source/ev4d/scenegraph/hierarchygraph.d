@@ -68,22 +68,12 @@ private:
 		{
 			c.parent = this;
 		}
-
-		version(unittest)
-		{
-			writeln("Adding children.");
-		}
 	}
 
 	void addChild(HierarchyGraph child) @safe pure nothrow
 	{
 		children ~= child;
 		child.parent = this;
-
-		version(unittest)
-		{
-			writeln("Info: adding child: ",child," leaf: ",child.leaf);
-		}
 	}
 
 
@@ -110,24 +100,36 @@ unittest
 
 	HierarchyGraph!float[5] hgArray;
 
-	foreach (ref hg; hgArray)
+	foreach (int i, ref hg; hgArray)
 	{
 		hg = new HGraph!float();
-		hg.leaf = -1;
+		hg.leaf = i;
 	}
 	
 	a ~= hgArray;
 
+	int compval = 5;
 
+	//traverseTree!("leaf < compval","a<5")(a);
+	traverseTree!("leaf < compval")(a);
 }
 
-alias HierarchyGraphIterator HGraphIterator;
-
 // pred is comparing function
-struct HierarchyGraphIterator(alias pred)
+void traverseTree(alias pred)(HierarchyGraph!float g)
 //if (is (typof(pred()) == bool))
-if (is(typeof(unaryFun!pred)))
+//if (is(typeof(unaryFun!pred)))
 {
+	version(unittest)
+	{
+	writeln(g.leaf);
+	}
+	foreach(HierarchyGraph!float child; g.children)
+	{
+		version(unittest)
+		{
+		writeln(child.leaf);
+		}
+	}
 /*	HierarchyGraph* _hg;
 
 	this (in HierarchyGraph* hg, alias less = "a < b ")
