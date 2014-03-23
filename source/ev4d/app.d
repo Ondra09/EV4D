@@ -10,17 +10,15 @@ import ev4d.scenegraph.hierarchygraph;
 int main(string[] argv)
 {
 
-    HGraph!int a0;
-    HGraph!int a1;
+    HGraph!int a0 = new HGraph!int();
+    HGraph!int a1 = new HGraph!int();
 
     a0.leaf = 7;
     a1.leaf = 23;
 
-    a0.children ~= a1;
+    a0 ~= a1;
+    
 
-    int[] arr;
-    //arr = a0.traverse();
-    writeln(arr);
 /++
     int[] arrb = [ 0 ];
     foreach (i; 0..100) // it grows capacity = 2*capacity+1
