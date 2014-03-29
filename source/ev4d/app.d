@@ -12,12 +12,17 @@ int main(string[] argv)
 
     HGraph!int a0 = new HGraph!int();
     HGraph!int a1 = new HGraph!int();
+    HGraph!int a2 = new HGraph!int();
 
     a0.leaf = 7;
     a1.leaf = 23;
+    a2.leaf = 33;
 
     a0 ~= a1;
+    a0 ~= a2;
+
     
+    //traverseTree!("leaf < compval")(a0);
 
 /++
     int[] arrb = [ 0 ];
