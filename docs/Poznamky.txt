@@ -1,3 +1,19 @@
+\
+knihovny:
+http://assimp.sourceforge.net
+freeimage lib
+gl3n
+
+derelict-assimp3
+
+derelict-fi
+
+gl3n-shared
+
+derelict-gl3
+
+dyaml
+
 ------------------
 Ruzne poznamky, co jsem mel po papirech sepsane sem.
 
