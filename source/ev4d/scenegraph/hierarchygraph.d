@@ -195,8 +195,17 @@ unittest
 	traverseTree!(ff)(a);
 }
 
+enum TreeTraversalOrder
+{
+	PRE_ORDER,
+	POST_ORDER
+}
+
+/**
+	
+*/
 // pred is comparing function
-void traverseTree(alias pred, T)(T g)
+void traverseTree(alias pred, T, TreeTraversalOrder order = TreeTraversalOrder.PRE_ORDER)(T g)
 if (is(typeof(unaryFun!pred)))
 //if (is (typof(pred()) == bool))
 {
@@ -205,6 +214,11 @@ if (is(typeof(unaryFun!pred)))
 	Array!(T) buffer;
 
 	buffer ~= g;
+
+	static if (order == TreeTraversalOrder.PRE_ORDER)
+	{
+	;
+	}
 
 	while (!buffer.empty)
 	{
