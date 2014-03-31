@@ -193,6 +193,44 @@ unittest
 							};
 
 	traverseTree!(ff)(a);
+
+	writeln("Post order traversal");
+	f = new HierarchyGraph!float();
+	f.leaf = 20;
+	c ~= f;
+	f = new HierarchyGraph!float();
+	f.leaf = 21;
+	c ~= f;
+	f = new HierarchyGraph!float();
+	f.leaf = 22;
+	hgArray[1] ~= f;
+	b = f = new HierarchyGraph!float();
+	f.leaf = 23;
+	hgArray[1] ~= f;
+	f = new HierarchyGraph!float();
+	f.leaf = 24;
+	hgArray[1] ~= f;
+	f = new HierarchyGraph!float();
+	f.leaf = 25;
+	hgArray[3] ~= f;
+
+	f = new HierarchyGraph!float();
+	f.leaf = 26;
+	hgArray[3] ~= f;
+
+	f = new HierarchyGraph!float();
+	f.leaf = 27;
+	b ~= f;
+	f = new HierarchyGraph!float();
+	f.leaf = 28;
+	b ~= f;
+	f = new HierarchyGraph!float();
+	f.leaf = 29;
+	b ~= f;
+
+	
+
+	traverseTree!("true", TreeTraversalOrder.POST_ORDER)(a);
 }
 
 enum TreeTraversalOrder
@@ -205,7 +243,7 @@ enum TreeTraversalOrder
 	
 */
 // pred is comparing function
-void traverseTree(alias pred, T, TreeTraversalOrder order = TreeTraversalOrder.PRE_ORDER)(T g)
+void traverseTree(alias pred, TreeTraversalOrder order = TreeTraversalOrder.PRE_ORDER, T)(T g)
 if (is(typeof(unaryFun!pred)))
 //if (is (typof(pred()) == bool))
 {
@@ -213,27 +251,57 @@ if (is(typeof(unaryFun!pred)))
 
 	Array!(T) buffer;
 
-	buffer ~= g;
-
 	static if (order == TreeTraversalOrder.PRE_ORDER)
 	{
-	;
-	}
-
-	while (!buffer.empty)
-	{
-		auto currentItem = buffer.back();
-		buffer.removeBack();
-
-		if (predFun(currentItem))
+		buffer ~= g;
+		while (!buffer.empty)
 		{
-			buffer ~= currentItem.children;
+			auto currentItem = buffer.back();
+			buffer.removeBack();
 
-			version(unittest)
+			if (predFun(currentItem))
 			{
-				writeln(currentItem.leaf);
+				buffer ~= currentItem.children;
+
+				version(unittest)
+				{
+					writeln(currentItem.leaf);
+				}
 			}
 		}
+	}
+
+	static if (order == TreeTraversalOrder.POST_ORDER)
+	{
+		T prev = null;
+		buffer ~= g;
+
+		while (!buffer.empty)
+		{
+			auto currentItem = buffer.back();
+
+			if (currentItem.children().empty) // trivialy remove item
+			{
+				buffer.removeBack();
+				writeln(currentItem.leaf);
+			}
+			else // not empty need to investigate if expand or remove
+			{
+				if (prev == currentItem.children[0]) // we are going upwards in tree
+				{
+					buffer.removeBack();
+					writeln(currentItem.leaf);
+				}
+				else // first time visited, expand item
+				{
+					buffer ~= currentItem.children;
+				}
+
+			}
+
+			prev = currentItem;
+		}
+
 	}
 	
 	/*foreach(T child; g.children())
