@@ -194,7 +194,7 @@ unittest
 
 	traverseTree!(ff)(a);
 
-	writeln("Post order traversal");
+	// add more items to test
 	f = new HierarchyGraph!float();
 	f.leaf = 20;
 	c ~= f;
@@ -228,9 +228,23 @@ unittest
 	f.leaf = 29;
 	b ~= f;
 
-	
+	auto wrtln = delegate void (HierarchyGraph!float a) 
+							{ 
+								version(unittest)
+								{
+									writeln(a.leaf);
+								}
+							};
 
-	traverseTree!("true", TreeTraversalOrder.POST_ORDER)(a);
+	writeln("Pre order traversal");
+	traverseTree!("true", wrtln, TreeTraversalOrder.PRE_ORDER)(a);
+	writeln("Pre order traversal, expanding only nodes < 25");
+	traverseTree!("a.leaf < 25", wrtln, TreeTraversalOrder.PRE_ORDER)(a);
+
+	writeln("Post order traversal");
+	traverseTree!("true", wrtln, TreeTraversalOrder.POST_ORDER)(a);
+	writeln("Post order traversal, expanding only nodes < 25");
+	traverseTree!("a.leaf < 25", wrtln, TreeTraversalOrder.POST_ORDER)(a);
 }
 
 enum TreeTraversalOrder
@@ -240,14 +254,22 @@ enum TreeTraversalOrder
 }
 
 /**
-	
+	@param pred .. serves for deciding for branching on tree unary funciton, that returns bool
+	@param action .. action on item if (pred) returns true
+	It is strongly encouraged to not misuse pred for anything else than for branch, if you put there any 
+	code with side effects POST_ORDER traversal will not work correctly. However it won't affect preorder code probably.
+	For code manipulation use $(D action) action delegate alias.
+	@param order .. ENUM order of traversal
+	@param g .. first node of tree for traversal (e.g. root)
 */
 // pred is comparing function
-void traverseTree(alias pred, TreeTraversalOrder order = TreeTraversalOrder.PRE_ORDER, T)(T g)
+void traverseTree(alias pred, alias action = "a", TreeTraversalOrder order = TreeTraversalOrder.PRE_ORDER, T)(T g)
 if (is(typeof(unaryFun!pred)))
+//if (is(typeof(unaryFun!action)))
 //if (is (typof(pred()) == bool))
 {
 	alias unaryFun!(pred) predFun;
+	alias unaryFun!(action) actionFun;
 
 	Array!(T) buffer;
 
@@ -262,11 +284,7 @@ if (is(typeof(unaryFun!pred)))
 			if (predFun(currentItem))
 			{
 				buffer ~= currentItem.children;
-
-				version(unittest)
-				{
-					writeln(currentItem.leaf);
-				}
+				actionFun(currentItem);
 			}
 		}
 	}
@@ -283,18 +301,27 @@ if (is(typeof(unaryFun!pred)))
 			if (currentItem.children().empty) // empty == leaf => trivialy remove item
 			{
 				buffer.removeBack();
-				writeln(currentItem.leaf);
+				if (predFun(currentItem))
+				{
+					actionFun(currentItem);
+				}
 			}
 			else // not empty need to investigate if expand or remove
 			{
 				if (prev == currentItem.children[0]) // we are going upwards in tree and returnig from left most
 				{
 					buffer.removeBack();
-					writeln(currentItem.leaf);
+					actionFun(currentItem);
 				}
 				else // first time visited, expand item
 				{
-					buffer ~= currentItem.children;
+					if (predFun(currentItem)) // expand only if pred satisfied
+					{
+						buffer ~= currentItem.children;
+					}else // if not sattisfied, immideately remove it and throw away
+					{
+						buffer.removeBack();
+					}
 				}
 
 			}
