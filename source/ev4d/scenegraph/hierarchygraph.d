@@ -201,10 +201,10 @@ unittest
 	f = new HierarchyGraph!float();
 	f.leaf = 21;
 	c ~= f;
-	f = new HierarchyGraph!float();
+	b = f = new HierarchyGraph!float();
 	f.leaf = 22;
 	hgArray[1] ~= f;
-	b = f = new HierarchyGraph!float();
+	f = new HierarchyGraph!float();
 	f.leaf = 23;
 	hgArray[1] ~= f;
 	f = new HierarchyGraph!float();
@@ -280,14 +280,14 @@ if (is(typeof(unaryFun!pred)))
 		{
 			auto currentItem = buffer.back();
 
-			if (currentItem.children().empty) // trivialy remove item
+			if (currentItem.children().empty) // empty == leaf => trivialy remove item
 			{
 				buffer.removeBack();
 				writeln(currentItem.leaf);
 			}
 			else // not empty need to investigate if expand or remove
 			{
-				if (prev == currentItem.children[0]) // we are going upwards in tree
+				if (prev == currentItem.children[0]) // we are going upwards in tree and returnig from left most
 				{
 					buffer.removeBack();
 					writeln(currentItem.leaf);
