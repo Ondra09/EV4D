@@ -79,7 +79,7 @@ unittest
     b ~= c;
     b ~= d;
 
-    a.data.rotation.rotatez(PI);
+    a.data.rotation.rotatez(PI/2);
     b.data.translation = vec3(3, -2, 5);
     c.data.scale.x = 2;
     d.data.translation = vec3(2, 2, -3);
