@@ -140,15 +140,22 @@ unittest
 	b.leaf = 10;
 	c.leaf = 28;
 	f.leaf = -1000;
-
-	writeln("a length: ", a.children.capacity,": ", a.children.length, a.children.empty);
 	
+	assert (a.children.length == 0);
 	a ~= b;
-	writeln("a length: ", a.children.capacity,": ", a.children.length, a.children.empty);
+	assert (a.children.length == 1);
+	assert (b.parent == a);
+
 	a ~= c;
-	writeln("a length: ", a.children.capacity,": ", a.children.length, a.children.empty);
+
+	assert (a.children.length == 2);
+	assert (c.parent == a);
+	assert (c.children.length == 0);
 	c ~= f;
-	writeln("a length: ", a.children.capacity,": ", a.children.length, a.children.empty);
+
+	assert (c.children.length == 1);
+	assert (f.parent == c);
+	
 
 	// HGraph!int ai = new HGraph();
 	// TODO: vyresit toto a ~= ai; a pak virtualni dedicnost
@@ -163,21 +170,21 @@ unittest
 	
 	a ~= hgArray;
 
-	writeln("a length: ", a.children.capacity,": ", a.children.length, a.children.empty);
+	assert (a.children.length == 8);
+
+	//writeln("a length: ", a.children.capacity,": ", a.children.length, a.children.empty);
 
 	int compval = 3;
 
-	writeln("Uninttest Traverse");
-	traverseTree!("a.leaf < 10")(a);
-
-	writeln("Uninttest Traverse second run");
+	traverseTree!("a.leaf < 10")(a);	
 	traverseTree!(b => b.leaf > compval)(a);
-
-	writeln("Uninttest Traverse third run");
+	
 	HierarchyGraph!float finalArray[];
 	traverseTree!(b => finalArray ~= b )(a);
-	writeln("Items returned");
-	writeln (finalArray);
+
+	assert(finalArray.length == 10);
+	
+	//writeln (finalArray);
 
 	writeln("Uninttest Traverse fourth run");
 	auto ff = delegate bool (HierarchyGraph!float b) 
@@ -264,7 +271,9 @@ enum TreeTraversalOrder
 */
 // pred is comparing function
 void traverseTree(alias pred, alias action = "a", TreeTraversalOrder order = TreeTraversalOrder.PRE_ORDER, T)(T g)
-if (is(typeof(unaryFun!pred)))
+if (is(typeof(unaryFun!pred))
+	&& is(typeof(unaryFun!action))
+	) 
 //if (is(typeof(unaryFun!action)))
 //if (is (typof(pred()) == bool))
 {
