@@ -2,7 +2,90 @@
 module ev4d.scenegraph.simplespatial;
 
 import ev4d.scenegraph.scenegraphobject;
+import ev4d.scenegraph.hierarchygraph;
 import gl3n.linalg;
+
+version(unittest)
+{
+    import std.stdio;
+}
+
+struct SpacialObject
+{
+private:
+    mat4 transformation = mat4.identity();
+    //mat4 translation;
+    //mat4 scale = mat4.identity();
+
+    bool dirtyTransform = true;
+
+public:
+    mat4 rotation = mat4.identity();
+    vec3 translation = vec3(0, 0, 0);
+    vec3 scale = vec3(1, 1, 1);
+/+
+    void setTranslation();
+    void setScale(const ref vec3 scale)
+    {
+
+    }
+    void rotate();+/
+}
+
+alias HierarchyGraph!(SpacialObject) SpacialHierarchyGraph;
+alias SpacialHierarchyGraph SHGraph;
+
+void recomputeTransformations(SpacialHierarchyGraph root)
+{
+    auto coputeTransformation = function void (SpacialHierarchyGraph node) 
+                            { 
+                                with(node.data)
+                                {
+                                    transformation =  mat4().translation(translation.x, translation.y, translation.z)*
+                                                     rotation *
+                                                     mat4().identity.scale(scale.x, scale.y, scale.z);
+
+                                    if (node.parent)
+                                    {
+                                        transformation = node.parent.data.transformation * transformation;
+                                    }
+                                }
+
+                                version(unittest)
+                                {
+                                    writeln(node.data.transformation);
+                                }
+                            };
+
+    traverseTree!("true", // for all items
+                coputeTransformation)(root);
+}
+
+unittest
+{
+    writeln("AAAAAAAAA");
+    //create dummy tree
+    // a
+    // |
+    // b
+    // +---
+    // c  d
+    SpacialHierarchyGraph a = new SpacialHierarchyGraph();
+    SpacialHierarchyGraph b = new SpacialHierarchyGraph();
+    SpacialHierarchyGraph c = new SpacialHierarchyGraph();
+    SpacialHierarchyGraph d = new SpacialHierarchyGraph();
+
+    a ~= b;
+    b ~= c;
+    b ~= d;
+
+    a.data.rotation.rotatez(PI);
+    b.data.translation = vec3(3, -2, 5);
+    c.data.scale.x = 2;
+    d.data.translation = vec3(2, 2, -3);
+
+    a.recomputeTransformations();
+}
 
 /++
 debug 
@@ -94,35 +177,4 @@ public:
     int a;
 }
 
-/// dummy test iterator
-struct SimpleSpatialIterator 
-{
-private:
-    size_t index;
-    SimpleSpatial _dummy;
-
-public:
-	this(SimpleSpatial dummy)
-	{
-        index = 0;
-        _dummy = dummy;
-	}
-
-    @property bool empty() const
-    {
-        return (index == _dummy.children.length);
-    }
-
-    SceneGraphObject next()
-    {
-
-        return _dummy.children[index++];
-    }
-
-    
-}
-
-void recomputeTransformations(SimpleSpatial dummy)
-{
-}
 +/

@@ -17,6 +17,7 @@ class HierarchyGraph(T)
 	//alias opBinary(string op)(T)
 
 	T leaf;
+	alias leaf data;
 
 	// ma binarni operator pro tohle smysl? nejspis ne, strukturu to nemeni, potreba udelat opassign
 	// kdyz nekdo zavola binarni operator pro tohle, tak by se to "melo chovat korektne" ve smyslu, ze ty objekty jsou validni uz predem (spoji dve casti (ruzneho) stromu)
@@ -97,6 +98,8 @@ class HierarchyGraph(T)
 		return child;
 	}
 
+	HierarchyGraph parent = null;
+
 private:
 
 	void addChild(HierarchyGraph[] childArr)// @safe pure nothrow
@@ -115,9 +118,6 @@ private:
 
 		child[$-1].parent = this;
 	}
-
-
-	HierarchyGraph parent = null;
 
 	Array!(HierarchyGraph) child;
 
@@ -186,7 +186,7 @@ unittest
 	
 	//writeln (finalArray);
 
-	writeln("Uninttest Traverse fourth run");
+	//writeln("Uninttest Traverse fourth run");
 	auto ff = delegate bool (HierarchyGraph!float b) 
 							{ 
 								if (b.parent is null)
@@ -339,22 +339,4 @@ if (is(typeof(unaryFun!pred))
 		}
 
 	}
-	
-	/*foreach(T child; g.children())
-	{
-		if (predFun(child))
-		{
-			version(unittest)
-			{
-				writeln(child.leaf);
-			}
-		}
-	}
-*/
-/*	HierarchyGraph* _hg;
-
-	this (in HierarchyGraph* hg, alias less = "a < b ")
-	{
-		_hg = hg;
-	}*/
 }
