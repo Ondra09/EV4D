@@ -24,7 +24,7 @@ public:
 
     /**
         If true, transformations are not computed and is always taken what is in transformation matrix directly.
-        If false, transformations are recomputed like this transformation = translationM * scaleM * rotationM;
+        If false, transformations are recomputed like this: transformation = translationM * scaleM * rotationM;
     */
     @property bool directTransformation(){ return useDirectTransform; }
     @property bool directTransformation(bool directly){ return useDirectTransform = directly; }
