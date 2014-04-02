@@ -23,7 +23,7 @@ public:
     mat4 translationM = mat4.identity();
 
     /**
-        If true, transformations are not computede and is always taken what is in transformation matrix directly.
+        If true, transformations are not computed and is always taken what is in transformation matrix directly.
         If false, transformations are recomputed like this transformation = translationM * scaleM * rotationM;
     */
     @property bool directTransformation(){ return useDirectTransform; }
