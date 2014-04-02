@@ -13,23 +13,21 @@ version(unittest)
 struct SpacialObject
 {
 private:
-    mat4 transformation = mat4.identity();
-    //mat4 translation;
-    //mat4 scale = mat4.identity();
-
-    bool dirtyTransform = true;
+    bool useDirectTransform = false;
 
 public:
-    mat4 rotation = mat4.identity();
-    vec3 translation = vec3(0, 0, 0);
-    vec3 scale = vec3(1, 1, 1);
-/+
-    void setTranslation();
-    void setScale(const ref vec3 scale)
-    {
+    mat4 transformation = mat4.identity();
 
-    }
-    void rotate();+/
+    mat4 rotationM = mat4.identity();
+    mat4 scaleM = mat4.identity();
+    mat4 translationM = mat4.identity();
+
+    /**
+        If true, transformations are not computede and is always taken what is in transformation matrix directly.
+        If false, transformations are recomputed like this transformation = translationM * scaleM * rotationM;
+    */
+    @property bool directTransformation(){ return useDirectTransform; }
+    @property bool directTransformation(bool directly){ return useDirectTransform = directly; }
 }
 
 alias HierarchyGraph!(SpacialObject) SpacialHierarchyGraph;
@@ -41,19 +39,17 @@ void recomputeTransformations(SpacialHierarchyGraph root)
                             { 
                                 with(node.data)
                                 {
-                                    transformation =  mat4().translation(translation.x, translation.y, translation.z)*
-                                                     rotation *
-                                                     mat4().identity.scale(scale.x, scale.y, scale.z);
+                                    if (!useDirectTransform)
+                                    {
+                                        transformation = translationM *
+                                                         rotationM *
+                                                         scaleM;
+                                    }
 
                                     if (node.parent)
                                     {
                                         transformation = node.parent.data.transformation * transformation;
                                     }
-                                }
-
-                                version(unittest)
-                                {
-                                    writeln(node.data.transformation);
                                 }
                             };
 
@@ -63,7 +59,7 @@ void recomputeTransformations(SpacialHierarchyGraph root)
 
 unittest
 {
-    writeln("AAAAAAAAA");
+    writeln(__FUNCTION__);
     //create dummy tree
     // a
     // |
@@ -75,15 +71,29 @@ unittest
     SpacialHierarchyGraph c = new SpacialHierarchyGraph();
     SpacialHierarchyGraph d = new SpacialHierarchyGraph();
 
+
+    a.data.rotationM.rotatez(PI/2);
+    a.data.translationM.translate(3, -2, 5);
+
+    b.data.translationM.translate(3, -2, 5);
+    c.data.scaleM.scale(1, 2, -3);
+
+    assert(c.data.scaleM.matrix == [[1.0f, 0.0f, 0.0f, 0.0f],
+                                   [0.0f, 2.0f, 0.0f, 0.0f],
+                                   [0.0f, 0.0f, -3.0f, 0.0f],
+                                   [0.0f, 0.0f, 0.0f, 1.0f]]);
+
+    d.data.translationM.translate(1.0f, 2.0f, -3.0f);
+
+    assert(d.data.translationM.matrix == [  [1.0f, 0.0f, 0.0f, 1.0f],
+                                            [0.0f, 1.0f, 0.0f, 2.0f],
+                                            [0.0f, 0.0f, 1.0f, -3.0f],
+                                            [0.0f, 0.0f, 0.0f, 1.0f]]);
+
+
     a ~= b;
     b ~= c;
     b ~= d;
-
-    a.data.rotation.rotatez(PI/2);
-    a.data.translation = vec3(3, -2, 5);
-    b.data.translation = vec3(3, -2, 5);
-    c.data.scale.x = 2;
-    d.data.translation = vec3(2, 2, -3);
 
     a.recomputeTransformations();
 }
