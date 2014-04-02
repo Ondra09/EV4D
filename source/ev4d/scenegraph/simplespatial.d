@@ -10,6 +10,9 @@ version(unittest)
     import std.stdio;
 }
 
+/**
+    
+*/
 struct SpacialObject
 {
 private:
@@ -23,8 +26,8 @@ public:
     mat4 translationM = mat4.identity();
 
     /**
-        If true, transformations are not computed and is always taken what is in transformation matrix directly.
-        If false, transformations are recomputed like this: transformation = translationM * scaleM * rotationM;
+        If true, transformations are not computede and is always taken what is in transformation matrix directly.
+        If false, transformations are recomputed like this transformation = translationM * scaleM * rotationM;
     */
     @property bool directTransformation(){ return useDirectTransform; }
     @property bool directTransformation(bool directly){ return useDirectTransform = directly; }
@@ -41,6 +44,7 @@ void recomputeTransformations(SpacialHierarchyGraph root)
                                 {
                                     if (!useDirectTransform)
                                     {
+                                        // OPTIM: recompute lazily
                                         transformation = translationM *
                                                          rotationM *
                                                          scaleM;
@@ -71,11 +75,14 @@ unittest
     SpacialHierarchyGraph c = new SpacialHierarchyGraph();
     SpacialHierarchyGraph d = new SpacialHierarchyGraph();
 
-
+    // thiz is not so weird
     a.data.rotationM.rotatez(PI/2);
     a.data.translationM.translate(3, -2, 5);
 
+    // thiz is weird
     b.data.translationM.translate(3, -2, 5);
+
+    // thiz is weird
     c.data.scaleM.scale(1, 2, -3);
 
     assert(c.data.scaleM.matrix == [[1.0f, 0.0f, 0.0f, 0.0f],
@@ -83,13 +90,13 @@ unittest
                                    [0.0f, 0.0f, -3.0f, 0.0f],
                                    [0.0f, 0.0f, 0.0f, 1.0f]]);
 
-    d.data.translationM.translate(1.0f, 2.0f, -3.0f);
+    // this is better
+    d.data.translationM = mat4.translation(1.0f, 2.0f, -3.0f);
 
     assert(d.data.translationM.matrix == [  [1.0f, 0.0f, 0.0f, 1.0f],
                                             [0.0f, 1.0f, 0.0f, 2.0f],
                                             [0.0f, 0.0f, 1.0f, -3.0f],
                                             [0.0f, 0.0f, 0.0f, 1.0f]]);
-
 
     a ~= b;
     b ~= c;

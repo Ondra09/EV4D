@@ -8,9 +8,7 @@
 		"Ondrej Pokorny"
 	],
     "dependencies": {
-		"gl3n": "~master",
-		"derelict:glfw3": "~master",
-		"derelict:opengl3": "~master",
-		"derelict:util": "~master"
+		"gl3n": "~master"
+		
 	}
 }
