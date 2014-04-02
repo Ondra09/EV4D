@@ -1,11 +1,12 @@
 
 import std.stdio;
 
-import ev4d.scenegraph.scenegraphobject;
+//import ev4d.scenegraph.scenegraphobject;
 import ev4d.scenegraph.simplespatial;
-import ev4d.scenegraph.bvh;
+//import ev4d.scenegraph.bvh;
 import ev4d.scenegraph.hierarchygraph;
 
+import derelict.opengl3.gl3;
 
 int main(string[] argv)
 {
@@ -21,7 +22,7 @@ int main(string[] argv)
     a0 ~= a1;
     a0 ~= a2;
 
-    
+    writeln("fff");
     //traverseTree!("leaf < compval")(a0);
 
 /++

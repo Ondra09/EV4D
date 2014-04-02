@@ -3,12 +3,14 @@
 	"description": "EV4D Scene Rendering Engine",
 	"homepage": "https://github.com/Ondra09/EV4D",
 	"copyright": "Copyright © 2013, Ondrej Pokorny",
-    "targetType":"executable",
+    
 	"authors": [
 		"Ondrej Pokorny"
 	],
+	"importPaths": [".","../../.dub/packages/gl3n-master/"],
     "dependencies": {
-		"gl3n": "~master"
+		"gl3n": "~master",
+		"derelict-gl3": "~master"
 		
 	}
 }
