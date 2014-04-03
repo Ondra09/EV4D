@@ -3,3 +3,4 @@
 *.swp
 *~
 .*
+.dub/dub.json
