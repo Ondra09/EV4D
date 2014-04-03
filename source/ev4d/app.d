@@ -1,15 +1,25 @@
 
 import std.stdio;
 
-//import ev4d.scenegraph.scenegraphobject;
 import ev4d.scenegraph.simplespatial;
-//import ev4d.scenegraph.bvh;
 import ev4d.scenegraph.hierarchygraph;
 
+import std.c.stdio;
+
+import derelict.glfw3.glfw3;
 import derelict.opengl3.gl3;
+
+extern (C) void errorcallback(int error, const char* description) nothrow
+{
+    //fputs(description, stderr);
+    //writeln(description);
+}
+
 
 int main(string[] argv)
 {
+    DerelictGLFW3.load();
+    DerelictGL3.load();
 
     HGraph!int a0 = new HGraph!int();
     HGraph!int a1 = new HGraph!int();
@@ -22,7 +32,86 @@ int main(string[] argv)
     a0 ~= a1;
     a0 ~= a2;
 
-    writeln("fff");
+    GLFWwindow* window;
+
+    /* Initialize the library */
+    if (!glfwInit())
+    {
+        return -1;
+    }
+
+    scope (exit)
+    {
+        glfwTerminate();
+    }
+
+    //glfwSetErrorCallback(&errorcallback);
+
+    /* Create a windowed mode window and its OpenGL context */
+    window = glfwCreateWindow(640, 480, "Hello World", null, null);
+    if (!window)
+    {
+        glfwTerminate();
+        return -1;
+    }
+
+    /* Make the window's context current */
+    glfwMakeContextCurrent(window);
+
+    DerelictGL3.reload();
+
+    int width, height;
+    glfwGetFramebufferSize(window, &width, &height);
+    glViewport(0, 0, width, height);
+
+    immutable int vertices = 3;
+    GLfloat positions[vertices*3] = [   0.5f, 0.5f, 0.0f,
+                                        0.5f, -0.5f, 0.0f,
+                                        -0.5f, -0.5f, 0.0f];
+
+
+    CGLProgram* m_pProgram;                // Program
+    CGLShader* m_pVertSh;                  // Vertex shader
+    CGLShader* m_pFragSh;    
+
+    m_pProgram = new CGLProgram();
+    m_pVertSh = new CGLShader(GL_VERTEX_SHADER);
+    m_pFragSh = new CGLShader(GL_FRAGMENT_SHADER);
+
+    m_pVertSh.Load(_T("minimal.vert"));
+    m_pFragSh.Load(_T("minimal.frag"));
+
+    m_pVertSh.Compile();
+    m_pFragSh.Compile();
+
+    m_pProgram.AttachShader(m_pVertSh);
+    m_pProgram.AttachShader(m_pFragSh);
+
+    m_pProgram.BindAttribLocation(0, "in_Position");
+    m_pProgram.BindAttribLocation(1, "in_Color");
+
+    m_pProgram.Link();
+    m_pProgram.Use();
+
+
+
+    /* Loop until the user closes the window */
+    while (!glfwWindowShouldClose(window))
+    {
+        /* Render here */
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        glDrawArrays(GL_TRIANGLES, 0, 1);
+
+        /* Swap front and back buffers */
+        glfwSwapBuffers(window);
+
+        /* Poll for and process events */
+        glfwPollEvents();
+    }
+
+    return 0;
+
     //traverseTree!("leaf < compval")(a0);
 
 /++
@@ -32,9 +121,6 @@ int main(string[] argv)
         arrb ~= i;
         writeln(arrb.capacity);
     }+/
-
-    getchar();
-    return 0;
 }
 
 /++
