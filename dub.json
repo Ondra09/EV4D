@@ -10,6 +10,7 @@
 	"importPaths": [".","../../.dub/packages/gl3n-master/"],
     "dependencies": {
 		"gl3n": "~master",
+		"derelict-glfw3": "~master",
 		"derelict-gl3": "~master"
 		
 	}
