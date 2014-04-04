@@ -7,19 +7,28 @@ import ev4d.scenegraph.hierarchygraph;
 import std.c.stdio;
 
 import derelict.glfw3.glfw3;
-import derelict.opengl3.gl3;
+import derelict.opengl3.gl;
 
-extern (C) void errorcallback(int error, const char* description) nothrow
+extern (C) nothrow 
 {
-    //fputs(description, stderr);
-    //writeln(description);
-}
+    void errorCallback(int error, const (char)* description)
+    {
+        //fputs(description, stderr);
 
+        printf("%d:, %s", error, description);
+    }
+
+    void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+    {
+        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+            glfwSetWindowShouldClose(window, GL_TRUE);
+    }
+}
 
 int main(string[] argv)
 {
     DerelictGLFW3.load();
-    DerelictGL3.load();
+    DerelictGL.load();
 
     HGraph!int a0 = new HGraph!int();
     HGraph!int a1 = new HGraph!int();
@@ -45,7 +54,7 @@ int main(string[] argv)
         glfwTerminate();
     }
 
-    //glfwSetErrorCallback(&errorcallback);
+    glfwSetErrorCallback(&errorCallback);
 
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(640, 480, "Hello World", null, null);
@@ -58,42 +67,21 @@ int main(string[] argv)
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
 
-    DerelictGL3.reload();
+    glfwSetKeyCallback( window, &keyCallback);
+
+    DerelictGL.reload();
 
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);
     glViewport(0, 0, width, height);
 
-    immutable int vertices = 3;
-    GLfloat positions[vertices*3] = [   0.5f, 0.5f, 0.0f,
-                                        0.5f, -0.5f, 0.0f,
-                                        -0.5f, -0.5f, 0.0f];
+    const int vertices = 3;
+    GLfloat positions[vertices*2] = [  1, 1,
+                                       -1, 1, 
+                                       0.5f, -0.5f];
 
-
-    CGLProgram* m_pProgram;                // Program
-    CGLShader* m_pVertSh;                  // Vertex shader
-    CGLShader* m_pFragSh;    
-
-    m_pProgram = new CGLProgram();
-    m_pVertSh = new CGLShader(GL_VERTEX_SHADER);
-    m_pFragSh = new CGLShader(GL_FRAGMENT_SHADER);
-
-    m_pVertSh.Load(_T("minimal.vert"));
-    m_pFragSh.Load(_T("minimal.frag"));
-
-    m_pVertSh.Compile();
-    m_pFragSh.Compile();
-
-    m_pProgram.AttachShader(m_pVertSh);
-    m_pProgram.AttachShader(m_pFragSh);
-
-    m_pProgram.BindAttribLocation(0, "in_Position");
-    m_pProgram.BindAttribLocation(1, "in_Color");
-
-    m_pProgram.Link();
-    m_pProgram.Use();
-
-
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(2, GL_FLOAT, 0, &positions);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -101,7 +89,14 @@ int main(string[] argv)
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glDrawArrays(GL_TRIANGLES, 0, 1);
+        glColor3f(1.0f, 0.0f, 0.0f);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        /*glBegin(GL_TRIANGLES);
+            glVertex2f(0.5f, 0.5f);
+            glVertex2f(0.5f, -0.5f);
+            glVertex2f(-0.5f, -0.5f);
+        glEnd();*/
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
