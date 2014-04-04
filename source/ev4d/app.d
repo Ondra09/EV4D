@@ -78,7 +78,7 @@ int main(string[] argv)
     const int vertices = 3;
     GLfloat positions[vertices*2] = [  1, 1,
                                        -1, 1, 
-                                       0.5f, -0.5f];
+                                       1, -1];
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(2, GL_FLOAT, 0, &positions);
@@ -88,15 +88,14 @@ int main(string[] argv)
     {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
+        glViewport(0, 0, width/2, height/2);
 
         glColor3f(1.0f, 0.0f, 0.0f);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
-        /*glBegin(GL_TRIANGLES);
-            glVertex2f(0.5f, 0.5f);
-            glVertex2f(0.5f, -0.5f);
-            glVertex2f(-0.5f, -0.5f);
-        glEnd();*/
+        glViewport(width/2, height/2, width/2, height/2);
+        glColor3f(1.0f, 1.0f, 0.0f);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
