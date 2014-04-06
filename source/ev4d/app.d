@@ -2,12 +2,15 @@
 import std.stdio;
 
 import ev4d.scenegraph.simplespatial;
-import ev4d.scenegraph.hierarchygraph;
+
+import ev4d.rendersystem.rendertarget;
 
 import std.c.stdio;
 
 import derelict.glfw3.glfw3;
 import derelict.opengl3.gl;
+
+
 
 extern (C) nothrow 
 {
@@ -30,16 +33,18 @@ int main(string[] argv)
     DerelictGLFW3.load();
     DerelictGL.load();
 
-    HGraph!int a0 = new HGraph!int();
-    HGraph!int a1 = new HGraph!int();
-    HGraph!int a2 = new HGraph!int();
+    SHGraph a0 = new SHGraph();
+    SHGraph a1 = new SHGraph();
+    SHGraph a2 = new SHGraph();
 
-    a0.leaf = 7;
-    a1.leaf = 23;
-    a2.leaf = 33;
+    a1.data.translationM.translate(0.3f, -0.2f, 0.5f);
+    a2.data.translationM.translate(0, -0.2f, 0.5f);
 
     a0 ~= a1;
     a0 ~= a2;
+
+    RenderTarget!SHGraph rt0 = new RenderTarget!SHGraph();
+    rt0.scene = a0;
 
     GLFWwindow* window;
 
