@@ -261,7 +261,7 @@ enum TreeTraversalOrder
 }
 
 /**
-	@param pred .. serves for deciding for branching on tree unary funciton, that returns bool
+	@param pred .. serves for deciding on tree branching. Unary funciton, that returns bool
 	@param action .. action on item if (pred) returns true
 	It is strongly encouraged to not misuse pred for anything else than for branch, if you put there any 
 	code with side effects POST_ORDER traversal will not work correctly. However it won't affect preorder code probably.

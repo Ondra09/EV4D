@@ -3,7 +3,7 @@ import std.stdio;
 
 import ev4d.scenegraph.simplespatial;
 
-import ev4d.rendersystem.rendertarget;
+import ev4d.rendersystem.renderqueue;
 
 import std.c.stdio;
 
@@ -43,7 +43,7 @@ int main(string[] argv)
     a0 ~= a1;
     a0 ~= a2;
 
-    RenderTarget!SHGraph rt0 = new RenderTarget!SHGraph();
+    RenderQueue!SHGraph rt0 = new RenderQueue!SHGraph();
     rt0.scene = a0;
 
     GLFWwindow* window;
