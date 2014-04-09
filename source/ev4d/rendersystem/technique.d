@@ -3,9 +3,10 @@ module ev4d.rendersystem.technique;
 
 import ev4d.rendersystem.rendertarget;
 
-class Technique
+class Technique(Range)
 {
 	RenderTarget * rtt;
-	//nofpasses
+	
+	Range objectsToRender;
 
 }
