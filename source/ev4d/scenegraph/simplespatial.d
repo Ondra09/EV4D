@@ -3,6 +3,7 @@ module ev4d.scenegraph.simplespatial;
 
 import ev4d.scenegraph.scenegraphobject;
 import ev4d.scenegraph.hierarchygraph;
+import ev4d.rendersystem.material;
 import gl3n.linalg;
 
 version(unittest)
@@ -24,6 +25,8 @@ public:
     mat4 rotationM = mat4.identity();
     mat4 scaleM = mat4.identity();
     mat4 translationM = mat4.identity();
+
+    Material material;
 
     /**
         If true, transformations are not computede and is always taken what is in transformation matrix directly.

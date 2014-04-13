@@ -1,13 +1,31 @@
 
 module ev4d.rendersystem.renderqueue;
 
-class RenderQueue(T)
+import ev4d.rendersystem.technique;
+import ev4d.scenegraph.simplespatial;
+import ev4d.rendersystem.material;
+
+import std.stdio;
+
+class RenderQueue
 {
 private:
-	T sceneRoot;
-	RenderTarget* rtt;
+protected:
 public:
-	@property T scene(){ return sceneRoot; }
-	@property T scene(T root){ return sceneRoot = root; }
+
+	Technique[] renderq;
+
+	void renderAll()
+	{
+		foreach (Technique t; renderq)
+		{
+			auto view = t.camera.getView();
+			
+			foreach (Material a; view)
+			{
+				a.render();
+			}
+		}
+	}
 
 }

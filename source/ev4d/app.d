@@ -1,9 +1,13 @@
 
 import std.stdio;
 
+import ev4d.scenegraph.hierarchygraph;
 import ev4d.scenegraph.simplespatial;
 
+import ev4d.rendersystem.camera;
+import ev4d.rendersystem.material;
 import ev4d.rendersystem.renderqueue;
+import ev4d.rendersystem.technique;
 
 import std.c.stdio;
 
@@ -28,10 +32,14 @@ extern (C) nothrow
     }
 }
 
-int main(string[] argv)
+RenderQueue initScene()
 {
-    DerelictGLFW3.load();
-    DerelictGL.load();
+    RenderQueue rq = new RenderQueue();
+    Technique tech0 = new Technique();
+
+    Camera!(SHGraph) cam = new Camera!(SHGraph)();
+
+    tech0.camera = cam;
 
     SHGraph a0 = new SHGraph();
     SHGraph a1 = new SHGraph();
@@ -40,12 +48,34 @@ int main(string[] argv)
     a1.data.translationM.translate(0.3f, -0.2f, 0.5f);
     a2.data.translationM.translate(0, -0.2f, 0.5f);
 
+    a0.data.material = new Material();
+    a0.data.material.renderdata.vertexes[0] = 0.5f;
+    a0.data.material.renderdata.vertexes[1] = a0.data.material.renderdata.vertexes[2] = 0;
+    
+    a1.data.material = new Material();
+    a1.data.material.renderdata.vertexes[0] = a1.data.material.renderdata.vertexes[1] = a1.data.material.renderdata.vertexes[2] = 0;
+
+    a2.data.material = new Material();
+    a2.data.material.renderdata.vertexes[0] = a2.data.material.renderdata.vertexes[1] = a2.data.material.renderdata.vertexes[2] = 0.6;
+
     a0 ~= a1;
     a0 ~= a2;
 
-    RenderQueue!SHGraph rt0 = new RenderQueue!SHGraph();
-    rt0.scene = a0;
+    cam.scene = a0;
 
+    rq.renderq ~= tech0;
+
+    return rq;
+}
+
+int main(string[] argv)
+{
+    DerelictGLFW3.load();
+    DerelictGL.load();
+
+    RenderQueue rq = initScene();
+   
+    // window initialization & callbacks
     GLFWwindow* window;
 
     /* Initialize the library */
@@ -93,6 +123,7 @@ int main(string[] argv)
     {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
+        /*
         glViewport(0, 0, width/2, height/2);
 
         glColor3f(1.0f, 0.0f, 0.0f);
@@ -100,7 +131,15 @@ int main(string[] argv)
 
         glViewport(width/2, height/2, width/2, height/2);
         glColor3f(1.0f, 1.0f, 0.0f);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, 3);*/
+
+        glBegin(GL_POINTS);
+
+            //glVertex3f(0, 0, 0);
+
+        glEnd();
+
+        rq.renderAll();
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
