@@ -7,6 +7,16 @@ import ev4d.rendersystem.material;
 
 import std.stdio;
 
+// this needs to be filled in order to render
+class RenderObject
+{
+	double keysorter; // key for sorting items in renderquee
+	
+	Matrices matrices;
+	Material mat;
+	Data data;
+}
+
 class RenderQueue
 {
 private:
