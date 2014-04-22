@@ -23,7 +23,11 @@ public:
 			
 			foreach (Material a; view)
 			{
-				a.render();
+				a.initMaterial();
+				a.initPass(0);
+				a.renderPass(0);
+				a.cleanUpPass(0);
+				a.cleanUp();
 			}
 		}
 	}

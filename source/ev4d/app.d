@@ -32,6 +32,16 @@ extern (C) nothrow
     }
 }
 
+// pbly struct better
+class RenderDataTest
+{
+    float vertexes[];
+    this()
+    {
+        vertexes = new float[3];
+    }
+}
+
 RenderQueue initScene()
 {
     RenderQueue rq = new RenderQueue();
@@ -48,15 +58,23 @@ RenderQueue initScene()
     a1.data.translationM.translate(0.3f, -0.2f, 0.5f);
     a2.data.translationM.translate(0, -0.2f, 0.5f);
 
-    a0.data.material = new Material();
-    a0.data.material.renderdata.vertexes[0] = 0.5f;
-    a0.data.material.renderdata.vertexes[1] = a0.data.material.renderdata.vertexes[2] = 0;
-    
-    a1.data.material = new Material();
-    a1.data.material.renderdata.vertexes[0] = a1.data.material.renderdata.vertexes[1] = a1.data.material.renderdata.vertexes[2] = 0;
+    RenderDataTest rdt = new RenderDataTest;
+    RenderDataTest rdt2 = new RenderDataTest;
 
-    a2.data.material = new Material();
-    a2.data.material.renderdata.vertexes[0] = a2.data.material.renderdata.vertexes[1] = a2.data.material.renderdata.vertexes[2] = 0.6;
+    SimpleMaterial!RenderDataTest smat = new SimpleMaterial!RenderDataTest();
+
+    smat.bindData(rdt);
+
+    a0.data.material = smat;
+
+    rdt.vertexes[0] = 0.5f;
+    rdt.vertexes[1] = rdt.vertexes[2] = 0;
+    
+    a1.data.material = smat;
+    //rdt.vertexes[0] = a1.data.material.renderdata.vertexes[1] = a1.data.material.renderdata.vertexes[2] = 0;
+
+    a2.data.material = smat;
+    //rdtvertexes[0] = a2.data.material.renderdata.vertexes[1] = a2.data.material.renderdata.vertexes[2] = 0.6;
 
     a0 ~= a1;
     a0 ~= a2;
