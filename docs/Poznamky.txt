@@ -1,4 +1,4 @@
-ctivo:
+ctivo + podivat se na techniky co tam jsou popisovane a zjistit, jestli EV4D to umi provest:
 http://antongerdelan.net/opengl/
 
 \
