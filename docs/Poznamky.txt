@@ -1,3 +1,6 @@
+ctivo:
+http://antongerdelan.net/opengl/
+
 \
 knihovny:
 http://assimp.sourceforge.net
