@@ -10,6 +10,9 @@ interface Material
 	@property int numberOfPasses();
 	@property int numberOfPasses(int n);
 
+	// TODO : Object or void* decide what better
+	void bindData(Object material);
+
 	void initMaterial();
 
 	void initPass(int num);
@@ -21,13 +24,13 @@ interface Material
 	void cleanUp();
 }
 
-class SimpleMaterial(Renderdata): Material
+class SimpleMaterial(RenderData): Material
 {
 private:
 	int passes = 1;
 public:
 	// TODO : struct vs class make it possible to accept both
-	Renderdata renderData;
+	RenderData renderData;
 
 	this()
 	{
@@ -36,9 +39,9 @@ public:
 	@property int numberOfPasses(){ return passes; }
 	@property int numberOfPasses(int n){ return passes = n; }
 
-	void bindData(Renderdata data)
+	override void bindData(Object data)
 	{
-		renderData = data;
+		renderData = cast(RenderData)data;
 	}
 
 	void initMaterial()
