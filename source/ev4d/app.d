@@ -64,8 +64,8 @@ Renderer initScene()
 
     sceneRoot = a0;
 
-    a1.data.translationM.translate(0.3f, -0.5f, 0.5f);
-    a2.data.translationM.translate(0, -0.0f, 0.0f);
+    //a1.data.translationM.translate(0.3f, -0.5f, 0.5f);
+    //a2.data.translationM.translate(-1.0f, 0.5f, 0.0f);
 
     RenderDataTest rdt = new RenderDataTest;
     RenderDataTest rdt2 = new RenderDataTest;
@@ -75,8 +75,6 @@ Renderer initScene()
 
     smat.bindData(rdt);
     smat2.bindData(rdt2);
-
-    a0.data.material = smat;
 
     rdt.vertexes[0] = 0.5f;
     rdt.vertexes[1] = rdt.vertexes[2] = 0;

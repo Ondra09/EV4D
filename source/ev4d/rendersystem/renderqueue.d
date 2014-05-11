@@ -28,14 +28,17 @@ void sortAndRender(T)(T[] view)
 {
 	foreach (T a; view)
 	{
-		with(a.material)
+		if (a.material)
 		{
-			worldMatrix(a.worldMatrix);
-			initMaterial();
-			initPass(0);
-			renderPass(0);
-			cleanUpPass(0);
-			cleanUp();
+			with(a.material)
+			{
+				worldMatrix(a.worldMatrix);
+				initMaterial();
+				initPass(0);
+				renderPass(0);
+				cleanUpPass(0);
+				cleanUp();
+			}
 		}
 	}
 }

@@ -56,11 +56,11 @@ void recomputeTransformations(SpacialHierarchyGraph root)
                                                          rotationM *
                                                          scaleM;
                                     }
-
-                                    if (node.parent)
-                                    {
-                                        transformation = node.parent.data.transformation * transformation;
-                                    }
+                                }
+                                
+                                if (node.parent)
+                                {
+                                    node.data.transformation = node.parent.data.transformation * node.data.transformation;
                                 }
                             };
 
