@@ -20,16 +20,20 @@ private:
     bool useDirectTransform = false;
 
 public:
+    double sortKey;
+
     mat4 transformation = mat4.identity();
 
     mat4 rotationM = mat4.identity();
     mat4 scaleM = mat4.identity();
     mat4 translationM = mat4.identity();
 
+    alias worldMatrix = transformation;
+
     Material material;
 
     /**
-        If true, transformations are not computede and is always taken what is in transformation matrix directly.
+        If true, transformations are not computed and is always taken what is in transformation matrix directly.
         If false, transformations are recomputed like this transformation = translationM * scaleM * rotationM;
     */
     @property bool directTransformation(){ return useDirectTransform; }

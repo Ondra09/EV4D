@@ -9,7 +9,8 @@ version(unittest)
 	import ev4d.scenegraph.hierarchygraph;
 }
 
-class AbstractCamera
+//
+class Camera
 {
 public:
 	// view angles
@@ -19,34 +20,22 @@ public:
 	// Viewport
 	int viewportWidth;
 	int viewportHeight;
-
-	abstract Material[] getView();
 }
 
-class Camera (T): AbstractCamera
+//
+T.DataType*[] getView(T)(T objectsToRender)
 {
-private:	
-	T objectsToRender;
+	typeof(return) retArr;
 
-public:
-	@property T scene(){ return objectsToRender; }
-	@property T scene(T root){ return objectsToRender = root; }
+	if (objectsToRender is null)
+		return retArr;
 
-	//override typeof(T.data)*[] getView()
-	override Material[] getView()
-		{ 
-			typeof(return) retArr;
+	// just get all items for now
+	traverseTree!("true", // for all items
+		// data is struct, need only pointer
+		b => retArr ~= &b.data )(objectsToRender);
 
-			if (objectsToRender is null)
-				return retArr;
-
-			// just get all items for now
-			traverseTree!("true", // for all items
-				// data is struct, need only pointer
-				b => retArr ~= b.data.material )(objectsToRender);
-
-			return retArr;
-		}
+	return retArr;
 }
 
 unittest

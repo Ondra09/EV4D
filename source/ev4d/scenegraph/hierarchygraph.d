@@ -15,7 +15,7 @@ alias HierarchyGraph HGraph;
 class HierarchyGraph(T)
 {
 	//alias opBinary(string op)(T)
-
+	alias DataType = T;
 	T leaf;
 	alias leaf data;
 

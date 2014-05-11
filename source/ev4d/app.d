@@ -6,6 +6,7 @@ import ev4d.scenegraph.simplespatial;
 
 import ev4d.rendersystem.camera;
 import ev4d.rendersystem.material;
+import ev4d.rendersystem.renderer;
 import ev4d.rendersystem.renderqueue;
 import ev4d.rendersystem.technique;
 
@@ -42,14 +43,15 @@ class RenderDataTest
     }
 }
 
-RenderQueue initScene()
+Renderer initScene()
 {
-    RenderQueue rq = new RenderQueue();
-    Technique tech0 = new Technique();
+    Renderer renderer = new Renderer();
 
-    Camera!(SHGraph) cam = new Camera!(SHGraph)();
+    Technique!(SHGraph) tech0 = new Technique!(SHGraph)();
 
-    tech0.camera = cam;
+    Camera cam = new Camera();
+
+    tech0.camera = cam; 
 
     SHGraph a0 = new SHGraph();
     SHGraph a1 = new SHGraph();
@@ -79,11 +81,11 @@ RenderQueue initScene()
     a0 ~= a1;
     a0 ~= a2;
 
-    cam.scene = a0;
+    tech0.scene = a0;
 
-    rq.renderq ~= tech0;
+    renderer.techniques ~= tech0;
 
-    return rq;
+    return renderer;
 }
 
 int main(string[] argv)
@@ -91,11 +93,11 @@ int main(string[] argv)
     DerelictGLFW3.load();
     DerelictGL.load();
 
-    RenderQueue rq = initScene();
+    Renderer renderer = initScene();
    
     // window initialization & callbacks
     GLFWwindow* window;
-
+    
     /* Initialize the library */
     if (!glfwInit())
     {
@@ -157,7 +159,7 @@ int main(string[] argv)
 
         glEnd();
 
-        rq.renderAll();
+        renderer.render();
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
