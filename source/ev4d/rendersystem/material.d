@@ -1,8 +1,11 @@
 
 module ev4d.rendersystem.material;
+
 // todo switch to gl2 or gl3
 import derelict.opengl3.gl;
 import gl3n.linalg;
+
+import std.stdio;
 
 interface Material
 {
@@ -43,7 +46,7 @@ public:
 	@property int numberOfPasses(int n){ return passes = n; }
 
 	@property mat4 worldMatrix(){ return wMatrix; }
-	@property mat4 worldMatrix(mat4 m){ return wMatrix = m; }
+	@property mat4 worldMatrix(mat4 m){ m.transpose(); return wMatrix = m; }
 
 	override void bindData(Object data)
 	{
@@ -55,7 +58,6 @@ public:
 		glColor3b(1, 0, 1);
 		glPushMatrix();
 		glMultMatrixf(wMatrix.value_ptr);
-
 	}
 
 	void initPass(int num)
@@ -69,6 +71,7 @@ public:
 
 		glBegin(GL_POINTS);
 			glVertex3fv(renderData.vertexes.ptr);
+			glVertex4f(0, 0.5f, 0, 1);
 		glEnd();
 	}
 

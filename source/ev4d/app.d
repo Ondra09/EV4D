@@ -36,10 +36,9 @@ extern (C) nothrow
 // pbly struct better
 class RenderDataTest
 {
-    float vertexes[];
+    float vertexes[3];
     this()
     {
-        vertexes = new float[3];
     }
 }
 
@@ -79,7 +78,7 @@ Renderer initScene()
     rdt.vertexes[0] = 0.5f;
     rdt.vertexes[1] = rdt.vertexes[2] = 0;
 
-    rdt2.vertexes[0] = 0.0f;
+    rdt2.vertexes[0] = -0.5f;
     rdt2.vertexes[1] = rdt2.vertexes[2] = 0;
     
     a1.data.material = smat;
