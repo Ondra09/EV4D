@@ -15,7 +15,7 @@ import std.c.stdio;
 import derelict.glfw3.glfw3;
 import derelict.opengl3.gl;
 
-
+import gl3n.linalg;
 
 extern (C) nothrow 
 {
@@ -43,6 +43,11 @@ class RenderDataTest
     }
 }
 
+SHGraph sceneRoot;
+
+SHGraph a1;
+SHGraph a2;
+
 Renderer initScene()
 {
     Renderer renderer = new Renderer();
@@ -54,29 +59,33 @@ Renderer initScene()
     tech0.camera = cam; 
 
     SHGraph a0 = new SHGraph();
-    SHGraph a1 = new SHGraph();
-    SHGraph a2 = new SHGraph();
+    a1 = new SHGraph();
+    a2 = new SHGraph();
 
-    a1.data.translationM.translate(0.3f, -0.2f, 0.5f);
-    a2.data.translationM.translate(0, -0.2f, 0.5f);
+    sceneRoot = a0;
+
+    a1.data.translationM.translate(0.3f, -0.5f, 0.5f);
+    a2.data.translationM.translate(0, -0.0f, 0.0f);
 
     RenderDataTest rdt = new RenderDataTest;
     RenderDataTest rdt2 = new RenderDataTest;
 
     SimpleMaterial!RenderDataTest smat = new SimpleMaterial!RenderDataTest();
+    SimpleMaterial!RenderDataTest smat2 = new SimpleMaterial!RenderDataTest();
 
     smat.bindData(rdt);
+    smat2.bindData(rdt2);
 
     a0.data.material = smat;
 
     rdt.vertexes[0] = 0.5f;
     rdt.vertexes[1] = rdt.vertexes[2] = 0;
+
+    rdt2.vertexes[0] = 0.0f;
+    rdt2.vertexes[1] = rdt2.vertexes[2] = 0;
     
     a1.data.material = smat;
-    //rdt.vertexes[0] = a1.data.material.renderdata.vertexes[1] = a1.data.material.renderdata.vertexes[2] = 0;
-
-    a2.data.material = smat;
-    //rdtvertexes[0] = a2.data.material.renderdata.vertexes[1] = a2.data.material.renderdata.vertexes[2] = 0.6;
+    a2.data.material = smat2;
 
     a0 ~= a1;
     a0 ~= a2;
@@ -130,34 +139,18 @@ int main(string[] argv)
     glfwGetFramebufferSize(window, &width, &height);
     glViewport(0, 0, width, height);
 
-    const int vertices = 3;
-    GLfloat positions[vertices*2] = [  1, 1,
-                                       -1, 1, 
-                                       1, -1];
-
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(2, GL_FLOAT, 0, &positions);
-
+    float translate = 0;
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
-        /* Render here */
-        glClear(GL_COLOR_BUFFER_BIT);
-        /*
-        glViewport(0, 0, width/2, height/2);
+        recomputeTransformations(sceneRoot);
+        a1.data.translationM = mat4.translation(translate, translate, 0);
 
-        glColor3f(1.0f, 0.0f, 0.0f);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
-        glViewport(width/2, height/2, width/2, height/2);
-        glColor3f(1.0f, 1.0f, 0.0f);
-        glDrawArrays(GL_TRIANGLES, 0, 3);*/
-
-        glBegin(GL_POINTS);
-
-            //glVertex3f(0, 0, 0);
-
-        glEnd();
+        translate += 0.01;
+        if(translate > 1)
+        {
+            translate = 0;
+        }
 
         renderer.render();
 

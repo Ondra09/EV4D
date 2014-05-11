@@ -3,6 +3,7 @@ module ev4d.rendersystem.camera;
 
 import ev4d.scenegraph.hierarchygraph;
 import ev4d.rendersystem.material;
+import gl3n.linalg;
 
 version(unittest)
 {
@@ -20,6 +21,9 @@ public:
 	// Viewport
 	int viewportWidth;
 	int viewportHeight;
+
+	mat4 *viewMatrix;
+	mat4 *projMatrix;
 }
 
 //
