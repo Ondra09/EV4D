@@ -69,9 +69,15 @@ public:
 		if (renderData is null)
 			return;
 
-		glBegin(GL_POINTS);
-			glVertex3fv(renderData.vertexes.ptr);
-			glVertex4f(0, 0.5f, 0, 1);
+		//glBegin(GL_POINTS);
+		//	glVertex3fv(renderData.vertexes.ptr);
+		//glEnd();
+
+		glBegin(GL_QUADS);			
+			glVertex4f(0.15f, 0.15f, 0, 1);
+			glVertex4f(-0.15f, 0.15f, 0, 1);
+			glVertex4f(-0.15f, -0.15f, 0, 1);
+			glVertex4f(0.15f, -0.15f, 0, 1);			
 		glEnd();
 	}
 
