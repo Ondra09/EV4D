@@ -46,6 +46,7 @@ SHGraph sceneRoot;
 
 SHGraph a1;
 SHGraph a2;
+SHGraph camNode;
 
 Renderer initScene()
 {
@@ -53,19 +54,25 @@ Renderer initScene()
 
     Technique!(SHGraph) tech0 = new Technique!(SHGraph)();
 
-    Camera cam = new Camera();
+    Camera cam = new Camera(640, 480, 120);
 
     tech0.camera = cam; 
 
     SHGraph a0 = new SHGraph();
     a1 = new SHGraph();
     a2 = new SHGraph();
+    camNode = new SHGraph();
 
     sceneRoot = a0;
 
-    a1.data.translationM.translate(0.3f, -0.5f, 0.5f);
+    //a1.data.translationM.translate(0.3f, -0.5f, 0.5f);
     a1.data.scaleM.scale(2, 1, 1);
+
     a2.data.translationM.translate(-1.0f, 0.5f, 0.0f);
+
+    camNode.data.translationM.translate(0.0f, 0.0f, 1.0f);
+
+    cam.viewMatrix = &camNode.data.worldMatrix;
 
     RenderDataTest rdt = new RenderDataTest;
     RenderDataTest rdt2 = new RenderDataTest;
@@ -87,6 +94,7 @@ Renderer initScene()
 
     a0 ~= a1;
     a0 ~= a2;
+    a0 ~= camNode;
 
     tech0.scene = a0;
 
@@ -146,10 +154,15 @@ int main(string[] argv)
         recomputeTransformations(sceneRoot);
 
         //sceneRoot.data.translationM = mat4.translation(-translate, 0, 0);
-        sceneRoot.data.rotationM.rotatez(-0.5f/180*3.1415924);
+        //sceneRoot.data.rotationM.rotatez(-0.5f/180*3.1415924);
+
+        
 
         a1.data.translationM = mat4.translation(translate, translate, 0);
         a1.data.rotationM.rotatez(5.0f/180*3.1415924);
+
+        //
+        camNode.data.translationM.translate(0, 0, sum);
 
         translate += sum;
         if(translate > 1)
