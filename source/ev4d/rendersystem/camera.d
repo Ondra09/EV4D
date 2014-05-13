@@ -13,17 +13,25 @@ version(unittest)
 //
 class Camera
 {
-public:
+private: 
 	// view angles
-	float fovx;
-	float fovy;
+	float fov;
 
 	// Viewport
 	int viewportWidth;
 	int viewportHeight;
+public:
+	this(int width, int height, float fov, float near = 0.5f, float far = 30.0f)
+	{
+		this.fov = fov;
+		viewportWidth = width;
+		viewportHeight = height;
+
+		projMatrix = mat4.perspective(viewportWidth, viewportHeight, fov, near, far);
+	}
 
 	mat4 *viewMatrix;
-	mat4 *projMatrix;
+	mat4 projMatrix;
 }
 
 //

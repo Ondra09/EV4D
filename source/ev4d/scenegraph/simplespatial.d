@@ -53,14 +53,14 @@ void recomputeTransformations(SpacialHierarchyGraph root)
                                     {
                                         // OPTIM: recompute lazily
 
-                                        transformation = translationM * rotationM * scaleM;
+                                        transformation = translationM * (rotationM * scaleM);
                                     }
                                 }
 
                                 if (node.parent)
                                 {
                                     //node.data.transformation =  node.data.transformation * node.parent.data.transformation;
-                                    node.data.transformation =  node.parent.data.transformation * node.data.transformation;
+                                    //node.data.transformation =  node.parent.data.transformation * node.data.transformation;
                                 }
                             };
 

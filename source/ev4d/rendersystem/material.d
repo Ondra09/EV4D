@@ -57,6 +57,7 @@ public:
 	{ 
 		glColor3b(1, 0, 1);
 		glPushMatrix();
+		
 		glMultMatrixf(wMatrix.value_ptr);
 	}
 

@@ -115,8 +115,8 @@ private:
 	void addChild(HierarchyGraph nchild)// @safe pure nothrow
 	{
 		child ~= nchild;
-
-		child[$-1].parent = this;
+		nchild.parent = this;
+		//child[$-1].parent = this;
 	}
 
 	Array!(HierarchyGraph) child;
