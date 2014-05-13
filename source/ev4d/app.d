@@ -138,22 +138,28 @@ int main(string[] argv)
     glViewport(0, 0, width, height);
 
     float translate = 0;
-    float roatationAngle = 0;
+    float sum = 0.01;
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         recomputeTransformations(sceneRoot);
 
-        sceneRoot.data.translationM = mat4.translation(-translate, 0, 0);
+        //sceneRoot.data.translationM = mat4.translation(-translate, 0, 0);
+        sceneRoot.data.rotationM.rotatez(-0.5f/180*3.1415924);
 
         a1.data.translationM = mat4.translation(translate, translate, 0);
         a1.data.rotationM.rotatez(5.0f/180*3.1415924);
 
-        roatationAngle += 1;
-        translate += 0.01;
+        translate += sum;
         if(translate > 1)
         {
-            translate = 0;
+            sum *= -1;
+        }
+
+        if(translate < -1)
+        {
+            sum *= -1;
         }
 
         renderer.render();
