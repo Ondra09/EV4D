@@ -93,7 +93,7 @@ Renderer initScene()
     a2.data.material = smat2;
 
     a0 ~= a1;
-    a0 ~= a2;
+    a1 ~= a2;
     a0 ~= camNode;
 
     tech0.scene = a0;
