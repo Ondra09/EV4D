@@ -15,6 +15,8 @@ import std.c.stdio;
 import derelict.glfw3.glfw3;
 import derelict.opengl3.gl;
 
+import ev4d.mesh.generator;
+
 import gl3n.linalg;
 
 extern (C) nothrow 
@@ -165,12 +167,12 @@ int main(string[] argv)
         camNode.data.translationM.translate(0, 0, sum);
 
         translate += sum;
-        if(translate > 1)
+        if(translate > 3)
         {
             sum *= -1;
         }
 
-        if(translate < -1)
+        if(translate < -3)
         {
             sum *= -1;
         }
