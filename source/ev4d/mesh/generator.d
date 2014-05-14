@@ -9,12 +9,21 @@ struct CubeVertexesEmitor(T)
 {
 private:
 	int vertexesEmited = 0;
+	T sizeX = 1;
+	T sizeY = 1;
+	T sizeZ = 1;
 public:
-	T size = 0.5;
 
-	this(T cubeWidth = 1)
+	void setCubeSize(T size)
 	{
-		size = cubeWidth;
+		setDimensions(size, size, size);
+	}
+
+	void setDimensions(T x, T y, T z)
+	{
+		sizeX = x;
+		sizeY = y;
+		sizeZ = z;
 	}
 
 	@property bool empty() const
@@ -28,13 +37,18 @@ public:
     	int ySin = (vertexesEmited & 2) - 1; // *2/2 - 1
     	float zSin = ((vertexesEmited & 4) * 0.5 - 1); // *2/4 - 1 
 
-        return Vector!(T, 3)(xSin, ySin, zSin) * size * 0.5;
+        return Vector!(T, 3)(xSin * sizeX, ySin * sizeY, zSin * sizeZ) * 0.5;
     }
 
     void popFront()
     {
         vertexesEmited++;
     }
+}
+
+unittest
+{
+	// TODO
 }
 
 struct CubeTrisEmitor(T)

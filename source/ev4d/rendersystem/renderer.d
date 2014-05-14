@@ -6,7 +6,6 @@ import derelict.opengl3.gl;
 import ev4d.rendersystem.technique;
 import gl3n.linalg;
 
-import std.stdio;
 import ev4d.mesh.generator;
 
 class Renderer
@@ -49,15 +48,23 @@ public:
 			t.render();
 
 			CubeVertexesEmitor!(float) emitor;
+			
 			glRotatef(45, 1, 1, 1);
 			glBegin(GL_POINTS);
 				foreach(vec3 v; emitor)
 				{
 					glVertex3fv(v.value_ptr);
-					writeln(v);
 				}
 			glEnd();
-			writeln();
+			//CubeTrisEmitor!(char) trisemit;
+
+			//glBegin(GL_TRIANGLES);
+			//	foreach (vec3 id; trisemit)
+			//	{
+
+			//	}
+
+			//glEnd();
 		}
 	}
 }
