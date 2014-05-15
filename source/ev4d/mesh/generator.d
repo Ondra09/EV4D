@@ -57,17 +57,17 @@ private:
 	int trisEmited = 0;
 public:
 	// this could be used directly as index array
-	T indexes[36] = { 	(0, 2, 1), (1, 2, 3),
-						(3, 2, 7), (7, 2, 6),
-						(6, 2, 4), (4, 2, 0),
-						(4, 0, 5), (5, 0, 1),
-						(5, 1, 3), (3, 7, 5),
-						(5, 7, 6), (5, 6, 4)
-					  };
+	T indexes[36] = [ 	0, 2, 1, 1, 2, 3,
+						3, 2, 7, 7, 2, 6,
+						6, 2, 4, 4, 2, 0,
+						4, 0, 5, 5, 0, 1,
+						5, 1, 3, 3, 7, 5,
+						5, 7, 6, 5, 6, 4
+					  ];
 
 	@property bool empty() const
     {
-        return vertexesEmited == 12;
+        return trisEmited == 12;
     }
 
     @property Vector!(T, 3) front()
@@ -82,7 +82,33 @@ public:
     }
 }
 
-struct CubeNormalsEmitor
+struct CubeNormalsEmitor(T)
 {
+private:
+	int normalsEmited = 0;
+public:
 
+	T indexes[18] = [ 	0, 0, -1,
+						0, 1, 0,
+						-1, 0, 0,
+						0, -1, 0,
+						1, 0, 0,
+						0, 0, 1,
+					  ];
+
+	@property bool empty() const
+    {
+        return normalsEmited == 6;
+    }
+
+    @property Vector!(T, 3) front()
+    {
+    	size_t i = normalsEmited * 3;
+        return Vector!(T, 3)(indexes[i], indexes[i+1], indexes[i+2]);
+    }
+
+    void popFront()
+    {
+        normalsEmited++;
+    }
 }

@@ -7,6 +7,7 @@ import ev4d.rendersystem.technique;
 import gl3n.linalg;
 
 import ev4d.mesh.generator;
+import std.stdio;
 
 class Renderer
 {
@@ -48,23 +49,35 @@ public:
 			t.render();
 
 			CubeVertexesEmitor!(float) emitor;
-			
-			glRotatef(45, 1, 1, 1);
+
+			vec3 arrv[8];
+			static float rotangle = 0;
+			rotangle+=1;
+			glRotatef(rotangle, 1, 1, 1);
 			glBegin(GL_POINTS);
+				int i = 0;
 				foreach(vec3 v; emitor)
 				{
 					glVertex3fv(v.value_ptr);
+					arrv[i] = v;
+					i++;
 				}
 			glEnd();
-			//CubeTrisEmitor!(char) trisemit;
 
-			//glBegin(GL_TRIANGLES);
-			//	foreach (vec3 id; trisemit)
-			//	{
+			CubeTrisEmitor!(int) trisemit;
 
-			//	}
+			glBegin(GL_TRIANGLES);
+				foreach (Vector!(int, 3) id; trisemit)
+				{
+					glVertex3fv(arrv[id.x].value_ptr);
+					glVertex3fv(arrv[id.y].value_ptr);
+					glVertex3fv(arrv[id.z].value_ptr);
 
-			//glEnd();
+					writeln(id);
+				}
+
+			glEnd();
+			writeln;
 		}
 	}
 }
