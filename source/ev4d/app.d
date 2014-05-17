@@ -38,10 +38,13 @@ extern (C) nothrow
 // pbly struct better
 class RenderDataTest
 {
-    float vertexes[3];
-    this()
-    {
-    }
+    float vertexes[];
+    float normals[];
+    GLubyte indices[];
+
+    int indicesCount = 0;
+
+    ubyte color[];
 }
 
 SHGraph sceneRoot;
@@ -72,12 +75,15 @@ Renderer initScene()
 
     a2.data.translationM.translate(-1.0f, 0.5f, 0.0f);
 
-    camNode.data.translationM.translate(0.0f, 0.0f, 1.0f);
+    camNode.data.translationM.translate(0.0f, 1.0f, 1.0f);
 
     cam.viewMatrix = &camNode.data.worldMatrix;
 
     RenderDataTest rdt = new RenderDataTest;
+    rdt.color = [cast(ubyte)(255), 0, 0, cast(ubyte)(255)];
+
     RenderDataTest rdt2 = new RenderDataTest;
+    rdt2.color = [cast(ubyte)(255), cast(ubyte)(255), 0, cast(ubyte)(255)];
 
     SimpleMaterial!RenderDataTest smat = new SimpleMaterial!RenderDataTest();
     SimpleMaterial!RenderDataTest smat2 = new SimpleMaterial!RenderDataTest();
@@ -85,9 +91,33 @@ Renderer initScene()
     smat.bindData(rdt);
     smat2.bindData(rdt2);
 
-    rdt.vertexes[0] = 0.5f;
-    rdt.vertexes[1] = rdt.vertexes[2] = 0;
+    rdt.vertexes = new float[3 * 8];
+    rdt.color = new ubyte[3 * 8];
 
+    CubeVertexesEmitor!(float) emitor;
+    int i = 0;
+    foreach(vec3 v; emitor)
+    {
+        rdt.color[i] = cast(ubyte)(i*30);
+        rdt.vertexes[i++] =  v.y;
+
+        rdt.color[i] = cast(ubyte)(i*30);
+        rdt.vertexes[i++] =  v.x;
+
+        rdt.color[i] = cast(ubyte)(i*30);
+        rdt.vertexes[i++] =  v.z;    
+    }
+    CubeTrisEmitor!(int) trisemit;
+
+    rdt.indices = new GLubyte[trisemit.indices.length];
+    rdt.indicesCount = trisemit.indices.length;
+
+    foreach(int j, int idx; trisemit.indices[])
+    {
+        rdt.indices[j] = cast(ubyte)(idx);
+    }
+
+    rdt2.vertexes = new float[3 * 8];
     rdt2.vertexes[0] = -0.5f;
     rdt2.vertexes[1] = rdt2.vertexes[2] = 0;
     

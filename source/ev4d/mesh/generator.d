@@ -90,7 +90,7 @@ private:
 	int trisEmited = 0;
 public:
 	// this could be used directly as index array
-	T indexes[36] = [ 	0, 2, 1, 1, 2, 3,
+	T indices[36] = [ 	0, 2, 1, 1, 2, 3,
 						3, 2, 7, 7, 2, 6,
 						6, 2, 4, 4, 2, 0,
 						4, 0, 5, 5, 0, 1,
@@ -106,7 +106,7 @@ public:
     @property Vector!(T, 3) front()
     {
     	size_t i = trisEmited * 3;
-        return Vector!(T, 3)(indexes[i], indexes[i+1], indexes[i+2]);
+        return Vector!(T, 3)(indices[i], indices[i+1], indices[i+2]);
     }
 
     void popFront()

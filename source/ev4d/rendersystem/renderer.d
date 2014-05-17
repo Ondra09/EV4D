@@ -6,9 +6,6 @@ import derelict.opengl3.gl;
 import ev4d.rendersystem.technique;
 import gl3n.linalg;
 
-import ev4d.mesh.generator;
-import std.stdio;
-
 class Renderer
 {
 private:
@@ -20,6 +17,7 @@ public:
 	{
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		foreach(GeneralTechnique t; techniques)

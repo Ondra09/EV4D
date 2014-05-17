@@ -55,9 +55,16 @@ public:
 
 	void initMaterial()
 	{ 
-		glColor3b(1, 0, 1);
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_COLOR_ARRAY);
+		glVertexPointer(3, GL_FLOAT, 0, cast(const void*)(renderData.vertexes));
+		glColorPointer(4, GL_UNSIGNED_BYTE, 0, cast(const void*)(renderData.color));
+
+		glColor4ubv(renderData.color.ptr);
+
 		glPushMatrix();
-		
+
 		glMultMatrixf(wMatrix.value_ptr);
 	}
 
@@ -70,16 +77,13 @@ public:
 		if (renderData is null)
 			return;
 
-		//glBegin(GL_POINTS);
-		//	glVertex3fv(renderData.vertexes.ptr);
-		//glEnd();
-
-		glBegin(GL_QUADS);			
-			glVertex4f(0.15f, 0.15f, 0, 1);
-			glVertex4f(-0.15f, 0.15f, 0, 1);
-			glVertex4f(-0.15f, -0.15f, 0, 1);
-			glVertex4f(0.15f, -0.15f, 0, 1);			
-		glEnd();
+		if (!(renderData.indices is null))
+		{
+			glDrawElements(GL_TRIANGLES, renderData.indicesCount, GL_UNSIGNED_BYTE, cast(const void*)(renderData.indices));
+		}else
+		{
+			glDrawArrays(GL_TRIANGLES, 0, 8);
+		}
 	}
 
 	void cleanUpPass(int num)
@@ -89,5 +93,8 @@ public:
 	void cleanUp()
 	{
 		glPopMatrix();
+
+		glDisableClientState(GL_COLOR_ARRAY);
+		glDisableClientState(GL_VERTEX_ARRAY);
 	}
 }
