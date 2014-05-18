@@ -55,6 +55,7 @@ public:
 
 	void initMaterial()
 	{ 
+		//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_COLOR_ARRAY);

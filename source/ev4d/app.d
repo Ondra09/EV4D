@@ -99,10 +99,10 @@ Renderer initScene()
     foreach(vec3 v; emitor)
     {
         rdt.color[i] = cast(ubyte)(i*30);
-        rdt.vertexes[i++] =  v.y;
+        rdt.vertexes[i++] =  v.x;
 
         rdt.color[i] = cast(ubyte)(i*30);
-        rdt.vertexes[i++] =  v.x;
+        rdt.vertexes[i++] =  v.y;
 
         rdt.color[i] = cast(ubyte)(i*30);
         rdt.vertexes[i++] =  v.z;    
