@@ -36,7 +36,7 @@ extern (C) nothrow
 }
 
 // pbly struct better
-class RenderDataTest
+struct RenderDataTest
 {
     float vertexes[];
     float normals[];
@@ -52,21 +52,28 @@ SHGraph sceneRoot;
 SHGraph a1;
 SHGraph a2;
 SHGraph camNode;
+SHGraph camNode1;
 
 Renderer initScene()
 {
     Renderer renderer = new Renderer();
 
     Technique!(SHGraph) tech0 = new Technique!(SHGraph)();
+    Technique!(SHGraph) tech1 = new Technique!(SHGraph)();
 
     Camera cam = new Camera(640, 480, 120);
+    Camera cam1 = new Camera(320, 240, 120);
+    cam1.viewportX = 300;
+    cam1.viewportY = 300;
 
     tech0.camera = cam; 
+    tech1.camera = cam1;
 
     SHGraph a0 = new SHGraph();
     a1 = new SHGraph();
     a2 = new SHGraph();
     camNode = new SHGraph();
+    camNode1 = new SHGraph();
 
     sceneRoot = a0;
 
@@ -76,13 +83,16 @@ Renderer initScene()
     a2.data.translationM.translate(-1.0f, 0.5f, 0.0f);
 
     camNode.data.translationM.translate(0.0f, 1.0f, 1.0f);
+    camNode1.data.translationM.translate(0.0f, -1.0f, 1.0f);
 
     cam.viewMatrix = &camNode.data.worldMatrix;
+    cam1.viewMatrix = &camNode1.data.worldMatrix;
 
-    RenderDataTest rdt = new RenderDataTest;
+    // create an object for this
+    RenderDataTest* rdt = new RenderDataTest;
     rdt.color = [cast(ubyte)(255), 0, 0, cast(ubyte)(255)];
 
-    RenderDataTest rdt2 = new RenderDataTest;
+    RenderDataTest* rdt2 = new RenderDataTest;
     rdt2.color = [cast(ubyte)(255), cast(ubyte)(255), 0, cast(ubyte)(255)];
 
     SimpleMaterial!RenderDataTest smat = new SimpleMaterial!RenderDataTest();
@@ -127,10 +137,12 @@ Renderer initScene()
     a0 ~= a1;
     a1 ~= a2;
     a0 ~= camNode;
+    a0 ~= camNode1;
 
     tech0.scene = a0;
+    tech1.scene = a0;
 
-    renderer.techniques ~= tech0;
+    renderer.techniques ~= [tech0, tech1];
 
     return renderer;
 }
@@ -141,7 +153,7 @@ int main(string[] argv)
     DerelictGL.load();
 
     Renderer renderer = initScene();
-   
+ 
     // window initialization & callbacks
     GLFWwindow* window;
     
@@ -175,7 +187,6 @@ int main(string[] argv)
 
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);
-    glViewport(0, 0, width, height);
 
     float translate = 0;
     float sum = 0.01;

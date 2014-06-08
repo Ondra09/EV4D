@@ -32,6 +32,13 @@ public:
 
 	mat4 *viewMatrix;
 	mat4 projMatrix;
+
+	/// read only, camera projection is constructed from this
+	@property int getViewportWidth(){ return viewportWidth; }
+	@property int getViewportHeight(){ return viewportHeight; }
+
+	int viewportX = 0;
+	int viewportY = 0;
 }
 
 //

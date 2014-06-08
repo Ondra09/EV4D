@@ -1,11 +1,11 @@
 
 module ev4d.rendersystem.material;
 
+import ev4d.rendersystem.technique;
+
 // todo switch to gl2 or gl3
 import derelict.opengl3.gl;
 import gl3n.linalg;
-
-import std.stdio;
 
 interface Material
 {
@@ -15,8 +15,7 @@ interface Material
 	@property mat4 worldMatrix();
 	@property mat4 worldMatrix(mat4 m);
 
-	// TODO : Object or void* decide what better
-	void bindData(Object material);
+	@property GeneralTechnique[] getDependencies();
 
 	void initMaterial();
 
@@ -36,7 +35,8 @@ private:
 	mat4 wMatrix = mat4.identity();
 public:
 	// TODO : struct vs class make it possible to accept both
-	RenderData renderData;
+	RenderData* renderData;
+	GeneralTechnique techniquesDep[];
 
 	this()
 	{
@@ -48,9 +48,11 @@ public:
 	@property mat4 worldMatrix(){ return wMatrix; }
 	@property mat4 worldMatrix(mat4 m){ m.transpose(); return wMatrix = m; }
 
-	override void bindData(Object data)
+	@property GeneralTechnique[] getDependencies(){ return techniquesDep; }
+
+	void bindData(RenderData* data)
 	{
-		renderData = cast(RenderData)data;
+		renderData = data;
 	}
 
 	void initMaterial()
@@ -75,6 +77,8 @@ public:
 
 	void renderPass(int num)
 	{ 
+		import std.stdio;
+
 		if (renderData is null)
 			return;
 
