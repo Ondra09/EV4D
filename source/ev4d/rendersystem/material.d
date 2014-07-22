@@ -9,10 +9,10 @@ import gl3n.linalg;
 
 interface Material
 {
-	@property int numberOfPasses();
+	@property int numberOfPasses() pure;
 	@property int numberOfPasses(int n);
 
-	@property mat4 worldMatrix();
+	@property mat4 worldMatrix() pure;
 	@property mat4 worldMatrix(mat4 m);
 
 	@property GeneralTechnique[] getDependencies();

@@ -5,8 +5,6 @@ import ev4d.rendersystem.material;
 //import ev4d.scenegraph.simplespatial;
 import ev4d.rendersystem.technique;
 
-import std.stdio;
-
 // this needs to be filled in order to render
 /**
 this structure is needed for rq to render it properly, camera should return it in right format

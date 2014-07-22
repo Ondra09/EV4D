@@ -62,7 +62,7 @@ public:
 
 					//
 					viewMat.transpose();
-					// OPTIM : could be done with 	[ R^T | -Transpose ] too 
+					// OPTIM : could be done with 	[ R^T | -Translate ] too 
 					//								[ 0	   0    0    1 ]
 					viewMat.invert();
 					glMultMatrixf(viewMat.value_ptr);
