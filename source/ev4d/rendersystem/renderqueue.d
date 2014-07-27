@@ -30,7 +30,9 @@ void sortAndRender(T)(T[] view)
 		{
 			with(a.material)
 			{
+				bindData(a.renderData);
 				worldMatrix(a.worldMatrix);
+				
 				initMaterial();
 				initPass(0);
 				renderPass(0);

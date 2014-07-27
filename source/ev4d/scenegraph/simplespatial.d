@@ -30,6 +30,8 @@ public:
 
     alias worldMatrix = transformation;
 
+    void* renderData;
+
     Material material;
 
     /**

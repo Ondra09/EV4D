@@ -9,6 +9,7 @@ import ev4d.rendersystem.material;
 import ev4d.rendersystem.renderer;
 import ev4d.rendersystem.renderqueue;
 import ev4d.rendersystem.technique;
+import ev4d.materials.testmaterials;
 
 import std.c.stdio;
 
@@ -98,9 +99,6 @@ Renderer initScene()
     SimpleMaterial!RenderDataTest smat = new SimpleMaterial!RenderDataTest();
     SimpleMaterial!RenderDataTest smat2 = new SimpleMaterial!RenderDataTest();
 
-    smat.bindData(rdt);
-    smat2.bindData(rdt2);
-
     rdt.vertexes = new float[3 * 8];
     rdt.color = new ubyte[3 * 8];
 
@@ -134,6 +132,9 @@ Renderer initScene()
     a1.data.material = smat;
     a2.data.material = smat2;
 
+    a1.data.renderData = rdt;
+    a2.data.renderData = rdt2;
+
     a0 ~= a1;
     a1 ~= a2;
     a0 ~= camNode;
@@ -144,6 +145,10 @@ Renderer initScene()
 
     renderer.techniques ~= [tech0, tech1];
 
+    ////
+    SimpleShader!RenderDataTest simpleShader = new SimpleShader!RenderDataTest();
+    a1.data.material = simpleShader;
+
     return renderer;
 }
 
@@ -151,8 +156,6 @@ int main(string[] argv)
 {
     DerelictGLFW3.load();
     DerelictGL.load();
-
-    Renderer renderer = initScene();
  
     // window initialization & callbacks
     GLFWwindow* window;
@@ -171,7 +174,8 @@ int main(string[] argv)
     glfwSetErrorCallback(&errorCallback);
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Hello World", null, null);
+    window = glfwCreateWindow(640, 480, "Space Shooter 1000", null, null);
+
     if (!window)
     {
         glfwTerminate();
@@ -190,6 +194,8 @@ int main(string[] argv)
 
     float translate = 0;
     float sum = 0.01;
+
+    Renderer renderer = initScene();
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -228,77 +234,4 @@ int main(string[] argv)
     }
 
     return 0;
-
-    //traverseTree!("leaf < compval")(a0);
-
-/++
-    int[] arrb = [ 0 ];
-    foreach (i; 0..100) // it grows capacity = 2*capacity+1
-    {
-        arrb ~= i;
-        writeln(arrb.capacity);
-    }+/
 }
-
-/++
-int oldmain(string[] argv)
-{
-	writeln("Hello D-World!");
-
-	Group!(SimpleSpatial, "dummy") g0 = new Group!(SimpleSpatial, "dummy");
-    g0.sds.dummy = new SimpleSpatial();
-    g0.dummy.a = 5;
-    g0.aaa();
-    //Array!(size_t).Payload faaa;
-    //Group!(int, char) g1 = new Group!(int, char);
-    //g1.sds[0] = 5;
-    //g1.sds[1] = 'r';
-
-    //g0.sds.dummy.addChild(g1);
-
-    //g0.setTraversalCondition(true);
-    
-    writeln("foreach g0");
-    //foreach (i, T; g0)
-    //{
-    //    writeln(T);
-    //    writeln(T.a);
-    //} 
-
-    writeln("ffff"); 
-    foreach (it; g0)
-    {
-        writeln(it);
-    }
-
-    Leaf lf =new Leaf();
-    g0.dummy.addChild(lf);
-    g0.dummy.addChild(new Leaf());
-
-    //g0.traverseSubnodes();
-    g0.getLeafs((sc => 1>0 ) );
-
-    g0.dummy.scale.set(4, 2, 6);
-    g0.dummy.translation.set(7, 2, 3);
-
-
-    writeln(g0.dummy.getTransform());
-
-    writeln("Travrse nodes");
-
-    BoundingVolumeHierarchy a0;
-    BoundingVolumeHierarchy a1;
-
-    a0.numero = 7;
-    a1.numero = 23;
-
-    a0.children ~= a1;
-
-    int[] arr;
-    a0.traverse(arr);
-    writeln(arr);
-
-	getchar();
-	return 0;
-}
-+/

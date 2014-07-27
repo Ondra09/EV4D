@@ -26,6 +26,7 @@ interface Material
 	void cleanUpPass(int num);
 
 	void cleanUp();
+	void bindData(void* data);
 }
 
 class SimpleMaterial(RenderData): Material
@@ -50,9 +51,9 @@ public:
 
 	@property GeneralTechnique[] getDependencies(){ return techniquesDep; }
 
-	void bindData(RenderData* data)
+	void bindData(void* data)
 	{
-		renderData = data;
+		renderData = cast(RenderData*)data;
 	}
 
 	void initMaterial()
