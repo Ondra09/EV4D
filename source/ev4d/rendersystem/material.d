@@ -7,33 +7,68 @@ import ev4d.rendersystem.technique;
 import derelict.opengl3.gl;
 import gl3n.linalg;
 
-interface Material
+class Material
 {
-	@property int numberOfPasses() pure;
-	@property int numberOfPasses(int n);
+private:
+	mat4 mviewMatrix = mat4.identity();
+	mat4 mworldMatrix = mat4.identity();
 
-	@property mat4 worldMatrix() pure;
-	@property mat4 worldMatrix(mat4 m);
+	mat4 mprojectionMatrix = void; //!!!
 
-	@property GeneralTechnique[] getDependencies();
+	int passes = 1;
+public:
+	@property int numberOfPasses() pure nothrow { return passes; }
+	@property int numberOfPasses(int n) {return passes = n; }
 
-	void initMaterial();
+	@property mat4 worldMatrix() pure nothrow
+	{
+		return mworldMatrix;
+	}
 
-	void initPass(int num);
+	@property mat4 worldMatrix(mat4 m)
+	{
+		return mworldMatrix = m;
+	}
 
-	void renderPass(int num);
+	@property mat4 viewMatrix() pure nothrow
+	{
+		return mviewMatrix;
+	}
 
-	void cleanUpPass(int num);
+	@property mat4 viewMatrix(mat4 m)
+	{
+		return mviewMatrix = m;
+	}
 
-	void cleanUp();
-	void bindData(void* data);
+	@property mat4 projectionMatrix() pure nothrow
+	{
+		return mprojectionMatrix;
+	}
+
+	@property mat4 projectionMatrix(mat4 m)
+	{
+		return mprojectionMatrix = m;
+	}
+
+
+	abstract @property GeneralTechnique[] getDependencies();
+
+	abstract void initMaterial();
+
+	abstract void initPass(int num);
+
+	abstract void renderPass(int num);
+
+	abstract void cleanUpPass(int num);
+
+	abstract void cleanUp();
+	abstract void bindData(void* data);
 }
 
 class SimpleMaterial(RenderData): Material
 {
 private:
-	int passes = 1;
-	mat4 wMatrix = mat4.identity();
+	
 public:
 	// TODO : struct vs class make it possible to accept both
 	RenderData* renderData;
@@ -43,20 +78,14 @@ public:
 	{
 	}
 
-	@property int numberOfPasses(){ return passes; }
-	@property int numberOfPasses(int n){ return passes = n; }
+	override @property GeneralTechnique[] getDependencies(){ return techniquesDep; }
 
-	@property mat4 worldMatrix(){ return wMatrix; }
-	@property mat4 worldMatrix(mat4 m){ m.transpose(); return wMatrix = m; }
-
-	@property GeneralTechnique[] getDependencies(){ return techniquesDep; }
-
-	void bindData(void* data)
+	override void bindData(void* data)
 	{
 		renderData = cast(RenderData*)data;
 	}
 
-	void initMaterial()
+	override void initMaterial()
 	{ 
 		//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
@@ -69,14 +98,14 @@ public:
 
 		glPushMatrix();
 
-		glMultMatrixf(wMatrix.value_ptr);
+		glMultMatrixf(worldMatrix.value_ptr);
 	}
 
-	void initPass(int num)
+	override void initPass(int num)
 	{
 	}
 
-	void renderPass(int num)
+	override void renderPass(int num)
 	{ 
 		import std.stdio;
 
@@ -92,11 +121,11 @@ public:
 		}
 	}
 
-	void cleanUpPass(int num)
+	override void cleanUpPass(int num)
 	{
 	}
 
-	void cleanUp()
+	override void cleanUp()
 	{
 		glPopMatrix();
 

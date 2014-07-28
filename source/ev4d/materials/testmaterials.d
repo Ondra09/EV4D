@@ -41,8 +41,6 @@ void printInfoLog(string type)(GLuint obj,  string file = __FILE__, int line = _
 class SimpleShader(RenderData) : Material
 {
 private:
-	mat4 mworldMatrix;
-
 	GLuint program;
 	GLuint vshader;
 	GLuint fshader;
@@ -64,7 +62,7 @@ public:
 
 			void main()
 			{
-				gl_Position    = gl_ProjectionMatrix * modelViewMatrix * gl_Vertex;
+				gl_Position    = gl_ProjectionMatrix * gl_ModelViewMatrix * modelViewMatrix * gl_Vertex;
 				gl_FrontColor  = gl_Color;
 				gl_TexCoord[0] = gl_MultiTexCoord0;
 			}
@@ -98,7 +96,9 @@ public:
 
 		modelViewMatrix = glGetUniformLocation(program, "modelViewMatrix");
 		customC = glGetUniformLocation(program, "customC");
-		//assert(modelViewMatrix != 0);
+		
+		assert(modelViewMatrix != -1);
+		assert(customC != -1);
 	}
 
 	~this()
@@ -108,26 +108,13 @@ public:
 		glDeleteProgram(0);
 	}
 
-	@property pure int numberOfPasses() const { return 1; }
-	@property int numberOfPasses(int n) const pure{ return 1; }
 
-	@property mat4 worldMatrix() pure nothrow
-	{
-		return mworldMatrix;
-	}
-
-	@property mat4 worldMatrix(mat4 m)
-	{
-		m.transpose(); 
-		return mworldMatrix = m;
-	}
-
-	@property GeneralTechnique[] getDependencies() const pure nothrow
+	override @property GeneralTechnique[] getDependencies() const pure nothrow
 	{
 		return null;
 	}
 
-	void initMaterial()
+	override void initMaterial()
 	{ 
 		//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
@@ -138,19 +125,20 @@ public:
 
 		glColor4ubv(renderData.color.ptr);
 
-		glPushMatrix();
+		//glPushMatrix();
 
-		glMultMatrixf(mworldMatrix.value_ptr);
+		//glMultMatrixf(mworldMatrix.value_ptr);
 		glUseProgram(program);
-		glUniform4fv(modelViewMatrix, 1, GL_TRUE, mworldMatrix.value_ptr);
+
+		glUniformMatrix4fv(modelViewMatrix, 1, GL_TRUE, worldMatrix.value_ptr);
 		glUniform4f(customC, 1, 0, 1, 1);
 	}
 
-	void initPass(int num)
+	override void initPass(int num)
 	{
 	}
 
-	void renderPass(int num)
+	override void renderPass(int num)
 	{ 
 		import std.stdio;
 
@@ -166,19 +154,19 @@ public:
 		}
 	}
 
-	void cleanUpPass(int num)
+	override void cleanUpPass(int num)
 	{
 	}
 
-	void cleanUp()
+	override void cleanUp()
 	{
-		glPopMatrix();
+		//glPopMatrix();
 
 		glDisableClientState(GL_COLOR_ARRAY);
 		glDisableClientState(GL_VERTEX_ARRAY);
 	}
 
-	void bindData(void* data) pure nothrow
+	override void bindData(void* data) pure nothrow
 	{
 		renderData = cast(RenderData*)data;
 	}

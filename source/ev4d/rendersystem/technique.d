@@ -6,6 +6,7 @@ import ev4d.rendersystem.rendertarget;
 import ev4d.rendersystem.renderqueue;
 
 import derelict.opengl3.gl;
+import gl3n.linalg;
 
 class GeneralTechnique
 {
@@ -16,6 +17,9 @@ public:
 
 	abstract void render();
 	abstract GeneralTechnique[] getRequiredTechniques();
+
+	/// let technique set the camera properly
+	abstract void setupCamera();
 
 	@property Camera camera(){ return cam; }
 	@property Camera camera(Camera concreteCam){ return cam = concreteCam; }
@@ -63,6 +67,32 @@ public:
 		}
 
 		return null;
+	}
+
+	override void setupCamera()
+	{
+		with(camera)
+		{
+			// width, height, fov, near, far
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			glMultMatrixf(projMatrix.value_ptr);
+
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+
+			//glTranslatef(0, 0, -1.0);
+			mat4 viewMat = *viewMatrix;
+
+			// column mayor to row mayor
+			viewMat.transpose();
+
+			// OPTIM : could be done with 	[ R^T | -Translate ] too 
+			//								[ 0	   0    0    1 ]					
+			// because camera transforms are invert to model ones
+			viewMat.invert();
+			glMultMatrixf(viewMat.value_ptr);
+		}
 	}
 
 }
