@@ -7,11 +7,14 @@ import ev4d.rendersystem.technique;
 import derelict.opengl3.gl;
 import gl3n.linalg;
 
+/**
+	All matrices are expected in column mayor and right format for camera. (inversion)
+*/
 class Material
 {
 private:
-	mat4 mviewMatrix = mat4.identity();
 	mat4 mworldMatrix = mat4.identity();
+	mat4 mviewMatrix = mat4.identity();
 
 	mat4 mprojectionMatrix = void; //!!!
 
@@ -30,6 +33,8 @@ public:
 		return mworldMatrix = m;
 	}
 
+	alias modelMatrix = worldMatrix;
+
 	@property mat4 viewMatrix() pure nothrow
 	{
 		return mviewMatrix;
@@ -47,6 +52,7 @@ public:
 
 	@property mat4 projectionMatrix(mat4 m)
 	{
+		m.transpose();
 		return mprojectionMatrix = m;
 	}
 
@@ -132,4 +138,40 @@ public:
 		glDisableClientState(GL_COLOR_ARRAY);
 		glDisableClientState(GL_VERTEX_ARRAY);
 	}
+}
+
+void printInfoLog(string type)(GLuint obj,  string file = __FILE__, int line = __LINE__)
+{
+	import std.stdio;
+
+    int infologLength = 0;
+    int charsWritten  = 0;
+
+    static if(type == "shader")
+    {
+    	glGetShaderiv(obj, GL_INFO_LOG_LENGTH, &infologLength);
+    }else if (type == "program")
+    {
+    	glGetProgramiv(obj, GL_INFO_LOG_LENGTH, &infologLength);
+    }
+
+    if (infologLength > 0)
+    {
+    	import core.memory;
+
+        char* infoLog = cast(char*) GC.malloc(infologLength);
+        scope(exit) GC.free(infoLog);
+        
+        static if(type == "shader")
+        {
+        	glGetShaderInfoLog(obj, infologLength, &charsWritten, infoLog);
+        	write("Shader: ");
+        }else if (type == "program")
+        {
+        	glGetProgramInfoLog(obj, infologLength, &charsWritten, infoLog);
+        	write("Program: ");
+        }
+        write(file,":", line, " ");
+		printf("%s", infoLog);
+    }
 }

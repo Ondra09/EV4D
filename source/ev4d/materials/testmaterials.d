@@ -7,39 +7,6 @@ import ev4d.rendersystem.technique;
 import derelict.opengl3.gl;
 import gl3n.linalg;
 
-void printInfoLog(string type)(GLuint obj,  string file = __FILE__, int line = __LINE__)
-{
-	import std.stdio;
-
-    int infologLength = 0;
-    int charsWritten  = 0;
-    static if(type == "shader")
-    {
-    	glGetShaderiv(obj, GL_INFO_LOG_LENGTH, &infologLength);
-    }else if (type == "program")
-    {
-    	glGetProgramiv(obj, GL_INFO_LOG_LENGTH, &infologLength);
-    }
-
-    if (infologLength > 0)
-    {
-        char* infoLog = cast(char*) malloc(infologLength);
-        scope(exit) free(infoLog);
-        
-        static if(type == "shader")
-        {
-        	glGetShaderInfoLog(obj, infologLength, &charsWritten, infoLog);
-        	write("Shader: ");
-        }else if (type == "program")
-        {
-        	glGetProgramInfoLog(obj, infologLength, &charsWritten, infoLog);
-        	write("Program: ");
-        }
-        write(file,":", line, " ");
-		fprint("%s", infoLog);
-    }
-}
-
 class SimpleShader(RenderData) : Material
 {
 private:
@@ -50,7 +17,10 @@ private:
 	RenderData* renderData;
 
 	// shader uniforms
-	GLint modelViewMatrix;
+	GLint modelMatrix_u;
+	GLint viewMatrix_u;
+	GLint projectionMatrix_u;
+
 	GLint customC;
 public:
 	this()
@@ -60,12 +30,16 @@ public:
 		fshader = glCreateShader(GL_FRAGMENT_SHADER);
 
 		immutable(char)* vss = (r"
-			uniform mat4 modelViewMatrix;
+			uniform mat4 modelMatrix;
+			uniform mat4 viewMatrix;
+			uniform mat4 projectionMatrix;
 
 			void main()
 			{
-				gl_Position    = gl_ProjectionMatrix * gl_ModelViewMatrix * modelViewMatrix * gl_Vertex;
-				gl_FrontColor  = gl_Color
+				//gl_Position    = gl_ProjectionMatrix * gl_ModelViewMatrix * modelViewMatrix * gl_Vertex;
+
+				gl_Position    = projectionMatrix * viewMatrix * modelMatrix * gl_Vertex;
+				gl_FrontColor  = gl_Color;
 				gl_TexCoord[0] = gl_MultiTexCoord0;
 			}
 			".toStringz());
@@ -96,10 +70,13 @@ public:
 
 		printInfoLog!"program"(program);
 
-		modelViewMatrix = glGetUniformLocation(program, "modelViewMatrix");
+		modelMatrix_u = glGetUniformLocation(program, "modelMatrix");
+		viewMatrix_u = glGetUniformLocation(program, "viewMatrix");
+		projectionMatrix_u = glGetUniformLocation(program, "projectionMatrix");
+		
 		customC = glGetUniformLocation(program, "customC");
 		
-		assert(modelViewMatrix != -1);
+		assert(modelMatrix_u != -1);
 		assert(customC != -1);
 	}
 
@@ -132,7 +109,11 @@ public:
 		//glMultMatrixf(mworldMatrix.value_ptr);
 		glUseProgram(program);
 
-		glUniformMatrix4fv(modelViewMatrix, 1, GL_TRUE, worldMatrix.value_ptr);
+		glUniformMatrix4fv(modelMatrix_u, 1, GL_FALSE, worldMatrix.value_ptr);
+		glUniformMatrix4fv(viewMatrix_u, 1, GL_FALSE, viewMatrix.value_ptr);
+		glUniformMatrix4fv(projectionMatrix_u, 1, GL_FALSE, projectionMatrix.value_ptr);
+
+		//
 		glUniform4f(customC, 1, 0, 1, 1);
 	}
 

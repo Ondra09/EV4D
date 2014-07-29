@@ -6,7 +6,6 @@ import ev4d.rendersystem.rendertarget;
 import ev4d.rendersystem.renderqueue;
 
 import derelict.opengl3.gl;
-import gl3n.linalg;
 
 class GeneralTechnique
 {
@@ -49,7 +48,7 @@ public:
 
 		// inspect scene for aditional techniques
 
-		sortAndRender(sceneView);
+		sortAndRender(sceneView, camera);
 	}
 
 	override GeneralTechnique[] getRequiredTechniques()
@@ -73,8 +72,12 @@ public:
 	{
 		with(camera)
 		{
-			// width, height, fov, near, far
 			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+
+			/*glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
 			glMultMatrixf(projMatrix.value_ptr);
 
@@ -92,6 +95,8 @@ public:
 			// because camera transforms are invert to model ones
 			viewMat.invert();
 			glMultMatrixf(viewMat.value_ptr);
+
+			*/
 		}
 	}
 

@@ -2,8 +2,10 @@
 module ev4d.rendersystem.renderqueue;
 
 import ev4d.rendersystem.material;
-//import ev4d.scenegraph.simplespatial;
 import ev4d.rendersystem.technique;
+import ev4d.rendersystem.camera;
+
+import gl3n.linalg;
 
 // this needs to be filled in order to render
 /**
@@ -22,17 +24,35 @@ interface RenderObject(Matrices)
 }
 */
 
-void sortAndRender(T)(T[] view)
+void sortAndRender(T)(T[] view, Camera cam)
 {
+	mat4 m_viewMatrix = *cam.viewMatrix;
+	mat4 m_projMatrix = cam.projMatrix;
+
+	// OPTIM : could be done with 	[ R^T | -Translate ] too 
+	//								[ 0	   0    0    1 ]					
+	// because camera transforms are invert to model ones
+	m_viewMatrix.invert();	
+	m_viewMatrix.transpose();
+
+	m_projMatrix.transpose();
+
 	foreach (T a; view)
 	{
 		if (a.material)
 		{
 			with(a.material)
 			{
+				mat4 m_worldMatrix = a.worldMatrix;
+				m_worldMatrix.transpose();
+
 				bindData(a.renderData);
-				worldMatrix(a.worldMatrix);
-				
+
+				// set matrices
+				a.material.worldMatrix(m_worldMatrix);
+				a.material.viewMatrix(m_viewMatrix);
+				a.material.projectionMatrix(m_projMatrix);
+
 				initMaterial();
 				initPass(0);
 				renderPass(0);
