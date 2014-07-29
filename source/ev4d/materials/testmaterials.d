@@ -23,18 +23,20 @@ void printInfoLog(string type)(GLuint obj,  string file = __FILE__, int line = _
 
     if (infologLength > 0)
     {
-        auto infoLog = new char[infologLength];
+        char* infoLog = cast(char*) malloc(infologLength);
+        scope(exit) free(infoLog);
+        
         static if(type == "shader")
         {
-        	glGetShaderInfoLog(obj, infologLength, &charsWritten, infoLog.ptr);
+        	glGetShaderInfoLog(obj, infologLength, &charsWritten, infoLog);
         	write("Shader: ");
         }else if (type == "program")
         {
-        	glGetProgramInfoLog(obj, infologLength, &charsWritten, infoLog.ptr);
+        	glGetProgramInfoLog(obj, infologLength, &charsWritten, infoLog);
         	write("Program: ");
         }
         write(file,":", line, " ");
-		write(infoLog);
+		fprint("%s", infoLog);
     }
 }
 
