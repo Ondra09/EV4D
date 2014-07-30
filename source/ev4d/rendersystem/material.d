@@ -52,7 +52,6 @@ public:
 
 	@property mat4 projectionMatrix(mat4 m)
 	{
-		m.transpose();
 		return mprojectionMatrix = m;
 	}
 
