@@ -72,12 +72,13 @@ public:
 	{
 		with(camera)
 		{
+			/*
 			glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
 			glMatrixMode(GL_MODELVIEW);
 			glLoadIdentity();
 
-			/*glMatrixMode(GL_PROJECTION);
+			glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
 			glMultMatrixf(projMatrix.value_ptr);
 
