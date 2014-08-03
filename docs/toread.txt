@@ -4,3 +4,9 @@ http://gameprogrammingpatterns.com/
 http://gamemechanicexplorer.com/
 http://www.lostgarden.com/2006/10/what-are-game-mechanics.html
 ====================
+neco vic o tehle grafickych knihovnach:
+cinder, processing - je v jave, umoznuje multiplatformost, iphone, android, javascipt atd..
+openframeworks
+srovnani: http://www.creativeapplications.net/tools/
+
+D: aurora
