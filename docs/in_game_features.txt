@@ -1,0 +1,7 @@
+dat tam podobne jak v git extensions do nejakeho dema na obrozovku odkazy/text alespon s timto:
+Contribute:
+  Develop
+  Donate
+  Translate -- heh
+  Issues
+  
