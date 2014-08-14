@@ -13,3 +13,8 @@ srovnani: http://www.creativeapplications.net/tools/
 D: aurora
 
 ==================
+
+http://realtimecollisiondetection.net/blog/?p=86
+
+http://aras-p.info/blog/2014/01/16/rough-sorting-by-depth/
+http://c0de517e.blogspot.ca
