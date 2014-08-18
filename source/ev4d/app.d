@@ -156,7 +156,11 @@ int main(string[] argv)
 {
     DerelictGLFW3.load();
     DerelictGL.load();
- 
+
+    import derelict.assimp3.assimp;
+    // Load the Assimp3 library.
+    DerelictASSIMP3.load(); // should not be here pbly
+    
     // window initialization & callbacks
     GLFWwindow* window;
     
@@ -183,11 +187,23 @@ int main(string[] argv)
     }
 
     /* Make the window's context current */
+    debug
+    {
+        writeln("Crating context.");
+    }
     glfwMakeContextCurrent(window);
 
     glfwSetKeyCallback( window, &keyCallback);
 
     DerelictGL.reload();
+    debug
+    {
+        writeln("GL binding reload.");
+    }
+
+    import ev4d.io.model;
+    VBO vbo;
+    testImport(vbo);
 
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);
