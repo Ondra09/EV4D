@@ -201,10 +201,6 @@ int main(string[] argv)
         writeln("GL binding reload.");
     }
 
-    import ev4d.io.model;
-    VBO vbo;
-    testImport(vbo);
-
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);
 
@@ -230,12 +226,12 @@ int main(string[] argv)
         camNode.data.translationM.translate(0, 0, sum);
 
         translate += sum;
-        if(translate > 3)
+        if(translate > 10)
         {
             sum *= -1;
         }
 
-        if(translate < -3)
+        if(translate < -10)
         {
             sum *= -1;
         }

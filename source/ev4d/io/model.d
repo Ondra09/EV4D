@@ -35,15 +35,15 @@ struct GameVertex_
 	float y;
 	float z;
 
-	float nx;
+	float nx;	// .offsetof
 	float ny;
 	float nz;
 
-	float tx;
+	float tx;	// .offsetof
 	float ty;
 	float tz;
 
-	float u;
+	float u;	// .offsetof
 	float v;
 }
 
@@ -51,8 +51,8 @@ struct GameVertex_
 // currently loads only one mesh with static data
 // and one texture coords
 // seems like assimp is not loading correctly s flag = smmothing groups
-// maybe write own importer2
-bool testImport  (ref VBO vbo, string filename = "")
+// maybe write own importer
+bool testImport (ref VBO vbo, string filename = "")
 {
 
 	import std.stdio;
@@ -85,6 +85,8 @@ bool testImport  (ref VBO vbo, string filename = "")
 	//delBuffers(vbo0);
 
 	//writeln("Num meshes: ", scene.mNumMeshes);
+	// TODO : think more about VBO & meshes when we have more meshes in model.. or across models
+	assert (scene.mNumMeshes == 1);
 
 	foreach (uint i; 0..scene.mNumMeshes)
 	{
@@ -100,9 +102,9 @@ bool testImport  (ref VBO vbo, string filename = "")
 		foreach (uint j; 0..mesh.mNumVertices)
 		{
 			//writeln(mesh.mVertices[j]);
-			vertex.x = mesh.mVertices[j].x;
-			vertex.y = mesh.mVertices[j].y;
-			vertex.z = mesh.mVertices[j].z;
+			vertex.x = mesh.mVertices[j].x;//16.0;
+			vertex.y = mesh.mVertices[j].y;//16.0;
+			vertex.z = mesh.mVertices[j].z;//16.0;
 
 			vertex.nx = mesh.mNormals[j].x;
 			vertex.ny = mesh.mNormals[j].y;
@@ -121,6 +123,9 @@ bool testImport  (ref VBO vbo, string filename = "")
 
 		glBindBuffer(GL_ARRAY_BUFFER, vbo.vboIDs[i]);
 		glBufferData(GL_ARRAY_BUFFER, GameVertex_.sizeof*vboContent.length, vboContent.ptr, GL_STATIC_DRAW);
+		
+		
+
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		indices = [];
@@ -137,11 +142,13 @@ bool testImport  (ref VBO vbo, string filename = "")
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo.idxIDs[i]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, uint.sizeof*indices.length, indices.ptr, GL_STATIC_DRAW);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+		// writeln(indices.length);
 	}
 
 	
 	//writeln(vboContent);
-	//writeln(vboContent.indices);
+	//writeln(vboContent.indices.length);
 
 	// Now we can access the file's contents
 	//DoTheSceneProcessing( scene);

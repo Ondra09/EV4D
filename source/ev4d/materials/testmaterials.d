@@ -6,7 +6,8 @@ import ev4d.rendersystem.technique;
 
 import derelict.opengl3.gl;
 import gl3n.linalg;
-
+import ev4d.io.model;
+long offsetof = GameVertex_.nx.offsetof;
 class SimpleShader(RenderData) : Material
 {
 private:
@@ -22,6 +23,11 @@ private:
 	GLint projectionMatrix_u;
 
 	GLint customC;
+
+	//
+	
+	VBO vbo;
+
 public:
 	this()
 	{
@@ -49,6 +55,7 @@ public:
 			void main()
 			{
 				gl_FragColor = gl_Color * customC;
+				//gl_FragColor = vec4(1,1,1,1);
 			}
 			".toStringz());
 
@@ -78,6 +85,8 @@ public:
 		
 		assert(modelMatrix_u != -1);
 		assert(customC != -1);
+    	
+    	testImport(vbo);
 	}
 
 	~this()
@@ -96,11 +105,16 @@ public:
 	override void initMaterial()
 	{ 
 		//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+		glDisable(GL_CULL_FACE);
 
+		glBindBuffer(GL_ARRAY_BUFFER, vbo.vboIDs[0]);
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_COLOR_ARRAY);
-		glVertexPointer(3, GL_FLOAT, 0, cast(const void*)(renderData.vertexes));
-		glColorPointer(4, GL_UNSIGNED_BYTE, 0, cast(const void*)(renderData.color));
+		//glVertexPointer(3, GL_FLOAT, 0, cast(const void*)(renderData.vertexes));
+		//glColorPointer(4, GL_UNSIGNED_BYTE, 0, cast(const void*)(renderData.color));
+
+		glVertexPointer(3, GL_FLOAT, GameVertex_.sizeof, null);
+		glColorPointer(3, GL_FLOAT, GameVertex_.sizeof, cast(const void*)(offsetof) );
 
 		glColor4ubv(renderData.color.ptr);
 
@@ -125,6 +139,11 @@ public:
 	{ 
 		import std.stdio;
 
+		
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo.idxIDs[0]);
+		glDrawElements(GL_TRIANGLES, 894, GL_UNSIGNED_INT, null);
+
+		/*
 		if (renderData is null)
 			return;
 
@@ -134,7 +153,7 @@ public:
 		}else
 		{
 			glDrawArrays(GL_TRIANGLES, 0, 8);
-		}
+		}*/
 	}
 
 	override void cleanUpPass(int num)
