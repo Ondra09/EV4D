@@ -3,6 +3,16 @@ module ev4d.io.model;
 import derelict.assimp3.assimp;
 import derelict.opengl3.gl;
 
+// not used for now
+enum FighterVBODescr
+{
+	INDEX,		// 0
+	VERTEX,		// 1
+	NORMAL,		// 2
+	TANGENT,	// 3
+	TEXTURE 	// 4 .max
+}
+
 
 struct VBO
 {
@@ -31,20 +41,58 @@ void delBuffers(ref VBO vbo)
 
 struct GameVertex_
 {
-	float x;
+	@(3, GL_FLOAT)		// add atribute
+	float x;	// vertex
 	float y;
 	float z;
 
+	@(3, GL_FLOAT)
 	float nx;	// .offsetof
-	float ny;
+	float ny;	// normals
 	float nz;
 
+	@(3, GL_FLOAT)
 	float tx;	// .offsetof
-	float ty;
+	float ty;	// tangent
 	float tz;
 
+	@(2, GL_FLOAT)
 	float u;	// .offsetof
-	float v;
+	float v;	// uv texture
+}
+
+
+void setVBOVertexPointers(Vertex)()
+{
+	static if (__traits(hasMember, Vertex, "x"))
+	{
+		static assert(__traits(getAttributes, Vertex.x)[0] == (3));
+
+		glVertexPointer(__traits(getAttributes, Vertex.x)[0], 
+						__traits(getAttributes, Vertex.x)[1], 
+						GameVertex_.sizeof, cast(void*)(Vertex.x.offsetof));
+	}
+
+	static if (__traits(hasMember, Vertex, "nx"))
+	{
+		glColorPointer(	__traits(getAttributes, Vertex.nx)[0], 
+						__traits(getAttributes, Vertex.nx)[1], 
+						GameVertex_.sizeof, cast(const void*)(Vertex.nx.offsetof) );
+	}
+
+	static if (__traits(hasMember, Vertex, "nx"))
+	{
+		glNormalPointer(__traits(getAttributes, Vertex.nx)[0], 
+						__traits(getAttributes, Vertex.nx)[1], 
+						GameVertex_.sizeof, cast(const void*)(Vertex.nx.offsetof) );
+	}
+
+	static if (__traits(hasMember, Vertex, "tx"))
+	{
+		glTexCoordPointer(	__traits(getAttributes, Vertex.nx)[0],
+							__traits(getAttributes, Vertex.nx)[1], 
+							GameVertex_.sizeof, cast(const void*)(Vertex.nx.offsetof) );
+	}
 }
 
 
@@ -61,7 +109,7 @@ bool testImport (ref VBO vbo, string filename = "")
 	const aiScene * scene = aiImportFile( "objects/Space Frigate 6/space_frigate_6/space_frigate_6.obj", 
 										    	aiProcess_CalcTangentSpace       | 
 										        aiProcess_Triangulate            |
-										        aiProcess_JoinIdenticalVertices  |
+										        //aiProcess_JoinIdenticalVertices  |
 										        aiProcess_SortByPType
 										        );
 
@@ -102,9 +150,10 @@ bool testImport (ref VBO vbo, string filename = "")
 		foreach (uint j; 0..mesh.mNumVertices)
 		{
 			//writeln(mesh.mVertices[j]);
-			vertex.x = mesh.mVertices[j].x;//16.0;
-			vertex.y = mesh.mVertices[j].y;//16.0;
-			vertex.z = mesh.mVertices[j].z;//16.0;
+			float scale = 1.0f/16.0f;
+			vertex.x = mesh.mVertices[j].x * scale;
+			vertex.y = mesh.mVertices[j].y * scale;
+			vertex.z = mesh.mVertices[j].z * scale;
 
 			vertex.nx = mesh.mNormals[j].x;
 			vertex.ny = mesh.mNormals[j].y;

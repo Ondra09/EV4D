@@ -113,8 +113,8 @@ public:
 		//glVertexPointer(3, GL_FLOAT, 0, cast(const void*)(renderData.vertexes));
 		//glColorPointer(4, GL_UNSIGNED_BYTE, 0, cast(const void*)(renderData.color));
 
-		glVertexPointer(3, GL_FLOAT, GameVertex_.sizeof, null);
-		glColorPointer(3, GL_FLOAT, GameVertex_.sizeof, cast(const void*)(offsetof) );
+		//glVertexPointer(3, GL_FLOAT, GameVertex_.sizeof, null);
+		setVBOVertexPointers!(GameVertex_)();
 
 		glColor4ubv(renderData.color.ptr);
 
