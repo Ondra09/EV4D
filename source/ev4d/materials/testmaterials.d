@@ -27,6 +27,7 @@ private:
 	//
 	
 	VBO vbo;
+	int tangentsAttribID;
 
 public:
 	this()
@@ -40,12 +41,15 @@ public:
 			uniform mat4 viewMatrix;
 			uniform mat4 projectionMatrix;
 
+			attribute vec3 vTangent;
+
 			void main()
 			{
 				//gl_Position    = gl_ProjectionMatrix * gl_ModelViewMatrix * modelViewMatrix * gl_Vertex;
 
 				gl_Position    = projectionMatrix * viewMatrix * modelMatrix * gl_Vertex;
-				gl_FrontColor  = gl_Color;
+				//gl_FrontColor  = gl_Color;
+				gl_FrontColor  = vec4(vTangent, 1.0);
 				gl_TexCoord[0] = gl_MultiTexCoord0;
 			}
 			".toStringz());
@@ -82,6 +86,10 @@ public:
 		projectionMatrix_u = glGetUniformLocation(program, "projectionMatrix");
 		
 		customC = glGetUniformLocation(program, "customC");
+
+		tangentsAttribID = glGetAttribLocation(program, "vTangent");
+
+		assert(tangentsAttribID != -1);
 		
 		assert(modelMatrix_u != -1);
 		assert(customC != -1);
@@ -108,13 +116,13 @@ public:
 		glDisable(GL_CULL_FACE);
 
 		glBindBuffer(GL_ARRAY_BUFFER, vbo.vboIDs[0]);
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glEnableClientState(GL_COLOR_ARRAY);
+		
 		//glVertexPointer(3, GL_FLOAT, 0, cast(const void*)(renderData.vertexes));
 		//glColorPointer(4, GL_UNSIGNED_BYTE, 0, cast(const void*)(renderData.color));
 
 		//glVertexPointer(3, GL_FLOAT, GameVertex_.sizeof, null);
-		setVBOVertexPointers!(GameVertex_)();
+		setVBOVertexPointers20!(GameVertex_)();
+		bindVertexAttrib20!(GameVertex_, "tx")(tangentsAttribID);
 
 		glColor4ubv(renderData.color.ptr);
 
@@ -140,7 +148,7 @@ public:
 		import std.stdio;
 
 		
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo.idxIDs[0]);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo.idxIDs[0]); // remove this bind pbly
 		glDrawElements(GL_TRIANGLES, 894, GL_UNSIGNED_INT, null);
 
 		/*
@@ -164,8 +172,9 @@ public:
 	{
 		//glPopMatrix();
 
-		glDisableClientState(GL_COLOR_ARRAY);
-		glDisableClientState(GL_VERTEX_ARRAY);
+		cleanUpVBOPointers20!(GameVertex_)();
+
+		glDisableVertexAttribArray(tangentsAttribID);
 	}
 
 	override void bindData(void* data) pure nothrow

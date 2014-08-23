@@ -7,6 +7,104 @@ import ev4d.rendersystem.technique;
 import derelict.opengl3.gl;
 import gl3n.linalg;
 
+void bindVertexAttrib20(Vertex, string field)(int attribLocation, bool normalized = false)
+{
+	static if (__traits(hasMember, Vertex, field)) // tangents
+	{
+		glEnableVertexAttribArray( attribLocation );
+
+		with (Vertex)
+		{
+		glEnableVertexAttribArray( attribLocation );
+		glVertexAttribPointer(	attribLocation,
+								__traits(getAttributes, mixin(field))[0],
+								__traits(getAttributes, mixin(field))[1],
+								normalized,	// normalized
+								Vertex.sizeof, cast(const void*)(mixin(field).offsetof) );
+		}
+	}
+}
+
+// binds buid in opengl variables
+// you should bind attrib yourself
+void setVBOVertexPointers20(Vertex)()
+{
+	static if (__traits(hasMember, Vertex, "x"))
+	{
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(__traits(getAttributes, Vertex.x)[0], 
+						__traits(getAttributes, Vertex.x)[1], 
+						Vertex.sizeof, cast(void*)(Vertex.x.offsetof));
+	}
+
+	static if (__traits(hasMember, Vertex, "cx"))
+	{
+		glEnableClientState(GL_COLOR_ARRAY);
+		glColorPointer(	__traits(getAttributes, Vertex.cx)[0], 
+						__traits(getAttributes, Vertex.cx)[1], 
+						Vertex.sizeof, cast(const void*)(Vertex.cx.offsetof) );
+	}
+
+	static if (__traits(hasMember, Vertex, "nx"))
+	{
+		glEnableClientState(GL_NORMAL_ARRAY);
+		glNormalPointer( 
+						__traits(getAttributes, Vertex.nx)[1], 
+						Vertex.sizeof, cast(const void*)(Vertex.nx.offsetof) );
+	}
+
+	static if (__traits(hasMember, Vertex, "u"))
+	{
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glTexCoordPointer(	__traits(getAttributes, Vertex.u)[0],
+							__traits(getAttributes, Vertex.u)[1], 
+							Vertex.sizeof, cast(const void*)(Vertex.u.offsetof) );
+	}
+/*
+	static if (__traits(hasMember, Vertex, "tx")) // tangents
+	{
+		glEnableVertexAttribArray( 0 );
+		// hardcoded for now
+		glVertexAttribPointer(	0, // lets bind tangents to 0 .. should be obtained with glGetAttribLocation from shader, maybe as parameter?
+								__traits(getAttributes, Vertex.tx)[0],
+								__traits(getAttributes, Vertex.tx)[1],
+								false,	// normalized
+								Vertex.sizeof, cast(const void*)(Vertex.tx.offsetof) );
+	}*/
+}
+
+//
+void cleanUpVBOPointers20(Vertex)()
+{
+	static if (__traits(hasMember, Vertex, "x"))
+	{
+		glDisableClientState(GL_VERTEX_ARRAY);
+	}
+
+	static if (__traits(hasMember, Vertex, "cx"))
+	{
+		glDisableClientState(GL_COLOR_ARRAY);
+	}
+
+	static if (__traits(hasMember, Vertex, "nx"))
+	{
+		glDisableClientState(GL_NORMAL_ARRAY);
+	}
+
+	static if (__traits(hasMember, Vertex, "u"))
+	{
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	}
+/*
+	static if (__traits(hasMember, Vertex, "tx"))
+	{
+		glDisableVertexAttribArray( 0 );
+	}*/
+}
+
+// TODO : write similar functions like obove for vertexattrib binding
+
 /**
 	All matrices are expected in column mayor and right format for camera. (inversion)
 */

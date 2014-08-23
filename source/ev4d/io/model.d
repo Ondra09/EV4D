@@ -62,40 +62,6 @@ struct GameVertex_
 }
 
 
-void setVBOVertexPointers(Vertex)()
-{
-	static if (__traits(hasMember, Vertex, "x"))
-	{
-		static assert(__traits(getAttributes, Vertex.x)[0] == (3));
-
-		glVertexPointer(__traits(getAttributes, Vertex.x)[0], 
-						__traits(getAttributes, Vertex.x)[1], 
-						GameVertex_.sizeof, cast(void*)(Vertex.x.offsetof));
-	}
-
-	static if (__traits(hasMember, Vertex, "nx"))
-	{
-		glColorPointer(	__traits(getAttributes, Vertex.nx)[0], 
-						__traits(getAttributes, Vertex.nx)[1], 
-						GameVertex_.sizeof, cast(const void*)(Vertex.nx.offsetof) );
-	}
-
-	static if (__traits(hasMember, Vertex, "nx"))
-	{
-		glNormalPointer(__traits(getAttributes, Vertex.nx)[0], 
-						__traits(getAttributes, Vertex.nx)[1], 
-						GameVertex_.sizeof, cast(const void*)(Vertex.nx.offsetof) );
-	}
-
-	static if (__traits(hasMember, Vertex, "tx"))
-	{
-		glTexCoordPointer(	__traits(getAttributes, Vertex.nx)[0],
-							__traits(getAttributes, Vertex.nx)[1], 
-							GameVertex_.sizeof, cast(const void*)(Vertex.nx.offsetof) );
-	}
-}
-
-
 // currently loads only one mesh with static data
 // and one texture coords
 // seems like assimp is not loading correctly s flag = smmothing groups
