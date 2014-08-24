@@ -3,6 +3,8 @@ module ev4d.io.model;
 import derelict.assimp3.assimp;
 import derelict.opengl3.gl;
 
+import ev4d.rendersystem.material;
+
 // not used for now
 enum FighterVBODescr
 {
@@ -11,13 +13,6 @@ enum FighterVBODescr
 	NORMAL,		// 2
 	TANGENT,	// 3
 	TEXTURE 	// 4 .max
-}
-
-
-struct VBO
-{
-	GLuint[] vboIDs;
-	uint[] idxIDs;
 }
 
 void genBuffers(ref VBO vbo, int num)

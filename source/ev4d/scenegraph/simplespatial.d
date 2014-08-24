@@ -30,7 +30,8 @@ public:
 
     alias worldMatrix = transformation;
 
-    void* renderData;
+    //TODO:  who hold this?
+    VBO* vbo;
 
     Material material;
 

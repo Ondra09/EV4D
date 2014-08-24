@@ -7,15 +7,13 @@ import ev4d.rendersystem.technique;
 import derelict.opengl3.gl;
 import gl3n.linalg;
 import ev4d.io.model;
-long offsetof = GameVertex_.nx.offsetof;
+
 class SimpleShader(RenderData) : Material
 {
 private:
 	GLuint program;
 	GLuint vshader;
 	GLuint fshader;
-
-	RenderData* renderData;
 
 	// shader uniforms
 	GLint modelMatrix_u;
@@ -117,14 +115,10 @@ public:
 
 		glBindBuffer(GL_ARRAY_BUFFER, vbo.vboIDs[0]);
 		
-		//glVertexPointer(3, GL_FLOAT, 0, cast(const void*)(renderData.vertexes));
-		//glColorPointer(4, GL_UNSIGNED_BYTE, 0, cast(const void*)(renderData.color));
-
-		//glVertexPointer(3, GL_FLOAT, GameVertex_.sizeof, null);
 		setVBOVertexPointers20!(GameVertex_)();
 		bindVertexAttrib20!(GameVertex_, "tx")(tangentsAttribID);
 
-		glColor4ubv(renderData.color.ptr);
+		//glColor4ubv(renderData.color.ptr);
 
 		//glPushMatrix();
 
@@ -145,8 +139,6 @@ public:
 
 	override void renderPass(int num)
 	{ 
-		import std.stdio;
-
 		
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo.idxIDs[0]); // remove this bind pbly
 		glDrawElements(GL_TRIANGLES, 894, GL_UNSIGNED_INT, null);
@@ -175,10 +167,5 @@ public:
 		cleanUpVBOPointers20!(GameVertex_)();
 
 		glDisableVertexAttribArray(tangentsAttribID);
-	}
-
-	override void bindData(void* data) pure nothrow
-	{
-		renderData = cast(RenderData*)data;
 	}
 }

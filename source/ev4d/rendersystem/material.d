@@ -7,6 +7,12 @@ import ev4d.rendersystem.technique;
 import derelict.opengl3.gl;
 import gl3n.linalg;
 
+struct VBO
+{
+	GLuint[] vboIDs;
+	uint[] idxIDs;
+}
+
 void bindVertexAttrib20(Vertex, string field)(int attribLocation, bool normalized = false)
 {
 	static if (__traits(hasMember, Vertex, field)) // tangents
@@ -15,7 +21,6 @@ void bindVertexAttrib20(Vertex, string field)(int attribLocation, bool normalize
 
 		with (Vertex)
 		{
-		glEnableVertexAttribArray( attribLocation );
 		glVertexAttribPointer(	attribLocation,
 								__traits(getAttributes, mixin(field))[0],
 								__traits(getAttributes, mixin(field))[1],
@@ -61,17 +66,6 @@ void setVBOVertexPointers20(Vertex)()
 							__traits(getAttributes, Vertex.u)[1], 
 							Vertex.sizeof, cast(const void*)(Vertex.u.offsetof) );
 	}
-/*
-	static if (__traits(hasMember, Vertex, "tx")) // tangents
-	{
-		glEnableVertexAttribArray( 0 );
-		// hardcoded for now
-		glVertexAttribPointer(	0, // lets bind tangents to 0 .. should be obtained with glGetAttribLocation from shader, maybe as parameter?
-								__traits(getAttributes, Vertex.tx)[0],
-								__traits(getAttributes, Vertex.tx)[1],
-								false,	// normalized
-								Vertex.sizeof, cast(const void*)(Vertex.tx.offsetof) );
-	}*/
 }
 
 //
@@ -96,11 +90,6 @@ void cleanUpVBOPointers20(Vertex)()
 	{
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
-/*
-	static if (__traits(hasMember, Vertex, "tx"))
-	{
-		glDisableVertexAttribArray( 0 );
-	}*/
 }
 
 // TODO : write similar functions like obove for vertexattrib binding
@@ -115,6 +104,8 @@ private:
 	mat4 mviewMatrix = mat4.identity();
 
 	mat4 mprojectionMatrix = void; //!!!
+
+	VBO* vbo;
 
 	int passes = 1;
 public:
@@ -153,6 +144,11 @@ public:
 		return mprojectionMatrix = m;
 	}
 
+	void bindVBO(VBO* nVbo)
+	{
+		vbo = nVbo;
+	}
+
 
 	abstract @property GeneralTechnique[] getDependencies();
 
@@ -165,7 +161,6 @@ public:
 	abstract void cleanUpPass(int num);
 
 	abstract void cleanUp();
-	abstract void bindData(void* data);
 }
 
 class SimpleMaterial(RenderData): Material
@@ -183,7 +178,7 @@ public:
 
 	override @property GeneralTechnique[] getDependencies(){ return techniquesDep; }
 
-	override void bindData(void* data)
+	void bindData(void* data)
 	{
 		renderData = cast(RenderData*)data;
 	}
@@ -191,7 +186,8 @@ public:
 	override void initMaterial()
 	{ 
 		//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-
+		if (renderData is null)
+			return;
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_COLOR_ARRAY);
 		glVertexPointer(3, GL_FLOAT, 0, cast(const void*)(renderData.vertexes));
@@ -210,7 +206,6 @@ public:
 
 	override void renderPass(int num)
 	{ 
-		import std.stdio;
 
 		if (renderData is null)
 			return;

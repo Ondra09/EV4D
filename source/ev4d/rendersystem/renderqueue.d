@@ -46,7 +46,8 @@ void sortAndRender(T)(T[] view, Camera cam)
 				mat4 m_worldMatrix = a.worldMatrix;
 				m_worldMatrix.transpose();
 
-				bindData(a.renderData);
+				//bindData(a.renderData);
+				bindVBO(a.vbo);
 
 				// set matrices
 				a.material.worldMatrix(m_worldMatrix);

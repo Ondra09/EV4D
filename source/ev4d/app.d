@@ -132,8 +132,8 @@ Renderer initScene()
     a1.data.material = smat;
     a2.data.material = smat2;
 
-    a1.data.renderData = rdt;
-    a2.data.renderData = rdt2;
+    //a1.data.renderData = rdt;
+    //a2.data.renderData = rdt2;
 
     a0 ~= a1;
     a1 ~= a2;
@@ -216,8 +216,6 @@ int main(string[] argv)
 
         //sceneRoot.data.translationM = mat4.translation(-translate, 0, 0);
         //sceneRoot.data.rotationM.rotatez(-0.5f/180*3.1415924);
-
-        
 
         a1.data.translationM = mat4.translation(translate, translate, 0);
         a1.data.rotationM.rotatez(5.0f/180*3.1415924);
