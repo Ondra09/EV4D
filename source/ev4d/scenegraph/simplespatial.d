@@ -30,7 +30,7 @@ public:
 
     alias worldMatrix = transformation;
 
-    //TODO:  who hold this?
+    //TODO:  who hold this? -- loader manager pbly? or level manager?
     VBO* vbo;
 
     Material material;

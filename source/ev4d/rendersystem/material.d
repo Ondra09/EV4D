@@ -105,9 +105,9 @@ private:
 
 	mat4 mprojectionMatrix = void; //!!!
 
-	VBO* vbo;
-
 	int passes = 1;
+protected:
+	VBO* vbo;
 public:
 	@property int numberOfPasses() pure nothrow { return passes; }
 	@property int numberOfPasses(int n) {return passes = n; }

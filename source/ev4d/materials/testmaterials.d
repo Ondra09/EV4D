@@ -6,9 +6,8 @@ import ev4d.rendersystem.technique;
 
 import derelict.opengl3.gl;
 import gl3n.linalg;
-import ev4d.io.model;
 
-class SimpleShader(RenderData) : Material
+class SimpleShader(BindVertex) : Material
 {
 private:
 	GLuint program;
@@ -23,8 +22,6 @@ private:
 	GLint customC;
 
 	//
-	
-	VBO vbo;
 	int tangentsAttribID;
 
 public:
@@ -91,8 +88,6 @@ public:
 		
 		assert(modelMatrix_u != -1);
 		assert(customC != -1);
-    	
-    	testImport(vbo);
 	}
 
 	~this()
@@ -115,8 +110,8 @@ public:
 
 		glBindBuffer(GL_ARRAY_BUFFER, vbo.vboIDs[0]);
 		
-		setVBOVertexPointers20!(GameVertex_)();
-		bindVertexAttrib20!(GameVertex_, "tx")(tangentsAttribID);
+		setVBOVertexPointers20!(BindVertex)();
+		bindVertexAttrib20!(BindVertex, "tx")(tangentsAttribID);
 
 		//glColor4ubv(renderData.color.ptr);
 
@@ -164,7 +159,7 @@ public:
 	{
 		//glPopMatrix();
 
-		cleanUpVBOPointers20!(GameVertex_)();
+		cleanUpVBOPointers20!(BindVertex)();
 
 		glDisableVertexAttribArray(tangentsAttribID);
 	}
