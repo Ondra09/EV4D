@@ -11,6 +11,9 @@ import ev4d.rendersystem.renderqueue;
 import ev4d.rendersystem.technique;
 import ev4d.materials.testmaterials;
 
+// model loading handling
+import ev4d.io.model;
+
 import std.c.stdio;
 
 import derelict.glfw3.glfw3;
@@ -19,6 +22,8 @@ import derelict.opengl3.gl;
 import ev4d.mesh.generator;
 
 import gl3n.linalg;
+
+VBO vbo; // fighter
 
 extern (C) nothrow 
 {
@@ -143,11 +148,16 @@ Renderer initScene()
     tech0.scene = a0;
     tech1.scene = a0;
 
+    // set techniques to renderer
     renderer.techniques ~= [tech0, tech1];
 
     ////
-    SimpleShader!RenderDataTest simpleShader = new SimpleShader!RenderDataTest();
+    SimpleShader!GameVertex_ simpleShader = new SimpleShader!GameVertex_();
     a1.data.material = simpleShader;
+
+    testImport(vbo);
+
+    a1.data.vbo = &vbo;
 
     return renderer;
 }
