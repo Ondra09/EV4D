@@ -84,7 +84,7 @@ Renderer initScene()
     sceneRoot = a0;
 
     //a1.data.translationM.translate(0.3f, -0.5f, 0.5f);
-    a1.data.scaleM.scale(2, 1, 1);
+    //a1.data.scaleM.scale(1, 1, 1);
 
     a2.data.translationM.translate(-1.0f, 0.5f, 0.0f);
 
@@ -95,15 +95,15 @@ Renderer initScene()
     cam1.viewMatrix = &camNode1.data.worldMatrix;
 
     // create an object for this
-    RenderDataTest* rdt = new RenderDataTest;
+    /*RenderDataTest* rdt = new RenderDataTest;
     rdt.color = [cast(ubyte)(255), 0, 0, cast(ubyte)(255)];
 
     RenderDataTest* rdt2 = new RenderDataTest;
     rdt2.color = [cast(ubyte)(255), cast(ubyte)(255), 0, cast(ubyte)(255)];
-
+    */
     SimpleMaterial!RenderDataTest smat = new SimpleMaterial!RenderDataTest();
     SimpleMaterial!RenderDataTest smat2 = new SimpleMaterial!RenderDataTest();
-
+    /*
     rdt.vertexes = new float[3 * 8];
     rdt.color = new ubyte[3 * 8];
 
@@ -133,7 +133,7 @@ Renderer initScene()
     rdt2.vertexes = new float[3 * 8];
     rdt2.vertexes[0] = -0.5f;
     rdt2.vertexes[1] = rdt2.vertexes[2] = 0;
-    
+    */
     a1.data.material = smat;
     a2.data.material = smat2;
 
