@@ -67,7 +67,7 @@ Renderer initScene()
     Technique!(SHGraph) tech0 = new Technique!(SHGraph)();
     Technique!(SHGraph) tech1 = new Technique!(SHGraph)();
 
-    Camera cam = new Camera(640, 480, 120);
+    Camera cam = new Camera(640, 480, 90);
     Camera cam1 = new Camera(320, 240, 120);
     cam1.viewportX = 300;
     cam1.viewportY = 300;
