@@ -43,7 +43,7 @@ void destroyShader20(in GLuint program, in GLuint vshader, in GLuint fshader)
 	glDeleteProgram(program);
 }
 
-GLuint[] obtainUniformLocations20(in GLuint program, in string[] names)
+GLuint[] obtainLocations20(string type)(in GLuint program, in string[] names)
 {
 	GLuint[] retVal;
 
@@ -51,7 +51,14 @@ GLuint[] obtainUniformLocations20(in GLuint program, in string[] names)
 	foreach (int i, const string str; names)
 	{
 		import std.string: toStringz;
+		static if(type == "uniforms")
+		{
 		GLuint unifLocat = glGetUniformLocation(program, str.toStringz());
+		}
+		static if(type == "attributes")
+		{
+		GLuint unifLocat = glGetAttribLocation(program, str.toStringz());
+		}
 
 		assert(unifLocat != -1);
 		retVal[i] = unifLocat;
@@ -118,8 +125,8 @@ public:
 
 		createAndBindShader20(program, vshader, fshader, vss, fss);
 
-		GLuint[] uniforms;
-		uniforms = obtainUniformLocations20(program, ["modelMatrix", "viewMatrix", "projectionMatrix", "customC"]);
+		GLuint[] locations;
+		locations = obtainLocations20!"uniforms"(program, ["modelMatrix", "viewMatrix", "projectionMatrix", "customC"]);
 
 		struct uniformsS
 		{
@@ -131,12 +138,14 @@ public:
 
 		obtainUniforomLocations!(uniformsS)();
 
-		modelMatrix_u = uniforms[0];
-		viewMatrix_u = uniforms[1];
-		projectionMatrix_u = uniforms[2];
-		customC = uniforms[3];
+		modelMatrix_u = locations[0];
+		viewMatrix_u = locations[1];
+		projectionMatrix_u = locations[2];
+		customC = locations[3];
 
-		tangentsAttribID = glGetAttribLocation(program, "vTangent");
+		locations = obtainLocations20!"attributes"(program, ["vTangent"]);
+
+		tangentsAttribID = locations[0];
 	}
 
 	~this()
