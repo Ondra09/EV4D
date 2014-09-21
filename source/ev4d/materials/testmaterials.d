@@ -7,6 +7,66 @@ import ev4d.rendersystem.technique;
 import derelict.opengl3.gl;
 import gl3n.linalg;
 
+void createAndBindShader20( ref GLuint program,
+							ref GLuint vshader,
+							ref GLuint fshader,
+							in immutable(char)* vss, in immutable(char) *fss)
+{
+	vshader = glCreateShader(GL_VERTEX_SHADER);
+	fshader = glCreateShader(GL_FRAGMENT_SHADER);
+
+	glShaderSource(vshader, 1, &vss, null);
+	glShaderSource(fshader, 1, &fss, null);
+
+	glCompileShader(vshader);
+	glCompileShader(fshader);
+
+	printInfoLog!"shader"(vshader);
+	printInfoLog!"shader"(fshader);
+
+	program = glCreateProgram();
+
+	glAttachShader(program, vshader);
+	glAttachShader(program, fshader);
+
+	glLinkProgram(program);
+
+	printInfoLog!"program"(program);
+}
+
+void destroyShader20(in GLuint program, in GLuint vshader, in GLuint fshader)
+{
+	glDetachShader(program, vshader); // must be present probably
+	glDetachShader(program, fshader);
+	glDeleteShader(vshader);
+	glDeleteShader(fshader);
+	glDeleteProgram(program);
+}
+
+GLuint[] obtainUniformLocations20(in GLuint program, in string[] names)
+{
+	GLuint[] retVal;
+
+	retVal.length = names.length;
+	foreach (int i, const string str; names)
+	{
+		import std.string: toStringz;
+		GLuint unifLocat = glGetUniformLocation(program, str.toStringz());
+
+		assert(unifLocat != -1);
+		retVal[i] = unifLocat;
+	}
+
+	return retVal;
+}
+
+void obtainUniforomLocations(T)()
+{
+	import std.stdio;
+	auto b = [ __traits(allMembers, T) ];
+	writeln(b);
+}
+
 class SimpleShader(BindVertex) : Material
 {
 private:
@@ -28,8 +88,6 @@ public:
 	this()
 	{
 		import std.string: toStringz;
-		vshader = glCreateShader(GL_VERTEX_SHADER);
-		fshader = glCreateShader(GL_FRAGMENT_SHADER);
 
 		immutable(char)* vss = (r"
 			uniform mat4 modelMatrix;
@@ -58,43 +116,32 @@ public:
 			}
 			".toStringz());
 
-		glShaderSource(vshader, 1, &vss, null);
-		glShaderSource(fshader, 1, &fss, null);
+		createAndBindShader20(program, vshader, fshader, vss, fss);
 
-		glCompileShader(vshader);
-		glCompileShader(fshader);
+		GLuint[] uniforms;
+		uniforms = obtainUniformLocations20(program, ["modelMatrix", "viewMatrix", "projectionMatrix", "customC"]);
 
-		printInfoLog!"shader"(vshader);
-		printInfoLog!"shader"(fshader);
+		struct uniformsS
+		{
+			GLuint modelMatrix;
+			GLuint viewMatrix;
+			GLuint projectionMatrix;
+			GLuint customC;
+		}
 
-		program = glCreateProgram();
+		obtainUniforomLocations!(uniformsS)();
 
-		glAttachShader(program, vshader);
-		glAttachShader(program, fshader);
-
-		glLinkProgram(program);
-
-		printInfoLog!"program"(program);
-
-		modelMatrix_u = glGetUniformLocation(program, "modelMatrix");
-		viewMatrix_u = glGetUniformLocation(program, "viewMatrix");
-		projectionMatrix_u = glGetUniformLocation(program, "projectionMatrix");
-		
-		customC = glGetUniformLocation(program, "customC");
+		modelMatrix_u = uniforms[0];
+		viewMatrix_u = uniforms[1];
+		projectionMatrix_u = uniforms[2];
+		customC = uniforms[3];
 
 		tangentsAttribID = glGetAttribLocation(program, "vTangent");
-
-		assert(tangentsAttribID != -1);
-		
-		assert(modelMatrix_u != -1);
-		assert(customC != -1);
 	}
 
 	~this()
 	{
-		glDetachShader(program, vshader); // must be present probably
-		glDeleteShader(0);
-		glDeleteProgram(0);
+		destroyShader20(program, vshader, fshader);
 	}
 
 
@@ -163,4 +210,9 @@ public:
 
 		glDisableVertexAttribArray(tangentsAttribID);
 	}
+}
+
+class ShipMaterial() : Material
+{
+
 }

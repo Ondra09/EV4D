@@ -1,4 +1,3 @@
-
 import std.stdio;
 
 import ev4d.scenegraph.hierarchygraph;
@@ -95,50 +94,12 @@ Renderer initScene()
     cam1.viewMatrix = &camNode1.data.worldMatrix;
 
     // create an object for this
-    /*RenderDataTest* rdt = new RenderDataTest;
-    rdt.color = [cast(ubyte)(255), 0, 0, cast(ubyte)(255)];
-
-    RenderDataTest* rdt2 = new RenderDataTest;
-    rdt2.color = [cast(ubyte)(255), cast(ubyte)(255), 0, cast(ubyte)(255)];
-    */
+   
     SimpleMaterial!RenderDataTest smat = new SimpleMaterial!RenderDataTest();
     SimpleMaterial!RenderDataTest smat2 = new SimpleMaterial!RenderDataTest();
-    /*
-    rdt.vertexes = new float[3 * 8];
-    rdt.color = new ubyte[3 * 8];
-
-    CubeVertexesEmitor!(float) emitor;
-    int i = 0;
-    foreach(vec3 v; emitor)
-    {
-        rdt.color[i] = cast(ubyte)(i*30);
-        rdt.vertexes[i++] =  v.x;
-
-        rdt.color[i] = cast(ubyte)(i*30);
-        rdt.vertexes[i++] =  v.y;
-
-        rdt.color[i] = cast(ubyte)(i*30);
-        rdt.vertexes[i++] =  v.z;    
-    }
-    CubeTrisEmitor!(int) trisemit;
-
-    rdt.indices = new GLubyte[trisemit.indices.length];
-    rdt.indicesCount = trisemit.indices.length;
-
-    foreach(int j, int idx; trisemit.indices[])
-    {
-        rdt.indices[j] = cast(ubyte)(idx);
-    }
-
-    rdt2.vertexes = new float[3 * 8];
-    rdt2.vertexes[0] = -0.5f;
-    rdt2.vertexes[1] = rdt2.vertexes[2] = 0;
-    */
+    
     a1.data.material = smat;
     a2.data.material = smat2;
-
-    //a1.data.renderData = rdt;
-    //a2.data.renderData = rdt2;
 
     a0 ~= a1;
     a1 ~= a2;
