@@ -43,7 +43,7 @@ void destroyShader20(in GLuint program, in GLuint vshader, in GLuint fshader)
 	glDeleteProgram(program);
 }
 
-GLuint[] obtainLocations20(string type)(in GLuint program, in string[] names)
+GLuint[] obtainLocations20(string type)(in GLuint program, in string[] names) nothrow
 {
 	GLuint[] retVal;
 
@@ -67,11 +67,35 @@ GLuint[] obtainLocations20(string type)(in GLuint program, in string[] names)
 	return retVal;
 }
 
-void obtainUniforomLocations(T)()
+void obtainLocations20(string type, T...)(GLuint program)
 {
-	import std.stdio;
-	auto b = [ __traits(allMembers, T) ];
-	writeln(b);
+	static assert((T.length % 2) == 0,
+                  "Members must be specified as pairs.");
+	
+	import std.string: toStringz;
+
+	foreach (i, const arg; T)
+	{
+		static if ( i % 2 == 1 ) // odd
+		{
+		}else // 
+		{
+			static assert (is (typeof(arg) == string),
+                           "Member name " ~ arg.stringof ~
+                           " is not a string.");
+
+			static if(type == "uniforms")
+			{
+			T[i+1] = glGetUniformLocation(program, T[i].toStringz());
+			}
+			static if(type == "attributes")
+			{
+			T[i+1] = glGetAttribLocation(program, T[i].toStringz());
+			}
+
+			assert(T[i+1] != -1);
+		}
+	}
 }
 
 class SimpleShader(BindVertex) : Material
@@ -143,9 +167,9 @@ public:
 		projectionMatrix_u = locations[2];
 		customC = locations[3];
 
-		locations = obtainLocations20!"attributes"(program, ["vTangent"]);
+		obtainLocations20!("attributes","vTangent", tangentsAttribID)(program);
 
-		tangentsAttribID = locations[0];
+		tangentsAttribID = -1;
 	}
 
 	~this()
