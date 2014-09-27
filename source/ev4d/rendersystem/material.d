@@ -128,6 +128,104 @@ void printInfoLog(string type)(GLuint obj,  string file = __FILE__, int line = _
     }
 }
 
+void createAndBindShader20( ref GLuint program,
+							ref GLuint vshader,
+							ref GLuint fshader,
+							in immutable(char)* vss, in immutable(char) *fss)
+{
+	vshader = glCreateShader(GL_VERTEX_SHADER);
+	fshader = glCreateShader(GL_FRAGMENT_SHADER);
+
+	glShaderSource(vshader, 1, &vss, null);
+	glShaderSource(fshader, 1, &fss, null);
+
+	glCompileShader(vshader);
+	glCompileShader(fshader);
+
+	printInfoLog!"shader"(vshader);
+	printInfoLog!"shader"(fshader);
+
+	program = glCreateProgram();
+
+	glAttachShader(program, vshader);
+	glAttachShader(program, fshader);
+
+	glLinkProgram(program);
+
+	printInfoLog!"program"(program);
+}
+
+void destroyShader20(in GLuint program, in GLuint vshader, in GLuint fshader)
+{
+	glDetachShader(program, vshader); // must be present probably
+	glDetachShader(program, fshader);
+	glDeleteShader(vshader);
+	glDeleteShader(fshader);
+	glDeleteProgram(program);
+}
+
+GLuint[] obtainLocations20(string type)(in GLuint program, in string[] names) nothrow
+{
+	GLuint[] retVal;
+
+	retVal.length = names.length;
+	foreach (int i, const string str; names)
+	{
+		import std.string: toStringz;
+		static if(type == "uniforms")
+		{
+		GLuint unifLocat = glGetUniformLocation(program, str.toStringz());
+		}
+		static if(type == "attributes")
+		{
+		GLuint unifLocat = glGetAttribLocation(program, str.toStringz());
+		}
+
+		assert(unifLocat != -1);
+		retVal[i] = unifLocat;
+	}
+
+	return retVal;
+}
+
+void obtainLocations20(string type, T...)(GLuint program)
+{
+	static assert((T.length % 2) == 0,
+                  "Members must be specified as pairs.");
+	
+	import std.string: toStringz;
+
+	foreach (i, const arg; T)
+	{
+		static if ( i % 2 == 1 ) // odd
+		{
+		}else // 
+		{
+			static assert (is (typeof(arg) == string),
+                           "Member name " ~ arg.stringof ~
+                           " is not a string.");
+
+			static if(type == "uniforms")
+			{
+			T[i+1] = glGetUniformLocation(program, T[i].toStringz());
+			}
+			static if(type == "attributes")
+			{
+			T[i+1] = glGetAttribLocation(program, T[i].toStringz());
+			}
+
+			assert(T[i+1] != -1);
+		}
+	}
+}
+
+struct Shader20
+{
+	GLuint program;
+	GLuint vshader;
+	GLuint fshader;
+}
+
 /**
 	All matrices are expected in column mayor and right format for camera. (inversion)
 */

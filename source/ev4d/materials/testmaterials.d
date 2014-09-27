@@ -7,104 +7,11 @@ import ev4d.rendersystem.technique;
 import derelict.opengl3.gl;
 import gl3n.linalg;
 
-void createAndBindShader20( ref GLuint program,
-							ref GLuint vshader,
-							ref GLuint fshader,
-							in immutable(char)* vss, in immutable(char) *fss)
-{
-	vshader = glCreateShader(GL_VERTEX_SHADER);
-	fshader = glCreateShader(GL_FRAGMENT_SHADER);
-
-	glShaderSource(vshader, 1, &vss, null);
-	glShaderSource(fshader, 1, &fss, null);
-
-	glCompileShader(vshader);
-	glCompileShader(fshader);
-
-	printInfoLog!"shader"(vshader);
-	printInfoLog!"shader"(fshader);
-
-	program = glCreateProgram();
-
-	glAttachShader(program, vshader);
-	glAttachShader(program, fshader);
-
-	glLinkProgram(program);
-
-	printInfoLog!"program"(program);
-}
-
-void destroyShader20(in GLuint program, in GLuint vshader, in GLuint fshader)
-{
-	glDetachShader(program, vshader); // must be present probably
-	glDetachShader(program, fshader);
-	glDeleteShader(vshader);
-	glDeleteShader(fshader);
-	glDeleteProgram(program);
-}
-
-GLuint[] obtainLocations20(string type)(in GLuint program, in string[] names) nothrow
-{
-	GLuint[] retVal;
-
-	retVal.length = names.length;
-	foreach (int i, const string str; names)
-	{
-		import std.string: toStringz;
-		static if(type == "uniforms")
-		{
-		GLuint unifLocat = glGetUniformLocation(program, str.toStringz());
-		}
-		static if(type == "attributes")
-		{
-		GLuint unifLocat = glGetAttribLocation(program, str.toStringz());
-		}
-
-		assert(unifLocat != -1);
-		retVal[i] = unifLocat;
-	}
-
-	return retVal;
-}
-
-void obtainLocations20(string type, T...)(GLuint program)
-{
-	static assert((T.length % 2) == 0,
-                  "Members must be specified as pairs.");
-	
-	import std.string: toStringz;
-
-	foreach (i, const arg; T)
-	{
-		static if ( i % 2 == 1 ) // odd
-		{
-		}else // 
-		{
-			static assert (is (typeof(arg) == string),
-                           "Member name " ~ arg.stringof ~
-                           " is not a string.");
-
-			static if(type == "uniforms")
-			{
-			T[i+1] = glGetUniformLocation(program, T[i].toStringz());
-			}
-			static if(type == "attributes")
-			{
-			T[i+1] = glGetAttribLocation(program, T[i].toStringz());
-			}
-
-			assert(T[i+1] != -1);
-		}
-	}
-}
 
 class SimpleShader(BindVertex) : Material
 {
 private:
-	GLuint program;
-	GLuint vshader;
-	GLuint fshader;
-
+	Shader20 shader;
 	// shader uniforms
 	GLint modelMatrix_u;
 	GLint viewMatrix_u;
@@ -147,34 +54,26 @@ public:
 			}
 			".toStringz());
 
-		createAndBindShader20(program, vshader, fshader, vss, fss);
+		createAndBindShader20(shader.program, shader.vshader, shader.fshader, vss, fss);
 
 		GLuint[] locations;
-		locations = obtainLocations20!"uniforms"(program, ["modelMatrix", "viewMatrix", "projectionMatrix", "customC"]);
 
-		struct uniformsS
-		{
-			GLuint modelMatrix;
-			GLuint viewMatrix;
-			GLuint projectionMatrix;
-			GLuint customC;
-		}
-
-		obtainUniforomLocations!(uniformsS)();
+		locations = obtainLocations20!"uniforms"(shader.program, ["modelMatrix", "viewMatrix", "projectionMatrix", "customC"]);
 
 		modelMatrix_u = locations[0];
 		viewMatrix_u = locations[1];
 		projectionMatrix_u = locations[2];
 		customC = locations[3];
 
-		obtainLocations20!("attributes","vTangent", tangentsAttribID)(program);
+		locations = obtainLocations20!("attributes")(shader.program,["vTangent"]);
 
 		tangentsAttribID = -1;
+		tangentsAttribID = locations[0];	
 	}
 
 	~this()
 	{
-		destroyShader20(program, vshader, fshader);
+		destroyShader20(shader.program, shader.vshader, shader.fshader);
 	}
 
 
@@ -198,7 +97,7 @@ public:
 		//glPushMatrix();
 
 		//glMultMatrixf(mworldMatrix.value_ptr);
-		glUseProgram(program);
+		glUseProgram(shader.program);
 
 		glUniformMatrix4fv(modelMatrix_u, 1, GL_FALSE, worldMatrix.value_ptr);
 		glUniformMatrix4fv(viewMatrix_u, 1, GL_FALSE, viewMatrix.value_ptr);
@@ -247,5 +146,7 @@ public:
 
 class ShipMaterial() : Material
 {
-
+private:
+protected:
+public:
 }
