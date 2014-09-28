@@ -1,5 +1,5 @@
 
-module ev4d.materials.testmaterials;
+module ev4d.rendersystem.testmaterials;
 
 import ev4d.rendersystem.material;
 import ev4d.rendersystem.technique;
@@ -10,8 +10,7 @@ import gl3n.linalg;
 
 class SimpleShader(BindVertex) : Material
 {
-private:
-	Shader20 shader;
+package:
 	// shader uniforms
 	GLint modelMatrix_u;
 	GLint viewMatrix_u;
@@ -68,7 +67,9 @@ public:
 		locations = obtainLocations20!("attributes")(shader.program,["vTangent"]);
 
 		tangentsAttribID = -1;
-		tangentsAttribID = locations[0];	
+		tangentsAttribID = locations[0];
+
+		obtainLocations20!("attribues","vTangent", tangentsAttribID)(shader.program);
 	}
 
 	~this()
@@ -144,9 +145,17 @@ public:
 	}
 }
 
-class ShipMaterial() : Material
+class ShipMaterial(BindVertex) : Material
 {
 private:
+package:
+	// shader uniforms
+	GLint modelMatrix_u;
+	GLint viewMatrix_u;
+	GLint projectionMatrix_u;
+
+	//
+
 protected:
 public:
 }

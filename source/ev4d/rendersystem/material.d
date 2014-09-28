@@ -187,8 +187,21 @@ GLuint[] obtainLocations20(string type)(in GLuint program, in string[] names) no
 
 	return retVal;
 }
-
+/** To be able to use this function, class must use at least package protected
+*	symbol.
+* Examples:
+* -----------------
+* class A
+* {
+*	package:
+*	GLUint vertex;
+* }
+* ...
+* obtainLocations20("uniforms","vertexNameInShader", vertex)(shader.program);
+* -----------------
+*/
 void obtainLocations20(string type, T...)(GLuint program)
+//if(type=="uniforms" || type == "attributes")
 {
 	static assert((T.length % 2) == 0,
                   "Members must be specified as pairs.");
@@ -238,6 +251,8 @@ private:
 	mat4 mprojectionMatrix = void; //!!!
 
 	int passes = 1;
+package:
+	Shader20 shader;
 protected:
 	VBO* vbo;
 public:
