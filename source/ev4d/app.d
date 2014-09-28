@@ -8,7 +8,7 @@ import ev4d.rendersystem.material;
 import ev4d.rendersystem.renderer;
 import ev4d.rendersystem.renderqueue;
 import ev4d.rendersystem.technique;
-import ev4d.materials.testmaterials;
+import ev4d.rendersystem.testmaterials;
 
 // model loading handling
 import ev4d.io.model;
