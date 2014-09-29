@@ -150,12 +150,113 @@ class ShipMaterial(BindVertex) : Material
 private:
 package:
 	// shader uniforms
-	GLint modelMatrix_u;
-	GLint viewMatrix_u;
-	GLint projectionMatrix_u;
+	
+	GLint modelViewMatrix_u;
+	GLint modelViewProjectionMatrix_u;
+	GLint normalMatrix_u;
 
+	GLint tangent_a;
 	//
 
 protected:
 public:
+	this()
+	{
+		import std.string: toStringz;
+
+		immutable(char)* vss = (r"
+			// Eastern Wolf @ 2014
+			//uniform mat4 mvpMatrix;
+
+			uniform mat4 modelViewMatrix;
+			uniform mat4 modelViewProjectionMatrix;
+			uniform mat4 normalMatrix;
+			
+			attribute vec3 tangent;
+
+			varying vec4 diffuse, ambient;
+
+			varying vec3 normal, halfVec;
+			varying vec3 lightVec;
+			varying vec3 eyeVec;
+
+
+			void main()
+			{
+				gl_Position    = modelViewProjectionMatrix * gl_Vertex;
+				gl_FrontColor  = gl_Color;
+				gl_TexCoord[0] = gl_MultiTexCoord0;
+
+				diffuse = gl_FrontMaterial.diffuse * gl_LightSource[0].diffuse;
+			    ambient = gl_FrontMaterial.ambient * gl_LightSource[0].ambient;
+			    ambient += gl_LightModel.ambient * gl_FrontMaterial.ambient;
+
+				// gl_NormalMatrix - 3x3 Matrix representing the inverse transpose model-view matrix
+				normal =	 normalize(normalMatrix * gl_Normal);
+
+				vec3 vertexPosition = vec3(modelViewMatrix *  gl_Vertex);
+				vertexPosition /= (modelViewMatrix *  gl_Vertex).w;
+
+				vec3 t;
+				vec3 b;
+				vec3 n = normal;
+
+				////////// remove ///////
+				if (n.y > 0.9)
+				{
+					b = normalize(cross(n,  vec3(n.x+0.5, n.y, n.z)));
+					t = normalize(cross(b, n));
+				}
+				else
+				{
+					t = normalize(cross(vec3(n.x, n.y + 0.9, n.z), n));
+					b = normalize(cross(n, t));
+				}
+				////////// remove ///////
+
+				vec3 lightDir = normalize(gl_LightSource[0].position.xyz - vertexPosition);
+				// transform light and half angle vectors by tangent basis
+				vec3 v;
+				v.x = dot (lightDir, t);
+				v.y = dot (lightDir, b);
+				v.z = dot (lightDir, n);
+				lightVec = normalize (v);
+
+				v.x = dot (-vertexPosition, t); // eye - vertex .. eye = [0,0,0]
+				v.y = dot (-vertexPosition, b);
+				v.z = dot (-vertexPosition, n);
+				eyeVec = normalize (v);
+
+				vec3 halfVector = normalize(-vertexPosition + lightDir);
+				v.x = dot (halfVector, t);
+				v.y = dot (halfVector, b);
+				v.z = dot (halfVector, n);
+
+				halfVec = v ; 
+			}
+			".toStringz());
+
+		immutable(char)* fss = (r"
+			
+			".toStringz());
+
+		createAndBindShader20(shader.program, shader.vshader, shader.fshader, vss, fss);
+
+		GLuint[] locations;
+
+		locations = obtainLocations20!"uniforms"(shader.program,["modelViewMatrix",
+																 "modelViewProjectionMatrix", "normalMatrix"]);
+
+		modelViewMatrix_u = locations[0];
+		modelViewProjectionMatrix_u = locations[1];
+		normalMatrix_u = locations[2];
+		
+
+		obtainLocations20!("attribues", "tangent", tangent_a)(shader.program);
+	}
+
+	~this()
+	{
+		destroyShader20(shader.program, shader.vshader, shader.fshader);
+	}
 }
