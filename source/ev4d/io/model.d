@@ -67,7 +67,7 @@ bool testImport (ref VBO vbo, string filename = "")
 	import std.stdio;
 	import std.path;
 
-	const aiScene * scene = aiImportFile( "objects/Space Frigate 6/space_frigate_6/space_frigate_6.obj", 
+	const aiScene * scene = aiImportFile( "objects/work/Space Frigate 6/space_frigate_6/space_frigate_6.obj", 
 										    	aiProcess_CalcTangentSpace       | 
 										        aiProcess_Triangulate            |
 										        //aiProcess_JoinIdenticalVertices  |
@@ -124,9 +124,9 @@ bool testImport (ref VBO vbo, string filename = "")
 			vertex.ty = mesh.mTangents[j].y;
 			vertex.tz = mesh.mTangents[j].z;
 
-			vertex.u = mesh.mTextureCoords[0].x; // only one texture coords at time
-			vertex.v = mesh.mTextureCoords[0].y;
-
+			vertex.u = mesh.mTextureCoords[0][j].x; // only one texture coords at time
+			vertex.v = mesh.mTextureCoords[0][j].y;
+			//writeln(vertex.u, " x ", vertex.v);
 			//
 			vboContent ~= vertex;
 		}

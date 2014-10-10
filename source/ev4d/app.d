@@ -12,6 +12,7 @@ import ev4d.rendersystem.testmaterials;
 
 // model loading handling
 import ev4d.io.model;
+import ev4d.io.texture;
 
 import std.c.stdio;
 
@@ -113,7 +114,7 @@ Renderer initScene()
     renderer.techniques ~= [tech0, tech1];
 
     ////
-    SimpleShader!GameVertex_ simpleShader = new SimpleShader!GameVertex_();
+    ShipMaterial!GameVertex_ simpleShader = new ShipMaterial!GameVertex_();
     a1.data.material = simpleShader;
 
     testImport(vbo);
@@ -127,6 +128,8 @@ int main(string[] argv)
 {
     DerelictGLFW3.load();
     DerelictGL.load();
+
+    //loadImageEngine();
 
     import derelict.assimp3.assimp;
     // Load the Assimp3 library.

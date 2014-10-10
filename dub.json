@@ -12,7 +12,7 @@
 		"gl3n": "~master",
 		"derelict-glfw3": "~master",
 		"derelict-gl3": "~master",
-		"derelict-assimp3": "~master"
-		
+		"derelict-assimp3": "~master",
+		"derelict-fi": ">=1.0.0"
 	}
 }
