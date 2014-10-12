@@ -296,7 +296,6 @@ public:
 		vbo = nVbo;
 	}
 
-
 	abstract @property GeneralTechnique[] getDependencies();
 
 	abstract void initMaterial();

@@ -166,10 +166,10 @@ package:
 	GLint texSpecular_u;
 
 	// tex's id
-	GLint texColor;
-	GLint texNormal;
-	GLint texIllum;
-	GLint texSpecular;
+	GLuint texColor;
+	GLuint texNormal;
+	GLuint texIllum;
+	GLuint texSpecular;
 protected:
 public:
 	this()
@@ -192,6 +192,18 @@ public:
 			varying vec3 halfVec;
 			varying vec3 lightVec;
 			varying vec3 eyeVec;
+
+			struct PointLight 
+			{ 
+			   vec3 vColor; // Color of that point light
+			   vec3 vPosition; 
+			    
+			   float fAmbient; 
+
+			   float fConstantAtt; 
+			   float fLinearAtt; 
+			   float fExpAtt; 
+			}; 
 
 			void main()
 			{
@@ -327,6 +339,7 @@ public:
 			 	// check if illumTex is computed correctly
 			 
 				gl_FragColor = color + illumTex;
+				
 				//gl_FragColor = texture2D(texNormal, gl_TexCoord[0].st);
 			}
 
@@ -364,10 +377,15 @@ public:
 	{
 		destroyShader20(shader.program, shader.vshader, shader.fshader);
 
-		deleteTexture(texColor);
-		deleteTexture(texNormal);
-		deleteTexture(texIllum);
-		deleteTexture(texSpecular);
+		(texColor) = -1;
+		(texNormal) = -1;
+		(texIllum) = -1;
+		(texSpecular) = -1;
+
+		deleteTexture("objects/work/Space Frigate 6/space_frigate_6/space_frigate_6_color.png");
+		deleteTexture("objects/work/Space Frigate 6/space_frigate_6/space_frigate_6 NRM.png");
+		deleteTexture("objects/work/Space Frigate 6/space_frigate_6/space_frigate_6_illumination.png");
+		deleteTexture("objects/work/Space Frigate 6/space_frigate_6/space_frigate_6_specular.png");
 	}
 
 	override @property GeneralTechnique[] getDependencies() const pure nothrow

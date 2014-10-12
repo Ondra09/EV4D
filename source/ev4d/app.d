@@ -216,6 +216,8 @@ int main(string[] argv)
         /* Poll for and process events */
         glfwPollEvents();
     }
+    
+    //a1.data.material = null;a1.data.vbo = null;
 
     return 0;
 }

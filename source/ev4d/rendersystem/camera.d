@@ -41,7 +41,9 @@ public:
 	int viewportY = 0;
 }
 
-//
+/**
+	return: all visible object from given camera.
+*/
 T.DataType*[] getView(T)(T objectsToRender)
 {
 	typeof(return) retArr;
