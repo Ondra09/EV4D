@@ -29,7 +29,7 @@ public:
 
 		projMatrix = mat4.perspective(viewportWidth, viewportHeight, fov, near, far);
 	}
-
+	// TODO : hide implementation detail behind property
 	mat4 *viewMatrix;
 	mat4 projMatrix;
 

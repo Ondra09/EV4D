@@ -1,7 +1,6 @@
 
 module ev4d.scenegraph.simplespatial;
 
-import ev4d.scenegraph.scenegraphobject;
 import ev4d.scenegraph.hierarchygraph;
 import ev4d.rendersystem.material;
 import gl3n.linalg;
