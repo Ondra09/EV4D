@@ -251,6 +251,13 @@ private:
 	mat4 mprojectionMatrix = void; //!!!
 
 	int passes = 1;
+
+	vec4 ambient;
+	vec4 diffuse;
+	vec4 specular;
+	vec4 emission;
+	
+	float shininess;
 package:
 	Shader20 shader;
 protected:

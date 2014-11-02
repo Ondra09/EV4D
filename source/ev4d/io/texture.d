@@ -4,7 +4,10 @@ module ev4d.io.texture;
 import derelict.opengl3.gl;
 import derelict.freeimage.freeimage;
 
-
+/*
+Basically global variables, I think it is ok for now. 
+We don't want to have multiple copyies of texture in applicaiton anywhere across all scenes.
+*/
 static this()
 {
 	DerelictFI.load();

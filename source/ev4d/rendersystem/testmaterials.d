@@ -243,7 +243,7 @@ public:
 				v.y = dot (-vertexPosition, b);
 				v.z = dot (-vertexPosition, n);
 				eyeVec = normalize (v);
-
+				// or use -reflect();
 				vec3 halfVector = normalize(-vertexPosition + lightDir);
 				v.x = dot (halfVector, t);
 				v.y = dot (halfVector, b);

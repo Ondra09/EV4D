@@ -10,6 +10,8 @@ import ev4d.rendersystem.renderqueue;
 import ev4d.rendersystem.technique;
 import ev4d.rendersystem.testmaterials;
 
+import ev4d.rendersystem.scene;
+
 // model loading handling
 import ev4d.io.model;
 import ev4d.io.texture;
@@ -62,6 +64,8 @@ SHGraph camNode1;
 
 Renderer initScene()
 {
+    Scene scene = new Scene();
+
     Renderer renderer = new Renderer();
 
     Technique!(SHGraph) tech0 = new Technique!(SHGraph)();
