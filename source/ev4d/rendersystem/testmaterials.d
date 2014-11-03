@@ -147,6 +147,9 @@ public:
 	}
 }
 
+/**
+	Material for ships.	
+*/
 class ShipMaterial(BindVertex) : Material
 {
 private:
@@ -191,7 +194,7 @@ public:
 
 			varying vec3 halfVec;
 			varying vec3 lightVec;
-			varying vec3 eyeVec;
+			//varying vec3 eyeVec;
 
 			struct PointLight 
 			{ 
@@ -207,7 +210,12 @@ public:
 
 			void main()
 			{
-				vec3 normal;
+				//////////////////////////////////////
+				// MAKE UNIFORMS from this
+				vec3 lightPos = vec3(0, 0, 0);
+				//////////////////////////////////////
+
+				vec3 normal, tan;
 				
 				gl_Position    = modelViewProjectionMatrix * gl_Vertex;
 				gl_FrontColor  = gl_Color;
@@ -215,23 +223,28 @@ public:
 
 				diffuse = gl_FrontMaterial.diffuse * gl_LightSource[0].diffuse;
 			    ambient = gl_FrontMaterial.ambient * gl_LightSource[0].ambient;
-			    ambient += gl_LightModel.ambient * gl_FrontMaterial.ambient;
+			    ambient += gl_FrontMaterial.ambient * gl_LightModel.ambient;
 
 				// gl_NormalMatrix - 3x3 Matrix representing the inverse transpose model-view matrix
-				normal  =	normalize(normalMatrix * vec4(gl_Normal, 1.0)).xyz;
+				// mat4 normalMatrix = transpose(inverse(modelView));
+				vec4 normalw  	=	normalize(normalMatrix * vec4(gl_Normal, 1.0));
+				vec4 tanw 		= 	normalize(normalMatrix * vec4(tangent, 1.0));
 
-				vec3 vertexPosition = vec3(modelViewMatrix *  gl_Vertex);
-				vertexPosition /= (modelViewMatrix *  gl_Vertex).w;
 
-				vec3 t;
+				normal  =	normalw.xyz/normalw.w;
+				tan 	= 	tanw.xyz/tanw.w;
+
+				vec4 vertexPosition_w = modelViewMatrix *  gl_Vertex;
+				vec3 vertexPosition = vertexPosition_w.xyz/vertexPosition_w.w;
+
+				vec3 t = tan;
 				vec3 b;
 				vec3 n = normal;
 
-				t = tangent;
 				b = normalize(cross(n, t));
 
 				///////////////////////////////////
-				vec3 lightDir = normalize(gl_LightSource[0].position.xyz - vertexPosition);
+				vec3 lightDir = normalize(lightPos - vertexPosition);
 				// transform light and half angle vectors by tangent basis
 				vec3 v;
 				v.x = dot (lightDir, t);
@@ -239,17 +252,19 @@ public:
 				v.z = dot (lightDir, n);
 				lightVec = normalize (v);
 
-				v.x = dot (-vertexPosition, t); // eye - vertex .. eye = [0,0,0]
+				/*v.x = dot (-vertexPosition, t); // eye - vertex .. eye = [0,0,0]
 				v.y = dot (-vertexPosition, b);
 				v.z = dot (-vertexPosition, n);
 				eyeVec = normalize (v);
+				*/
+
 				// or use -reflect();
 				vec3 halfVector = normalize(-vertexPosition + lightDir);
 				v.x = dot (halfVector, t);
 				v.y = dot (halfVector, b);
 				v.z = dot (halfVector, n);
 
-				halfVec = v ; 
+				halfVec = v; 
 			}
 			".toStringz());
 
@@ -263,11 +278,11 @@ public:
 			uniform sampler2D texIllum;
 			uniform sampler2D texSpecular;
 
-			varying vec4 diffuse,ambient;
+			varying vec4 diffuse, ambient;
 
-			varying vec3 normal, halfVec;
+			varying vec3 halfVec;
 			varying vec3 lightVec;
-			varying vec3 eyeVec;
+			//varying vec3 eyeVec;
 
 			const float bumpMagnitude = 2.0;
 			// return normalized vector
@@ -295,32 +310,25 @@ public:
 				vec4 colorTex = texture2D(texColor, gl_TexCoord[0].st);
 				vec4 illumTex = texture2D(texIllum, gl_TexCoord[0].st);
 				vec4 specularTex = texture2D(texSpecular, gl_TexCoord[0].st);
-			//gl_FragColor = colorTex;texture2D(texNormal, gl_TexCoord[0].st);
-			//return;
+			
 				//vec3 normalTex = compute_bump_normal();
 				vec3 normalTex = read_normal_map();
-				//normalTex = vec3(0.0, 0.0, 1.0);
-
 
 				//
-				vec3 n, halfV, lightDir;
+				vec3 n, halfV;
 			    float NdotL, NdotHV;
-			 
-			    lightDir = vec3(gl_LightSource[0].position);
 			 
 			    /* The ambient term will always be present */
 			    vec4 color = ambient * colorTex;
 			    
-			    // n = normalize(normal);
 				n = normalTex;
 
 				vec3 lightVector = normalize(lightVec);
 
 			    /* compute the dot product between normal and ldir */
 			 
-			    NdotL = max(dot(n, lightVector),0.0);
+			    NdotL = max(dot(n, lightVector), 0.0);
 
-				
 				if (NdotL > 0.0) 
 				{
 			        color += diffuse * NdotL * colorTex;
@@ -338,8 +346,9 @@ public:
 
 			 	// check if illumTex is computed correctly
 			 
-				gl_FragColor = color + illumTex;
-				
+				gl_FragColor = color + illumTex + vec4(0.2, 0.2, 0.2, 1.0);
+				gl_FragColor = vec4(NdotL, NdotL, NdotL, 1);
+
 				//gl_FragColor = texture2D(texNormal, gl_TexCoord[0].st);
 			}
 
@@ -412,10 +421,17 @@ public:
 		mat4 modelViewProjectionMatrix = worldMatrix * viewMatrix * projectionMatrix;
 
 		mat4 normalMatrix = modelViewMatrix.inverse();
+		normalMatrix.transpose();
 
 		glUniformMatrix4fv(modelViewMatrix_u, 1, GL_FALSE, modelViewMatrix.value_ptr);
 		glUniformMatrix4fv(modelViewProjectionMatrix_u, 1, GL_FALSE, modelViewProjectionMatrix.value_ptr);
-		glUniformMatrix4fv(normalMatrix_u, 1, GL_FALSE, viewMatrix.value_ptr);
+		// GL_TRUE to have transpose matrix
+		// mat4 normalMatrix = transpose(inverse(modelView));
+		glUniformMatrix4fv(normalMatrix_u, 1, GL_FALSE, normalMatrix.value_ptr);
+
+		/*import std.stdio;
+		writeln("MM: ", modelViewMatrix);
+		writeln("IM: ", normalMatrix);*/
 
 		//
 		//glUniform4f(customC, 1, 0, 1, 1);

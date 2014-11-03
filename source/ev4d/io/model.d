@@ -126,7 +126,7 @@ bool testImport (ref VBO vbo, string filename = "")
 
 			vertex.u = mesh.mTextureCoords[0][j].x; // only one texture coords at time
 			vertex.v = mesh.mTextureCoords[0][j].y;
-			//writeln(vertex.u, " x ", vertex.v);
+			//writeln(vertex.tx, " x ", vertex.ty, " x ", vertex.tz);
 			//
 			vboContent ~= vertex;
 		}
