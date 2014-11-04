@@ -172,16 +172,18 @@ GLuint[] obtainLocations20(string type)(in GLuint program, in string[] names) no
 	foreach (int i, const string str; names)
 	{
 		import std.string: toStringz;
+		GLuint unifLocat = -1;
+
 		static if(type == "uniforms")
 		{
-		GLuint unifLocat = glGetUniformLocation(program, str.toStringz());
+			unifLocat = glGetUniformLocation(program, str.toStringz());
 		}
 		static if(type == "attributes")
 		{
-		GLuint unifLocat = glGetAttribLocation(program, str.toStringz());
+			unifLocat = glGetAttribLocation(program, str.toStringz());
 		}
 
-		assert(unifLocat != -1);
+		assert(unifLocat != -1, "Invalid shader location.");
 		retVal[i] = unifLocat;
 	}
 
@@ -218,6 +220,8 @@ void obtainLocations20(string type, T...)(GLuint program)
                            "Member name " ~ arg.stringof ~
                            " is not a string.");
 
+			T[i+1] = -1;
+
 			static if(type == "uniforms")
 			{
 			T[i+1] = glGetUniformLocation(program, T[i].toStringz());
@@ -227,7 +231,7 @@ void obtainLocations20(string type, T...)(GLuint program)
 			T[i+1] = glGetAttribLocation(program, T[i].toStringz());
 			}
 
-			assert(T[i+1] != -1);
+			assert(T[i+1] != -1, "Invalid shader location.");
 		}
 	}
 }
@@ -256,7 +260,7 @@ private:
 	vec4 diffuse;
 	vec4 specular;
 	vec4 emission;
-	
+
 	float shininess;
 package:
 	Shader20 shader;

@@ -160,7 +160,7 @@ package:
 	GLint modelViewProjectionMatrix_u;
 	GLint normalMatrix_u;
 
-	GLint tangent_a;
+	GLint tangent_a = -1;
 
 	// tex's uniforms
 	GLint texColor_u;
@@ -181,14 +181,12 @@ public:
 
 		immutable(char)* vss = (r"
 			// Eastern Wolf @ 2014
-			//uniform mat4 mvpMatrix;
 
 			uniform mat4 modelViewMatrix;
 			uniform mat4 modelViewProjectionMatrix;
 			uniform mat4 normalMatrix;
 			
 			attribute vec3 tangent;
-
 
 			varying vec4 diffuse, ambient;
 
@@ -227,12 +225,8 @@ public:
 
 				// gl_NormalMatrix - 3x3 Matrix representing the inverse transpose model-view matrix
 				// mat4 normalMatrix = transpose(inverse(modelView));
-				vec4 normalw  	=	normalize(normalMatrix * vec4(gl_Normal, 1.0));
-				vec4 tanw 		= 	normalize(normalMatrix * vec4(tangent, 1.0));
-
-
-				normal  =	normalw.xyz/normalw.w;
-				tan 	= 	tanw.xyz/tanw.w;
+				normal  	=	normalize(normalMatrix * vec4(gl_Normal, 0.0)).xyz;
+				tan 		= 	normalize(normalMatrix * vec4(tangent, 0.0)).xyz;
 
 				vec4 vertexPosition_w = modelViewMatrix *  gl_Vertex;
 				vec3 vertexPosition = vertexPosition_w.xyz/vertexPosition_w.w;
@@ -250,7 +244,9 @@ public:
 				v.x = dot (lightDir, t);
 				v.y = dot (lightDir, b);
 				v.z = dot (lightDir, n);
+
 				lightVec = normalize (v);
+				//lightVec = lightDir;
 
 				/*v.x = dot (-vertexPosition, t); // eye - vertex .. eye = [0,0,0]
 				v.y = dot (-vertexPosition, b);
@@ -269,7 +265,7 @@ public:
 			".toStringz());
 
 		immutable(char)* fss = (r"
-			// Eeastern Wolf @ 2014
+			// Eastern Wolf @ 2014
 
 			// 'time' contains seconds since the program was linked.
 			uniform float time;
@@ -306,7 +302,6 @@ public:
 
 			void main()
 			{
-				//gl_FragColor = gl_Color;
 				vec4 colorTex = texture2D(texColor, gl_TexCoord[0].st);
 				vec4 illumTex = texture2D(texIllum, gl_TexCoord[0].st);
 				vec4 specularTex = texture2D(texSpecular, gl_TexCoord[0].st);
@@ -324,8 +319,6 @@ public:
 				n = normalTex;
 
 				vec3 lightVector = normalize(lightVec);
-
-			    /* compute the dot product between normal and ldir */
 			 
 			    NdotL = max(dot(n, lightVector), 0.0);
 
@@ -344,12 +337,13 @@ public:
 							pow(NdotHV, shininess);
 			    }
 
-			 	// check if illumTex is computed correctly
+			    // hacked gamma correction .. looks good
+			    color.x = pow(color.x, 1.0/2.2);
+			    color.y = pow(color.y, 1.0/2.2);
+			    color.z = pow(color.z, 1.0/2.2);
+			    color.w = pow(color.w, 1.0/2.2);
 			 
-				gl_FragColor = color + illumTex + vec4(0.2, 0.2, 0.2, 1.0);
-				gl_FragColor = vec4(NdotL, NdotL, NdotL, 1);
-
-				//gl_FragColor = texture2D(texNormal, gl_TexCoord[0].st);
+				gl_FragColor = color + illumTex;
 			}
 
 			".toStringz());
@@ -366,7 +360,7 @@ public:
 		normalMatrix_u = locations[2];
 		
 
-		obtainLocations20!("attribues", "tangent", tangent_a)(shader.program);
+		obtainLocations20!("attributes", "tangent", tangent_a)(shader.program);
 
 		locations = obtainLocations20!"uniforms"(shader.program,["texColor", "texNormal",
 																 "texIllum", "texSpecular"]);
