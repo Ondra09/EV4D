@@ -18,3 +18,8 @@ http://realtimecollisiondetection.net/blog/?p=86
 
 http://aras-p.info/blog/2014/01/16/rough-sorting-by-depth/
 http://c0de517e.blogspot.ca
+
+
+correct bump map
+==================
+http://www.katsbits.com/tutorials/textures/how-not-to-make-normal-maps-from-photos-or-images.php

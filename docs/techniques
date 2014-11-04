@@ -6,3 +6,15 @@ Material list:
 http://devernay.free.fr/cours/opengl/materials.html
 
 chci neco kreslit do .png napr jako target?
+
+TODO -- short term
+
+finish Fighter shader, focus on lighting
+multiple light support
+text rendering
+
+TODO -- long term
+
+inputs and control and create first demo
+collision detection... (use some 2D physical engine for this?)
+
