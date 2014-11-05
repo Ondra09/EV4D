@@ -4,8 +4,10 @@ EV4D
 D language rendering engine.
 
 Currently working on:
-* Shader integration.
+* Bump shader, text shader rendering. 
 
 In near future:
-* Bump shader, text shader rendering.
-* Model import.
+* Very basic collisions
+* Input handling.
+* Tech demo0
+
