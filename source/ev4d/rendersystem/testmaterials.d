@@ -204,7 +204,7 @@ public:
 			   float fConstantAtt; 
 			   float fLinearAtt; 
 			   float fExpAtt; 
-			}; 
+			};
 
 			void main()
 			{
@@ -300,6 +300,11 @@ public:
 				return 2.0*texture2D(texNormal, gl_TexCoord[0].st).xyz - 1.0;
 			}
 
+			vec3 performLighting()
+			{
+				
+			}
+			
 			void main()
 			{
 				vec4 colorTex = texture2D(texColor, gl_TexCoord[0].st);
@@ -314,9 +319,15 @@ public:
 			    float NdotL, NdotHV;
 			 
 			    /* The ambient term will always be present */
-			    vec4 color = ambient * colorTex;
+			    vec4 color = diffuse * colorTex * ambient; // amient term
 			    
 				n = normalTex;
+
+				int MAX_LIGHTS = 1;
+				for (int i = 0; i < MAX_LIGHTS; i++)
+				{
+
+				}
 
 				vec3 lightVector = normalize(lightVec);
 			 

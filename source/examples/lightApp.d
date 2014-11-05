@@ -69,7 +69,7 @@ Renderer initScene()
 
     Technique!(SHGraph) tech0 = new Technique!(SHGraph)();
 
-    Camera cam = new Camera(640, 480, 90);
+    Camera cam = new Camera(800, 600, 90);
 
     tech0.camera = cam; 
 
@@ -129,7 +129,7 @@ int main(string[] argv)
     glfwSetErrorCallback(&errorCallback);
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Space Shooter 1000", null, null);
+    window = glfwCreateWindow(800, 600, "Space Shooter 1000", null, null);
 
     if (!window)
     {
@@ -160,14 +160,14 @@ int main(string[] argv)
 
     Renderer renderer = initScene();
     fighterNode.data.translationM = mat4.translation(0, 0.0, -1.5);
-    fighterNode.data.rotationM.rotatex(-105.0f/180*3.1415924);
+    //fighterNode.data.rotationM.rotatex(-105.0f/180*3.1415924);
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
     
 
        	// rotate with fighter
-        fighterNode.data.rotationM.rotatex(2.0f/180*3.1415924);
+        //fighterNode.data.rotationM.rotatex(2.0f/180*3.1415924);
 
         //
         //camNode.data.translationM.translate(0, 0, sum);
@@ -182,7 +182,7 @@ int main(string[] argv)
         {
             sum *= -1;
         }
-        
+
         recomputeTransformations(sceneRoot);
         renderer.render();
 
