@@ -195,7 +195,6 @@ public:
 			varying vec4 diffuse, ambient;
 
 			varying vec3 halfVec;
-			varying vec3 lightVec;
 			varying mat3 lightVecs;
 
 			//varying vec3 eyeVec;
@@ -238,17 +237,20 @@ public:
 
 				b = normalize(cross(n, t));
 
+				mat3 tangentMatrix = mat3(
+										t.x, b.x, n.x, // first column
+										t.y, b.y, n.y, // second column
+										t.z, b.z, n.z // third column
+										);
+				mat3 vertexPosMat = mat3(vertexPosition, vertexPosition, vertexPosition);
+
+				mat3 lDirs = lightPositions - vertexPosMat;
+				lightVecs = tangentMatrix * lDirs;
 				///////////////////////////////////
 				vec3 lightDir = normalize(lightPositions[0] - vertexPosition);
 
 				// transform light and half angle vectors by tangent basis
 				vec3 v;
-				v.x = dot (lightDir, t);
-				v.y = dot (lightDir, b);
-				v.z = dot (lightDir, n);
-
-				lightVec = normalize (v);
-
 				/*v.x = dot (-vertexPosition, t); // eye - vertex .. eye = [0,0,0]
 				v.y = dot (-vertexPosition, b);
 				v.z = dot (-vertexPosition, n);
@@ -261,9 +263,9 @@ public:
 				v.y = dot (halfVector, b);
 				v.z = dot (halfVector, n);
 
-				lightVecs[0] = lightVec;
-				lightVecs[1] = halfVector;
-				lightVecs[2] = vec3(1,2,3);
+				//lightVecs[0] = lightVec;
+				//lightVecs[1] = halfVector;
+				//lightVecs[2] = vec3(1,2,3);
 
 				halfVec = v; 
 			}
@@ -282,7 +284,6 @@ public:
 			varying vec4 diffuse, ambient;
 
 			varying vec3 halfVec;
-			varying vec3 lightVec;
 
 			varying mat3 lightVecs;
 			//varying vec3 eyeVec;
@@ -329,17 +330,18 @@ public:
 			    vec4 color = diffuse * colorTex * ambient; // amient term
 			    
 				n = normalTex;
+				vec4 testColor = vec4(0,0,0,1);
 
-				int MAX_LIGHTS = 1;
-				for (int i = 0; i < MAX_LIGHTS; i++)
+				NdotL = 0.0;				
+				for (int i = 0; i < 3; i++)
 				{
+					vec3 lightVector = normalize(lightVecs[i]);
 
+					NdotL += max(dot(n, lightVector), 0.0);
+
+					testColor[i] = max(dot(n, lightVector), 0.0);
+					
 				}
-
-				vec3 lightVector = normalize(lightVec);
-				//lightVector = normalize(lightVecs[0]);
-			 
-			    NdotL = max(dot(n, lightVector), 0.0);
 
 				if (NdotL > 0.0) 
 				{
@@ -363,6 +365,8 @@ public:
 			    color.w = pow(color.w, 1.0/2.2);
 			 
 				gl_FragColor = color + illumTex;
+
+				gl_FragColor = testColor;
 
 				/*vec3 diff = abs(lightVecs[0] - n)*2.0; // this is interesting effect
 
@@ -474,19 +478,18 @@ public:
 		
 	}
 	mat3 lights = mat3(	0, 1, 0, 	// first light
-						0, 0, 0,  	// second light
-						0, 0, 0 );	// third light
+						1, 0, 0,  	// second light
+						-1, 0, 0 );	// third light
 	override void initPass(int num)
 	{
 		//lights = mat3(0, 0, 0, 0, 0, 0, 0, 0, 0);
+		glUniformMatrix3fv(lightPositionsMatrix_u, 1, GL_FALSE, lights.value_ptr);
 	}
 
 	override void renderPass(int num)
 	{ 
 
-		//lights[0][0] -= 0.1;
-
-		glUniformMatrix3fv(lightPositionsMatrix_u, 1, GL_FALSE, lights.value_ptr);
+		//lights[0][1] += 0.1;
 
 		////////////////////////////////////////////////////////////////////////////////	
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo.idxIDs[0]); // remove this bind pbly

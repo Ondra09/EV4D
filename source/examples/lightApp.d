@@ -167,7 +167,7 @@ int main(string[] argv)
     
 
        	// rotate with fighter
-        //fighterNode.data.rotationM.rotatex(2.0f/180*3.1415924);
+        fighterNode.data.rotationM.rotatex(2.0f/180*3.1415924);
 
         //
         //camNode.data.translationM.translate(0, 0, sum);
