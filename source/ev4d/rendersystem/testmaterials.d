@@ -156,9 +156,11 @@ private:
 package:
 	// shader uniforms
 	
-	GLint modelViewMatrix_u;
-	GLint modelViewProjectionMatrix_u;
-	GLint normalMatrix_u;
+	GLint modelViewMatrix_u = -1;
+	GLint modelViewProjectionMatrix_u = -1;
+	GLint normalMatrix_u = -1;
+
+	GLint lightPositionsMatrix_u = -1;
 
 	GLint tangent_a = -1;
 
@@ -186,12 +188,16 @@ public:
 			uniform mat4 modelViewProjectionMatrix;
 			uniform mat4 normalMatrix;
 			
+			uniform mat3 lightPositions;
+
 			attribute vec3 tangent;
 
 			varying vec4 diffuse, ambient;
 
 			varying vec3 halfVec;
 			varying vec3 lightVec;
+			varying mat3 lightVecs;
+
 			//varying vec3 eyeVec;
 
 			struct PointLight 
@@ -208,11 +214,6 @@ public:
 
 			void main()
 			{
-				//////////////////////////////////////
-				// MAKE UNIFORMS from this
-				vec3 lightPos = vec3(0, 0, 0);
-				//////////////////////////////////////
-
 				vec3 normal, tan;
 				
 				gl_Position    = modelViewProjectionMatrix * gl_Vertex;
@@ -238,7 +239,8 @@ public:
 				b = normalize(cross(n, t));
 
 				///////////////////////////////////
-				vec3 lightDir = normalize(lightPos - vertexPosition);
+				vec3 lightDir = normalize(lightPositions[0] - vertexPosition);
+
 				// transform light and half angle vectors by tangent basis
 				vec3 v;
 				v.x = dot (lightDir, t);
@@ -246,7 +248,6 @@ public:
 				v.z = dot (lightDir, n);
 
 				lightVec = normalize (v);
-				//lightVec = lightDir;
 
 				/*v.x = dot (-vertexPosition, t); // eye - vertex .. eye = [0,0,0]
 				v.y = dot (-vertexPosition, b);
@@ -259,6 +260,10 @@ public:
 				v.x = dot (halfVector, t);
 				v.y = dot (halfVector, b);
 				v.z = dot (halfVector, n);
+
+				lightVecs[0] = lightVec;
+				lightVecs[1] = halfVector;
+				lightVecs[2] = vec3(1,2,3);
 
 				halfVec = v; 
 			}
@@ -278,6 +283,8 @@ public:
 
 			varying vec3 halfVec;
 			varying vec3 lightVec;
+
+			varying mat3 lightVecs;
 			//varying vec3 eyeVec;
 
 			const float bumpMagnitude = 2.0;
@@ -302,7 +309,7 @@ public:
 
 			vec3 performLighting()
 			{
-				
+				return vec3(1);
 			}
 			
 			void main()
@@ -330,6 +337,7 @@ public:
 				}
 
 				vec3 lightVector = normalize(lightVec);
+				//lightVector = normalize(lightVecs[0]);
 			 
 			    NdotL = max(dot(n, lightVector), 0.0);
 
@@ -355,6 +363,11 @@ public:
 			    color.w = pow(color.w, 1.0/2.2);
 			 
 				gl_FragColor = color + illumTex;
+
+				/*vec3 diff = abs(lightVecs[0] - n)*2.0; // this is interesting effect
+
+				diff = abs(lightVecs[1] - lightVec)*2.0;
+				gl_FragColor = vec4(diff, 1 );*/
 			}
 
 			".toStringz());
@@ -364,11 +377,12 @@ public:
 		GLuint[] locations;
 
 		locations = obtainLocations20!"uniforms"(shader.program,["modelViewMatrix",
-																 "modelViewProjectionMatrix", "normalMatrix"]);
+																 "modelViewProjectionMatrix", "normalMatrix", "lightPositions"]);
 
 		modelViewMatrix_u = locations[0];
 		modelViewProjectionMatrix_u = locations[1];
 		normalMatrix_u = locations[2];
+		lightPositionsMatrix_u = locations[3];
 		
 
 		obtainLocations20!("attributes", "tangent", tangent_a)(shader.program);
@@ -395,6 +409,8 @@ public:
 		(texNormal) = -1;
 		(texIllum) = -1;
 		(texSpecular) = -1;
+
+		//lightPositionsMatrix_u = -1;
 
 		deleteTexture("objects/work/Space Frigate 6/space_frigate_6/space_frigate_6_color.png");
 		deleteTexture("objects/work/Space Frigate 6/space_frigate_6/space_frigate_6 NRM.png");
@@ -457,14 +473,22 @@ public:
 		glUniform1i(texSpecular_u, 3);
 		
 	}
-
+	mat3 lights = mat3(	0, 1, 0, 	// first light
+						0, 0, 0,  	// second light
+						0, 0, 0 );	// third light
 	override void initPass(int num)
 	{
+		//lights = mat3(0, 0, 0, 0, 0, 0, 0, 0, 0);
 	}
 
 	override void renderPass(int num)
 	{ 
-		
+
+		//lights[0][0] -= 0.1;
+
+		glUniformMatrix3fv(lightPositionsMatrix_u, 1, GL_FALSE, lights.value_ptr);
+
+		////////////////////////////////////////////////////////////////////////////////	
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo.idxIDs[0]); // remove this bind pbly
 		glDrawElements(GL_TRIANGLES, 894, GL_UNSIGNED_INT, null);
 	}
