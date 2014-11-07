@@ -159,7 +159,7 @@ int main(string[] argv)
     float sum = 0.01;
 
     Renderer renderer = initScene();
-    fighterNode.data.translationM = mat4.translation(0, 0.0, -1.5);
+    fighterNode.data.translationM = mat4.translation(0, 0.0, -1.6);
     //fighterNode.data.rotationM.rotatex(-105.0f/180*3.1415924);
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -167,7 +167,7 @@ int main(string[] argv)
     
 
        	// rotate with fighter
-        fighterNode.data.rotationM.rotatex(2.0f/180*3.1415924);
+        fighterNode.data.rotationM.rotatex(1.0f/180*3.1415924);
 
         //
         //camNode.data.translationM.translate(0, 0, sum);

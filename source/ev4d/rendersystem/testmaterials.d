@@ -329,12 +329,10 @@ public:
 
 				        NdotHV = clamp(dot(n, halfV),0.0, 1.0);
 					
-						float shininess = specularTex.r * 255.0;
-
-				        color += pow(NdotHV, 90.0);
+				        color += pow(NdotHV, 128.0) * specularTex;
 				        		//gl_FrontMaterial.specular *
 				                //gl_LightSource[0].specular *
-				                pow(NdotHV, 90.0);
+				                //pow(NdotHV, 90.0);
 				                //pow(NdotHV, gl_FrontMaterial.shininess);
 								//pow(NdotHV, 128.0) * specularTex; // specular omited
 
@@ -344,16 +342,16 @@ public:
 					//testColor[i] = max(dot(n, lightVector), 0.0);
 				}
 
-
 			    // hacked gamma correction .. looks good
 			    color.x = pow(color.x, 1.0/2.2);
 			    color.y = pow(color.y, 1.0/2.2);
 			    color.z = pow(color.z, 1.0/2.2);
-			    color.w = pow(color.w, 1.0/2.2);
+			    //color.w = pow(color.w, 1.0/2.2);
 			 
 				gl_FragColor = color + illumTex;
 
 				//gl_FragColor = testColor;
+				//gl_FragColor = vec4(dot(n, normalize(lightVecs[0])));
 
 				/*vec3 diff = abs(lightVecs[0] - n)*2.0; // this is interesting effect
 
@@ -464,7 +462,7 @@ public:
 		glUniform1i(texSpecular_u, 3);
 		
 	}
-	mat3 lights = mat3(	0, 1, 0, 	// first light
+	mat3 lights = mat3(	0, 2, 0, 	// first light
 						1, 0, 0,  	// second light
 						-1, 0, 0 );	// third light
 	override void initPass(int num)
