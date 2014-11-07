@@ -188,16 +188,16 @@ public:
 			uniform mat4 modelViewProjectionMatrix;
 			uniform mat4 normalMatrix;
 			
+			// in world coordinates
 			uniform mat3 lightPositions;
 
 			attribute vec3 tangent;
 
 			varying vec4 diffuse, ambient;
 
-			varying vec3 halfVec;
 			varying mat3 lightVecs;
+			varying mat3 halfVecs;
 
-			//varying vec3 eyeVec;
 
 			struct PointLight 
 			{ 
@@ -212,28 +212,29 @@ public:
 			};
 
 			void main()
-			{
-				vec3 normal, tan;
-				
+			{	
 				gl_Position    = modelViewProjectionMatrix * gl_Vertex;
 				gl_FrontColor  = gl_Color;
 				gl_TexCoord[0] = gl_MultiTexCoord0;
 
 				diffuse = gl_FrontMaterial.diffuse * gl_LightSource[0].diffuse;
+				diffuse = vec4(0.7, 0.7, 0.7, 1.0);
+			    
 			    ambient = gl_FrontMaterial.ambient * gl_LightSource[0].ambient;
 			    ambient += gl_FrontMaterial.ambient * gl_LightModel.ambient;
+				ambient = vec4(0.1, 0.1, 0.1, 1.0);
 
-				// gl_NormalMatrix - 3x3 Matrix representing the inverse transpose model-view matrix
+			    // gl_NormalMatrix - 3x3 Matrix representing the inverse transpose model-view matrix
 				// mat4 normalMatrix = transpose(inverse(modelView));
-				normal  	=	normalize(normalMatrix * vec4(gl_Normal, 0.0)).xyz;
-				tan 		= 	normalize(normalMatrix * vec4(tangent, 0.0)).xyz;
+				// OPTIM : 
+				// if matrix contains only rotation or uniform scale than normalMatrix == modelViewMatrix;
 
 				vec4 vertexPosition_w = modelViewMatrix *  gl_Vertex;
 				vec3 vertexPosition = vertexPosition_w.xyz/vertexPosition_w.w;
 
-				vec3 t = tan;
+				vec3 t = normalize(normalMatrix * vec4(tangent, 0.0)).xyz;
 				vec3 b;
-				vec3 n = normal;
+				vec3 n = normalize(normalMatrix * vec4(gl_Normal, 0.0)).xyz;
 
 				b = normalize(cross(n, t));
 
@@ -242,32 +243,14 @@ public:
 										t.y, b.y, n.y, // second column
 										t.z, b.z, n.z // third column
 										);
+
 				mat3 vertexPosMat = mat3(vertexPosition, vertexPosition, vertexPosition);
 
 				mat3 lDirs = lightPositions - vertexPosMat;
-				lightVecs = tangentMatrix * lDirs;
-				///////////////////////////////////
-				vec3 lightDir = normalize(lightPositions[0] - vertexPosition);
 
 				// transform light and half angle vectors by tangent basis
-				vec3 v;
-				/*v.x = dot (-vertexPosition, t); // eye - vertex .. eye = [0,0,0]
-				v.y = dot (-vertexPosition, b);
-				v.z = dot (-vertexPosition, n);
-				eyeVec = normalize (v);
-				*/
-
-				// or use -reflect();
-				vec3 halfVector = normalize(-vertexPosition + lightDir);
-				v.x = dot (halfVector, t);
-				v.y = dot (halfVector, b);
-				v.z = dot (halfVector, n);
-
-				//lightVecs[0] = lightVec;
-				//lightVecs[1] = halfVector;
-				//lightVecs[2] = vec3(1,2,3);
-
-				halfVec = v; 
+				lightVecs = tangentMatrix * lDirs;
+				halfVecs = tangentMatrix * (-vertexPosMat + lDirs);
 			}
 			".toStringz());
 
@@ -283,10 +266,8 @@ public:
 
 			varying vec4 diffuse, ambient;
 
-			varying vec3 halfVec;
-
 			varying mat3 lightVecs;
-			//varying vec3 eyeVec;
+			varying mat3 halfVecs;
 
 			const float bumpMagnitude = 2.0;
 			// return normalized vector
@@ -324,39 +305,45 @@ public:
 
 				//
 				vec3 n, halfV;
-			    float NdotL, NdotHV;
+			    float NdotHV;
 			 
 			    /* The ambient term will always be present */
-			    vec4 color = diffuse * colorTex * ambient; // amient term
+			    // emmisive term ommited
+			    vec4 color = diffuse * colorTex * ambient; // ambient term
 			    
 				n = normalTex;
-				vec4 testColor = vec4(0,0,0,1);
+				//vec4 testColor = vec4(0,0,0,1);
 
-				NdotL = 0.0;				
+				// BUG: normals are in wrong dirrection on half of the model
 				for (int i = 0; i < 3; i++)
 				{
 					vec3 lightVector = normalize(lightVecs[i]);
 
-					NdotL += max(dot(n, lightVector), 0.0);
+					float NdotL = max(dot(n, lightVector), 0.0);
 
-					testColor[i] = max(dot(n, lightVector), 0.0);
+					if (NdotL > 0.0)
+					{
+				        color += diffuse * NdotL * colorTex;
+
+				        halfV = normalize(halfVecs[i]);
+
+				        NdotHV = clamp(dot(n, halfV),0.0, 1.0);
 					
+						float shininess = specularTex.r * 255.0;
+
+				        color += pow(NdotHV, 90.0);
+				        		//gl_FrontMaterial.specular *
+				                //gl_LightSource[0].specular *
+				                pow(NdotHV, 90.0);
+				                //pow(NdotHV, gl_FrontMaterial.shininess);
+								//pow(NdotHV, 128.0) * specularTex; // specular omited
+
+						//testColor = pow(NdotHV, 80.0) * specularTex;
+				    }
+
+					//testColor[i] = max(dot(n, lightVector), 0.0);
 				}
 
-				if (NdotL > 0.0) 
-				{
-			        color += diffuse * NdotL * colorTex;
-			        halfV = normalize(halfVec);
-
-			        NdotHV = clamp(dot(n, halfV),0.0, 1.0);
-				
-					float shininess = specularTex.r * 255.0;
-
-			        color += gl_FrontMaterial.specular *
-			                gl_LightSource[0].specular *
-			                //pow(NdotHV, gl_FrontMaterial.shininess);
-							pow(NdotHV, shininess);
-			    }
 
 			    // hacked gamma correction .. looks good
 			    color.x = pow(color.x, 1.0/2.2);
@@ -366,7 +353,7 @@ public:
 			 
 				gl_FragColor = color + illumTex;
 
-				gl_FragColor = testColor;
+				//gl_FragColor = testColor;
 
 				/*vec3 diff = abs(lightVecs[0] - n)*2.0; // this is interesting effect
 
