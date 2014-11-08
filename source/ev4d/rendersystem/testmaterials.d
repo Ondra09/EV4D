@@ -270,6 +270,8 @@ public:
 
 			varying vec4 diffuse, ambient;
 
+			//uniform vec3 aa[10];
+
 			varying mat3 lightVecs;
 			varying mat3 halfVecs;
 
@@ -293,9 +295,42 @@ public:
 				return 2.0*texture2D(texNormal, gl_TexCoord[0].st).xyz - 1.0;
 			}
 
-			vec3 performLighting()
+			vec4 performPhongShading(vec3 n, vec4 colorTex, vec4 specularTex)
 			{
-				return vec3(1);
+				vec4 color;
+
+				vec3 halfV;
+			    float NdotHV;
+
+				// BUG: normals are in wrong dirrection on half of the model
+				for (int i = 0; i < 3; i++)
+				{
+					vec4 lightContrib = vec4(0,0,0,0);
+					vec3 lightVector = normalize(lightVecs[i]);
+
+					float NdotL = max(dot(n, lightVector), 0.0);
+
+					if (NdotL > 0.0)
+					{
+				        lightContrib = diffuse * NdotL * colorTex;
+
+				        halfV = normalize(halfVecs[i]);
+
+				        NdotHV = clamp(dot(n, halfV),0.0, 1.0);
+					
+				        lightContrib += pow(NdotHV, 128.0) * specularTex;
+				        		//gl_FrontMaterial.specular *
+				                //gl_LightSource[0].specular *
+				                //pow(NdotHV, 90.0);
+				                //pow(NdotHV, gl_FrontMaterial.shininess);
+								//pow(NdotHV, 128.0) * specularTex; // specular omited
+
+				    }
+
+				    color += lightContrib * vec4(lightColors[i], 1);
+				}
+
+				return color;
 			}
 			
 			void main()
@@ -306,45 +341,12 @@ public:
 			
 				//vec3 normalTex = compute_bump_normal();
 				vec3 normalTex = read_normal_map();
-
-				//
-				vec3 n, halfV;
-			    float NdotHV;
 			 
 			    /* The ambient term will always be present */
 			    // emmisive term ommited
 			    vec4 color = diffuse * colorTex * ambient; // ambient term
-			    
-				n = normalTex;
-				//vec4 testColor = vec4(0,0,0,1);
 
-				// BUG: normals are in wrong dirrection on half of the model
-				for (int i = 0; i < 3; i++)
-				{
-					vec3 lightVector = normalize(lightVecs[i]);
-
-					float NdotL = max(dot(n, lightVector), 0.0);
-
-					if (NdotL > 0.0)
-					{
-				        color += diffuse * NdotL * colorTex * vec4(lightColors[i], 1);
-
-				        halfV = normalize(halfVecs[i]);
-
-				        NdotHV = clamp(dot(n, halfV),0.0, 1.0);
-					
-				        color += pow(NdotHV, 128.0) * specularTex * vec4(lightColors[i], 1);
-				        		//gl_FrontMaterial.specular *
-				                //gl_LightSource[0].specular *
-				                //pow(NdotHV, 90.0);
-				                //pow(NdotHV, gl_FrontMaterial.shininess);
-								//pow(NdotHV, 128.0) * specularTex; // specular omited
-
-						//testColor = pow(NdotHV, 80.0) * specularTex;
-				    }
-
-					//testColor[i] = max(dot(n, lightVector), 0.0);
-				}
+				color += performPhongShading(normalTex, colorTex, specularTex);
 
 			    // hacked gamma correction .. looks good
 			    color.x = pow(color.x, 1.0/2.2);
@@ -465,15 +467,17 @@ public:
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_2D, texSpecular);
 		glUniform1i(texSpecular_u, 3);
+
+		//glEnable(GL_MULTISAMPLE);
 		
 	}
 	mat3 lights = mat3(	0, 2, 0, 	// first light
 						1, 0, 0,  	// second light
 						-1, 0, 0 );	// third light
 
-	mat3 lightColors = mat3(0, 0, 1, 	// first light
-							0, 1, 0,  	// second light
-							1, 0, 0 );	// third light);
+	mat3 lightColors = mat3(0, 0, 0.5, 	// first light
+							0, 0.5, 0,  	// second light
+							0.2, 0, 0 );	// third light);
 
 	override void initPass(int num)
 	{

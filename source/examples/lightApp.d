@@ -129,7 +129,14 @@ int main(string[] argv)
     glfwSetErrorCallback(&errorCallback);
 
     /* Create a windowed mode window and its OpenGL context */
+    //glfwWindowHint(GLFW_SAMPLES, 4);
     window = glfwCreateWindow(800, 600, "Space Shooter 1000", null, null);
+/*
+    GLint bufs, samples;
+glGetIntegerv(GL_SAMPLE_BUFFERS, &bufs);
+glGetIntegerv(GL_SAMPLES, &samples);
+printf("MSAA: buffers = %d samples = %d\n", bufs, samples);
+*/
 
     if (!window)
     {

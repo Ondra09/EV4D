@@ -9,4 +9,7 @@ float gammaCorrection(float light)
 {
 	return pow(light, gamma);
 }
+
+//vec3 color = lightingModel( … );
+//FragColor = vec4( pow( color, vec3(1.0/Gamma) ), 1.0 );
 ";
