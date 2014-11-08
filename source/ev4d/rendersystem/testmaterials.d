@@ -170,6 +170,8 @@ package:
 	GLint texIllum_u;
 	GLint texSpecular_u;
 
+	GLint lightColors_u;
+
 	// tex's id
 	GLuint texColor;
 	GLuint texNormal;
@@ -264,6 +266,8 @@ public:
 			uniform sampler2D texIllum;
 			uniform sampler2D texSpecular;
 
+			uniform mat3 lightColors;
+
 			varying vec4 diffuse, ambient;
 
 			varying mat3 lightVecs;
@@ -323,13 +327,13 @@ public:
 
 					if (NdotL > 0.0)
 					{
-				        color += diffuse * NdotL * colorTex;
+				        color += diffuse * NdotL * colorTex * vec4(lightColors[i], 1);
 
 				        halfV = normalize(halfVecs[i]);
 
 				        NdotHV = clamp(dot(n, halfV),0.0, 1.0);
 					
-				        color += pow(NdotHV, 128.0) * specularTex;
+				        color += pow(NdotHV, 128.0) * specularTex * vec4(lightColors[i], 1);
 				        		//gl_FrontMaterial.specular *
 				                //gl_LightSource[0].specular *
 				                //pow(NdotHV, 90.0);
@@ -377,12 +381,13 @@ public:
 		obtainLocations20!("attributes", "tangent", tangent_a)(shader.program);
 
 		locations = obtainLocations20!"uniforms"(shader.program,["texColor", "texNormal",
-																 "texIllum", "texSpecular"]);
+																 "texIllum", "texSpecular", "lightColors"]);
 
 		texColor_u = locations[0];
 		texNormal_u = locations[1];
 		texIllum_u = locations[2];
 		texSpecular_u = locations[3];
+		lightColors_u = locations[4];
 
 		texColor = loadImage("objects/work/Space Frigate 6/space_frigate_6/space_frigate_6_color.png");
 		texNormal = loadImage("objects/work/Space Frigate 6/space_frigate_6/space_frigate_6 NRM.png");
@@ -465,10 +470,16 @@ public:
 	mat3 lights = mat3(	0, 2, 0, 	// first light
 						1, 0, 0,  	// second light
 						-1, 0, 0 );	// third light
+
+	mat3 lightColors = mat3(0, 0, 1, 	// first light
+							0, 1, 0,  	// second light
+							1, 0, 0 );	// third light);
+
 	override void initPass(int num)
 	{
 		//lights = mat3(0, 0, 0, 0, 0, 0, 0, 0, 0);
 		glUniformMatrix3fv(lightPositionsMatrix_u, 1, GL_FALSE, lights.value_ptr);
+		glUniformMatrix3fv(lightColors_u, 1, GL_FALSE, lightColors.value_ptr);
 	}
 
 	override void renderPass(int num)
