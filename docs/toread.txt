@@ -1,5 +1,6 @@
 ====================
 http://gameprogrammingpatterns.com/
+http://www.pixelprospector.com/
 ====================
 http://gamemechanicexplorer.com/
 http://www.lostgarden.com/2006/10/what-are-game-mechanics.html
