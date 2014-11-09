@@ -349,11 +349,8 @@ public:
 				color += performPhongShading(normalTex, colorTex, specularTex);
 
 			    // hacked gamma correction .. looks good
-			    color.x = pow(color.x, 1.0/2.2);
-			    color.y = pow(color.y, 1.0/2.2);
-			    color.z = pow(color.z, 1.0/2.2);
-			    //color.w = pow(color.w, 1.0/2.2);
-			 
+			    color = vec4( pow( color.xyz, vec3(1.0/2.2) ), color.w );
+
 				gl_FragColor = color + illumTex;
 
 				//gl_FragColor = testColor;

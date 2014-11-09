@@ -9,6 +9,7 @@ import ev4d.rendersystem.renderer;
 import ev4d.rendersystem.renderqueue;
 import ev4d.rendersystem.technique;
 import ev4d.rendersystem.testmaterials;
+import ev4d.rendersystem.lights;
 
 import ev4d.rendersystem.scene;
 
@@ -56,8 +57,11 @@ struct RenderDataTest
 }
 
 SHGraph sceneRoot;
-
 SHGraph fighterNode;
+SHGraph lightPivot0;
+
+PointLight pointLight0;
+Lights lights;
 
 Renderer initScene()
 {
@@ -66,6 +70,7 @@ Renderer initScene()
     Renderer renderer = new Renderer();
 
 	SHGraph camNode;
+    SHGraph light0;
 
     Technique!(SHGraph) tech0 = new Technique!(SHGraph)();
 
@@ -76,6 +81,8 @@ Renderer initScene()
     SHGraph a0 = new SHGraph();
     fighterNode = new SHGraph();
     camNode = new SHGraph();
+    lightPivot0 = new SHGraph();
+    light0 = new SHGraph();
 
     sceneRoot = a0;
 
@@ -86,6 +93,10 @@ Renderer initScene()
     // create an object for this
     a0 ~= fighterNode;
     a0 ~= camNode;
+
+    camNode ~= lightPivot0;
+    lightPivot0 ~= light0; 
+    light0.data.translationM.translate(0, 0, -2);
 
     tech0.scene = a0;
 
@@ -99,6 +110,12 @@ Renderer initScene()
     testImport(vbo);
 
     fighterNode.data.vbo = &vbo;
+
+    // lights init
+    pointLight0.worldMatrix = &light0.data.worldMatrix;
+    pointLight0.color = vec3(1, 1, 0);
+
+    lights.addPointLight(&pointLight0);
 
     return renderer;
 }
@@ -149,11 +166,13 @@ printf("MSAA: buffers = %d samples = %d\n", bufs, samples);
     {
         writeln("Crating context.");
     }
+
     glfwMakeContextCurrent(window);
 
     glfwSetKeyCallback( window, &keyCallback);
 
     DerelictGL.reload();
+
     debug
     {
         writeln("GL binding reload.");
@@ -175,6 +194,8 @@ printf("MSAA: buffers = %d samples = %d\n", bufs, samples);
 
        	// rotate with fighter
         fighterNode.data.rotationM.rotatex(1.0f/180*3.1415924);
+
+        lightPivot0.data.rotationM.rotatex(1.0f/180*3.1415924);
 
         //
         //camNode.data.translationM.translate(0, 0, sum);

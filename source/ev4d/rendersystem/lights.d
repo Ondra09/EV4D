@@ -17,9 +17,9 @@ import gl3n.linalg;
 */
 struct PointLight 
 {
-	vec3* position; 
+	mat4 *worldMatrix;
 
-	vec4 color = vec4(1, 1, 1, 1);
+	vec3 color = vec3(1, 1, 1);
 	/// point light attenuation constants (constant, linear, quadratic)
 	/// att = 1/(kc + kl * d + kq * d^2)
 	/// d = distance(light_position, world_pos);
@@ -38,9 +38,14 @@ public:
 		pointLights ~= *pl;
 	}
 
+	PointLight* getNearestLight()
+	{
+		return pointLights[0];
+	}
+
 	// TODO : implement here some spatial structure if needed
 	// generalize for more lights (e.g.: 3)
-	PointLight* getNearestLight(vec3 position)
+/*	PointLight* getNearestLight(vec3 position)
 	{
 		PointLight* retVal;
 		float dst = float.max;
@@ -57,9 +62,8 @@ public:
 		}
 
 		return retVal;
-	}
+	}*/
 
 private:
 	PointLight[] pointLights;
-
 }
