@@ -7,6 +7,8 @@ import ev4d.rendersystem.renderqueue;
 
 import derelict.opengl3.gl;
 
+import ev4d.rendersystem.lights;
+
 class GeneralTechnique
 {
 private:
@@ -27,7 +29,6 @@ public:
 /**
 	Technique
 */
-
 class Technique(T) : GeneralTechnique
 {
 private:
@@ -40,6 +41,8 @@ public:
 	@property T scene(){ return objectsToRender; }
 	@property T scene(T root){ return objectsToRender = root; }
 
+	Lights lights;
+
 	override void render()
 	{
 		glViewport(cam.viewportX, cam.viewportY, cam.getViewportWidth, cam.getViewportHeight);
@@ -48,7 +51,7 @@ public:
 
 		// inspect scene for aditional techniques
 
-		sortAndRender(sceneView, camera);
+		sortAndRender(sceneView, camera, &lights);
 	}
 
 	override GeneralTechnique[] getRequiredTechniques()

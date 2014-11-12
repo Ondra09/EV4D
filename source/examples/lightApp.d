@@ -61,7 +61,6 @@ SHGraph fighterNode;
 SHGraph lightPivot0;
 
 PointLight pointLight0;
-Lights lights;
 
 Renderer initScene()
 {
@@ -94,7 +93,7 @@ Renderer initScene()
     a0 ~= fighterNode;
     a0 ~= camNode;
 
-    camNode ~= lightPivot0;
+    fighterNode ~= lightPivot0;
     lightPivot0 ~= light0; 
     light0.data.translationM.translate(0, 0, -2);
 
@@ -115,7 +114,7 @@ Renderer initScene()
     pointLight0.worldMatrix = &light0.data.worldMatrix;
     pointLight0.color = vec3(1, 1, 0);
 
-    lights.addPointLight(&pointLight0);
+    tech0.lights.addPointLight(&pointLight0);
 
     return renderer;
 }
@@ -193,7 +192,7 @@ printf("MSAA: buffers = %d samples = %d\n", bufs, samples);
     
 
        	// rotate with fighter
-        fighterNode.data.rotationM.rotatex(1.0f/180*3.1415924);
+        //fighterNode.data.rotationM.rotatex(1.0f/180*3.1415924);
 
         lightPivot0.data.rotationM.rotatex(1.0f/180*3.1415924);
 

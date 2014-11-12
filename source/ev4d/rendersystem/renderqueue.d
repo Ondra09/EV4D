@@ -4,6 +4,7 @@ module ev4d.rendersystem.renderqueue;
 import ev4d.rendersystem.material;
 import ev4d.rendersystem.technique;
 import ev4d.rendersystem.camera;
+import ev4d.rendersystem.lights;
 
 import gl3n.linalg;
 
@@ -24,7 +25,7 @@ interface RenderObject(Matrices)
 }
 */
 
-void sortAndRender(T)(T[] view, Camera cam)
+void sortAndRender(T)(T[] view, Camera cam, Lights *lights)
 {
 	mat4 m_viewMatrix = *cam.viewMatrix;
 	mat4 m_projMatrix = cam.projMatrix;
@@ -37,6 +38,8 @@ void sortAndRender(T)(T[] view, Camera cam)
 
 	m_projMatrix.transpose();
 
+	PointLight *nearestLight = lights.getNearestLight();
+
 	foreach (T a; view)
 	{
 		if (a.material)
@@ -48,6 +51,8 @@ void sortAndRender(T)(T[] view, Camera cam)
 
 				//bindData(a.renderData);
 				bindVBO(a.vbo);
+
+				setLight(nearestLight);
 
 				// set matrices
 				a.material.worldMatrix(m_worldMatrix);

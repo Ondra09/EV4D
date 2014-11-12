@@ -472,14 +472,32 @@ public:
 						1, 0, 0,  	// second light
 						-1, 0, 0 );	// third light
 
-	mat3 lightColors = mat3(0, 0, 0.5, 	// first light
-							0, 0.5, 0,  	// second light
-							0.2, 0, 0 );	// third light);
+	mat3 lightColors = mat3(0, 0, 0, 	// first light
+							0, 0, 0,  	// second light
+							0, 0, 0 );	// third light);
 
 	override void initPass(int num)
 	{
+		
+		vec4 loc = vec4(0, 0, 0, 1);
+		if (light)
+		{
+			loc = loc * (*light.worldMatrix);
+			//loc /= loc.w;
+			//loc.xyz = loc.w;
+
+			lights[0][0] = loc.x;
+		    lights[0][1] = loc.y;
+		    lights[0][2] = loc.z;
+
+		    lightColors[0][0] = light.color.x;
+		    lightColors[0][1] = light.color.y;
+		    lightColors[0][2] = light.color.z;
+		}
+		
 		//lights = mat3(0, 0, 0, 0, 0, 0, 0, 0, 0);
 		glUniformMatrix3fv(lightPositionsMatrix_u, 1, GL_FALSE, lights.value_ptr);
+
 		glUniformMatrix3fv(lightColors_u, 1, GL_FALSE, lightColors.value_ptr);
 	}
 

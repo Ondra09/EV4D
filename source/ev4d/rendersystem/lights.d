@@ -40,7 +40,11 @@ public:
 
 	PointLight* getNearestLight()
 	{
-		return pointLights[0];
+		PointLight *pl = null;
+		if (pointLights.length > 0)
+			pl = &pointLights[0];
+
+		return pl;
 	}
 
 	// TODO : implement here some spatial structure if needed

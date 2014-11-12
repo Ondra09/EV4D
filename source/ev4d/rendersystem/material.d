@@ -2,6 +2,7 @@
 module ev4d.rendersystem.material;
 
 import ev4d.rendersystem.technique;
+import ev4d.rendersystem.lights;
 
 // todo switch to gl2 or gl3
 import derelict.opengl3.gl;
@@ -264,6 +265,7 @@ private:
 	float shininess;
 package:
 	Shader20 shader;
+	PointLight *light;
 protected:
 	VBO* vbo;
 public:
@@ -305,6 +307,11 @@ public:
 	void bindVBO(VBO* nVbo)
 	{
 		vbo = nVbo;
+	}
+
+	void setLight(PointLight* nearestlight)
+	{
+		light = nearestlight;
 	}
 
 	abstract @property GeneralTechnique[] getDependencies();
