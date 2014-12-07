@@ -15,18 +15,34 @@ class Camera
 {
 private: 
 	// view angles
-	float fov;
+	//float fov;
 
 	// Viewport
 	int viewportWidth;
 	int viewportHeight;
 public:
-	this(int width, int height, float fov, float near = 0.5f, float far = 30.0f)
+	/**
+		@param width viewport width
+		@param height viewport height
+	*/
+	this(int width, int height)
 	{
-		this.fov = fov;
 		viewportWidth = width;
 		viewportHeight = height;
+	}
 
+	void createOrtho(float left, float right, float bottom, float top, float near, float far)
+	{
+		projMatrix = mat4.orthographic(left, right, bottom, top, near, far);
+	}
+
+	/**
+		@param fov y field of vision
+		@param near
+		@param far
+	*/
+	void createProjection(float fov, float near = 0.5f, float far = 30.0f)
+	{
 		projMatrix = mat4.perspective(viewportWidth, viewportHeight, fov, near, far);
 	}
 	// TODO : hide implementation detail behind property

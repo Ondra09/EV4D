@@ -15,25 +15,6 @@ enum FighterVBODescr
 	TEXTURE 	// 4 .max
 }
 
-void genBuffers(ref VBO vbo, int num)
-{
-	vbo.vboIDs.reserve(num);
-	vbo.vboIDs.length = num;
-
-	vbo.idxIDs.reserve(num);
-	vbo.idxIDs.length = num;
-
-	//
-	glGenBuffers(num, vbo.vboIDs.ptr);
-	glGenBuffers(num, vbo.idxIDs.ptr);
-}
-
-void delBuffers(ref VBO vbo)
-{
-	glDeleteBuffers(cast(int)vbo.vboIDs.length, vbo.vboIDs.ptr);
-}
-
-
 struct GameVertex_
 {
 	@(3, GL_FLOAT)		// add atribute
@@ -63,7 +44,6 @@ struct GameVertex_
 // maybe write own importer
 bool testImport (ref VBO vbo, string filename = "")
 {
-
 	import std.stdio;
 	import std.path;
 
@@ -91,7 +71,6 @@ bool testImport (ref VBO vbo, string filename = "")
 	GameVertex_ vertex;
 
 	genBuffers(vbo, scene.mNumMeshes);
-	//delBuffers(vbo0);
 
 	//writeln("Num meshes: ", scene.mNumMeshes);
 	// TODO : think more about VBO & meshes when we have more meshes in model.. or across models
@@ -131,12 +110,7 @@ bool testImport (ref VBO vbo, string filename = "")
 			vboContent ~= vertex;
 		}
 
-		glBindBuffer(GL_ARRAY_BUFFER, vbo.vboIDs[i]);
-		glBufferData(GL_ARRAY_BUFFER, GameVertex_.sizeof*vboContent.length, vboContent.ptr, GL_STATIC_DRAW);
-		
-		
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		bindBufferAndData!(GameVertex_)(vbo.vboIDs[i], vboContent);
 
 		indices = [];
 		indices.reserve(mesh.mNumFaces*3);
@@ -149,9 +123,7 @@ bool testImport (ref VBO vbo, string filename = "")
 			indices ~= mesh.mFaces[j].mIndices[2]; 
 		}
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo.idxIDs[i]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, uint.sizeof*indices.length, indices.ptr, GL_STATIC_DRAW);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		bindBufferAndData!(uint)(vbo.idxIDs[i], indices, GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
 
 		// writeln(indices.length);
 	}

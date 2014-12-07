@@ -54,6 +54,9 @@ public:
 		sortAndRender(sceneView, camera, &lights);
 	}
 
+	/**
+	Run through all techniques in materials and return them.
+	*/
 	override GeneralTechnique[] getRequiredTechniques()
 	{
 		GeneralTechnique returnVal[];

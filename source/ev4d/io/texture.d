@@ -4,9 +4,13 @@ module ev4d.io.texture;
 import derelict.opengl3.gl;
 import derelict.freeimage.freeimage;
 
+/**
+Module handles very basic of loading textures.
+*/
+
 /*
 Basically global variables, I think it is ok for now. 
-We don't want to have multiple copyies of texture in applicaiton anywhere across all scenes.
+We don't want to have multiple copies of texture in applicaiton anywhere across all scenes.
 */
 static this()
 {
@@ -28,12 +32,16 @@ struct TexInfo
 	GLuint textID = -1;
 	size_t count;
 }
+
+// this is global over whole application, we don't have same texture twice
 TexInfo[string] textureList;
 
 
 public:
 /**
 	Loads texture given by texName and buffers it. If texture is loaded multiple time only buffered GLuint is returned.
+
+	@return GLuint identifier of texture in OpenGL context ready for binding.
 */
 GLuint loadImage(const char* texName, bool generateMipMaps = false)
 {
@@ -67,7 +75,6 @@ GLuint loadImage(const char* texName, bool generateMipMaps = false)
 		}
 	}
 	
-	//if (texture == 0)
 	{
 	    FIBITMAP* bitmap = FreeImage_Load(FreeImage_GetFileType(texName, 0),texName, PNG_DEFAULT);
 	    assert(bitmap);

@@ -14,6 +14,44 @@ struct VBO
 	uint[] idxIDs;
 }
 
+/**
+Generates OpenGL vertex buffers. Index and vertexbuffer;
+*/
+void genBuffers(ref VBO vbo, int num)
+{
+	vbo.vboIDs.reserve(num);
+	vbo.vboIDs.length = num;
+
+	vbo.idxIDs.reserve(num);
+	vbo.idxIDs.length = num;
+
+	//
+	glGenBuffers(num, vbo.vboIDs.ptr);
+	glGenBuffers(num, vbo.idxIDs.ptr);
+}
+/**
+Deletes OpenGL vertex buffers.
+*/
+void delBuffers(ref VBO vbo)
+{
+	glDeleteBuffers(cast(int)vbo.vboIDs.length, vbo.vboIDs.ptr);
+}
+
+/**
+Binds data array to apropriate bufferID
+@param vboId vbo's id to bind the data
+@param vArray array holding the data
+@param target same as in glBufferData target.
+@param usage same as in glBufferData usage.
+*/
+void bindBufferAndData(Vertex)(	GLuint vboId, Vertex[] vArray, 
+								GLenum target = GL_ARRAY_BUFFER, GLenum usage = GL_STATIC_DRAW)
+{
+	glBindBuffer(target, vboId);
+	glBufferData(target, Vertex.sizeof*vArray.length, vArray.ptr, usage);
+	glBindBuffer(target, 0);
+}
+
 void bindVertexAttrib20(Vertex, string field)(int attribLocation, bool normalized = false)
 {
 	static if (__traits(hasMember, Vertex, field)) // tangents

@@ -4,14 +4,14 @@ import ev4d.scenegraph.hierarchygraph;
 import ev4d.scenegraph.simplespatial;
 
 import ev4d.rendersystem.camera;
+import ev4d.rendersystem.lights;
 import ev4d.rendersystem.material;
 import ev4d.rendersystem.renderer;
 import ev4d.rendersystem.renderqueue;
+import ev4d.rendersystem.scene;
 import ev4d.rendersystem.technique;
 import ev4d.rendersystem.testmaterials;
-import ev4d.rendersystem.lights;
-
-import ev4d.rendersystem.scene;
+import ev4d.rendersystem.text;
 
 // model loading handling
 import ev4d.io.model;
@@ -73,7 +73,8 @@ Renderer initScene()
 
     Technique!(SHGraph) tech0 = new Technique!(SHGraph)();
 
-    Camera cam = new Camera(800, 600, 90);
+    Camera cam = new Camera(800, 600);
+    cam.createProjection(90);
 
     tech0.camera = cam; 
 
@@ -115,6 +116,20 @@ Renderer initScene()
     pointLight0.color = vec3(1, 1, 0);
 
     tech0.lights.addPointLight(&pointLight0);
+
+    // screen space text
+    Technique!(SHGraph) tech1 = new Technique!(SHGraph)();
+
+    Camera cam1 = new Camera(800, 600);
+    cam1.createOrtho(-1, 1, -0.75, 0.75, 1, 30);
+
+    // load text file
+    Font font = new Font();
+    font.loadTextData("objects/OpenSans-Regular.json");
+
+    VBO vbo;
+    font.createTextVBO(vbo, "sedmero kokotů
+        a +ěščžýáíé");
 
     return renderer;
 }
@@ -185,12 +200,11 @@ printf("MSAA: buffers = %d samples = %d\n", bufs, samples);
 
     Renderer renderer = initScene();
     fighterNode.data.translationM = mat4.translation(0, 0.0, -1.6);
+
     //fighterNode.data.rotationM.rotatex(-105.0f/180*3.1415924);
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
-    
-
        	// rotate with fighter
         //fighterNode.data.rotationM.rotatex(1.0f/180*3.1415924);
 
