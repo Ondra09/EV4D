@@ -27,6 +27,7 @@ import ev4d.mesh.generator;
 import gl3n.linalg;
 
 VBO vbo; // fighter
+VBO vboText; // text0
 
 extern (C) nothrow 
 {
@@ -117,19 +118,39 @@ Renderer initScene()
 
     tech0.lights.addPointLight(&pointLight0);
 
+    // BUG: this code causes invalid memory at applicaiton exit
     // screen space text
     Technique!(SHGraph) tech1 = new Technique!(SHGraph)();
 
-    Camera cam1 = new Camera(800, 600);
-    cam1.createOrtho(-1, 1, -0.75, 0.75, 1, 30);
+    Camera uiCam = new Camera(800, 600);
+    uiCam.createOrtho(0, 800, 0, 600, 1, 30);
 
+    tech1.camera = uiCam;
+
+    SHGraph uiSHroot = new SHGraph();
+    uiSHroot.data.translationM.translate(0, 0, 3); // 
+    tech1.scene = uiSHroot;
+
+    uiCam.viewMatrix =  &uiSHroot.data.worldMatrix;
+
+    renderer.techniques ~= tech1;
+
+/*
+    TODO: add material here with text rendering and create maybe helper function that creates text from
+    given font, create scene node and puts it on appropriate screen loacation (transformation)
+*/
     // load text file
     Font font = new Font();
     font.loadTextData("objects/OpenSans-Regular.json");
 
-    VBO vbo;
-    font.createTextVBO(vbo, "sedmero kokotů
-        a +ěščžýáíé");
+    //font.createTextVBO(vboText, "sedmero krkavců ąß∂‘’łėę€œ∑´®†¥¨ˆøπø«æ…¬˚∆˙©ƒ∂ßåΩ≈ç√∫˜µ≤≥a +ěščžýáíé");
+    font.createTextVBO(vboText, "ěščžýáíé");
+
+    TextShader!(GlyphVertex_) textShader = new TextShader!(GlyphVertex_)();
+    uiSHroot.data.vbo = &vboText;
+    uiSHroot.data.material = textShader;
+
+    //recomputeTransformations(uiSHroot);
 
     return renderer;
 }
@@ -224,7 +245,7 @@ printf("MSAA: buffers = %d samples = %d\n", bufs, samples);
             sum *= -1;
         }
 
-        recomputeTransformations(sceneRoot);
+        recomputeTransformations(sceneRoot); // for multiple roots? all techniques
         renderer.render();
 
         /* Swap front and back buffers */

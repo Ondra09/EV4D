@@ -12,6 +12,7 @@ struct VBO
 {
 	GLuint[] vboIDs;
 	uint[] idxIDs;
+	int[] itemsCount;
 }
 
 /**
@@ -24,6 +25,9 @@ void genBuffers(ref VBO vbo, int num)
 
 	vbo.idxIDs.reserve(num);
 	vbo.idxIDs.length = num;
+
+	vbo.itemsCount.reserve(num);
+	vbo.itemsCount.length = num;
 
 	//
 	glGenBuffers(num, vbo.vboIDs.ptr);
@@ -344,6 +348,7 @@ public:
 
 	void bindVBO(VBO* nVbo)
 	{
+		assert(nVbo != null);
 		vbo = nVbo;
 	}
 
@@ -364,7 +369,7 @@ public:
 
 	abstract void cleanUp();
 }
-
+// TODO : create general material that is binding shader values automatically based on its named variables?
 class SimpleMaterial(RenderData): Material
 {
 private:

@@ -507,8 +507,8 @@ public:
 		//lights[0][1] += 0.1;
 
 		////////////////////////////////////////////////////////////////////////////////	
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo.idxIDs[0]); // remove this bind pbly
-		glDrawElements(GL_TRIANGLES, 894, GL_UNSIGNED_INT, null);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo.idxIDs[0]); //
+		glDrawElements(GL_TRIANGLES, vbo.itemsCount[0], GL_UNSIGNED_INT, null);
 	}
 
 	override void cleanUpPass(int num)
@@ -521,5 +521,156 @@ public:
 		cleanUpVBOPointers20!(BindVertex)();
 
 		glDisableVertexAttribArray(tangent_a);
+	}
+}
+
+/**
+Shader for text rendering
+*/
+class TextShader(BindVertex) : Material
+{
+package:
+	// shader uniforms
+	GLint modelMatrix_u;
+	GLint viewMatrix_u;
+	GLint projectionMatrix_u;
+
+	// fragment shader's uniforms
+	GLint color_u;
+	GLint buffer_u;
+	GLint gamma_u;
+
+	// tex's uniforms
+	GLint texDstMap_u;
+
+	// tex's id
+	GLuint texDstMap;
+
+public:
+	this()
+	{
+		import std.string: toStringz;
+
+		immutable(char)* vss = (r"
+			uniform mat4 modelMatrix;
+			uniform mat4 viewMatrix;
+			uniform mat4 projectionMatrix;
+
+			void main()
+			{
+				gl_Position    = projectionMatrix * viewMatrix * modelMatrix * (gl_Vertex + vec4(250, 250, -3, 0));
+
+				gl_TexCoord[0] = gl_MultiTexCoord0;
+			}
+			".toStringz());
+
+		immutable(char)* fss = (r"
+			// Eastern Wolf @ 2014
+
+			uniform sampler2D u_texture;
+			uniform vec4 u_color;
+			uniform float u_buffer;
+			uniform float u_gamma;
+
+			//varying vec2 v_texcoord;
+
+			void main() 
+			{
+			    float dist = texture2D(u_texture, gl_TexCoord[0].st).r;
+			    float alpha = smoothstep(u_buffer - u_gamma, u_buffer + u_gamma, dist);
+				vec4 f_color = u_color;
+
+				// black halo
+				//f_color.rgb = u_color.rgb * step(u_buffer+0.01 , dist);
+				
+			    gl_FragColor = vec4(f_color.rgb, alpha * u_color.a);
+
+			    //gl_FragColor = vec4(1,1,1,1);
+			}
+			".toStringz());
+
+		createAndBindShader20(shader.program, shader.vshader, shader.fshader, vss, fss);
+
+		GLuint[] locations;
+
+		locations = obtainLocations20!"uniforms"(shader.program, ["modelMatrix", "viewMatrix", "projectionMatrix"]);
+
+		modelMatrix_u = locations[0];
+		viewMatrix_u = locations[1];
+		projectionMatrix_u = locations[2];
+
+		locations = obtainLocations20!"uniforms"(shader.program,["u_texture", "u_color",
+																 "u_buffer", "u_gamma"]);
+
+		texDstMap_u = locations[0];
+		color_u = locations[1];
+		buffer_u = locations[2];
+		gamma_u = locations[3];
+
+		texDstMap = loadImage("objects/OpenSans-Regular.png");
+	}
+
+	~this()
+	{
+		destroyShader20(shader.program, shader.vshader, shader.fshader);
+
+		deleteTexture("objects/OpenSans-Regular.png");
+	}
+
+
+	override @property GeneralTechnique[] getDependencies() const pure nothrow
+	{
+		return null;
+	}
+
+	override void initMaterial()
+	{ 
+		glBindBuffer(GL_ARRAY_BUFFER, vbo.vboIDs[0]);	
+		setVBOVertexPointers20!(BindVertex)();
+
+		glUseProgram(shader.program);
+
+		glUniformMatrix4fv(modelMatrix_u, 1, GL_FALSE, worldMatrix.value_ptr);
+		glUniformMatrix4fv(viewMatrix_u, 1, GL_FALSE, viewMatrix.value_ptr);
+		glUniformMatrix4fv(projectionMatrix_u, 1, GL_FALSE, projectionMatrix.value_ptr);
+
+		//
+		glUniform4f(color_u, 1, 0, 0, 1);
+		glUniform1f(buffer_u, 0.677f);
+		glUniform1f(gamma_u, 0.041f);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texDstMap);
+		glUniform1i(texDstMap_u, 0);
+
+		glEnable (GL_BLEND);
+		glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		
+		//glDisable(GL_DEPTH_TEST);
+		glDepthMask(GL_FALSE);
+	}
+
+	override void initPass(int num)
+	{
+	}
+
+	override void renderPass(int num)
+	{ 		
+		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo.idxIDs[0]);
+		//glDrawElements(GL_TRIANGLES, 894, GL_UNSIGNED_INT, null);
+
+		glDrawArrays(GL_TRIANGLES, 0, vbo.itemsCount[0]);
+	}
+
+	override void cleanUpPass(int num)
+	{
+	}
+
+	override void cleanUp()
+	{
+		glDepthMask(GL_TRUE);
+		//glEnable(GL_DEPTH_TEST);
+		glDisable (GL_BLEND);
+		cleanUpVBOPointers20!(BindVertex)();
 	}
 }

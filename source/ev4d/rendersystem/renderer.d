@@ -19,7 +19,7 @@ public:
 	{
 		// let's go through all techniques and solve dependencies
 		//foreach(GeneralTechnique t; techniques)
-		
+
 		GeneralTechnique[] techSlice = techniques;
 		techniquesToRender = [];
 
@@ -36,7 +36,6 @@ public:
 			techSlice = techSlice[1..$];
 		}
 
-
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
@@ -48,7 +47,7 @@ public:
 			{
 				t.setupCamera();
 			}
-
+			
 			t.render();
 		}
 

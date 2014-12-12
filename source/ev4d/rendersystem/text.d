@@ -74,37 +74,54 @@ private:
 				import std.stdio;
 				writeln(character, *glyph, " > ", advance, " bearingX/Y", advance + glyph.bearingX, "/", glyph.bearingY);
 				
-				GlyphVertex_ coords[4];
+				GlyphVertex_ coords[6];
+
+				float top = buffer + glyph.bearingY;
+				float height = glyph.height + buffer * 2;
 
 				coords[0].x = advance - buffer + glyph.bearingX; // top left
-				coords[0].y = 0 - buffer - glyph.bearingY;
+				coords[0].y = 0 + top;
 				coords[0].z = 0;
 
 				coords[0].u = glyph.texU;
 				coords[0].v = glyph.texV;
 
 				coords[1].x = advance - buffer + glyph.bearingX; // bottom left
-				coords[1].y = 0 + buffer - glyph.bearingY + glyph.height;
+				coords[1].y = 0 + top - height;
 				coords[1].z = 0;
 
 				coords[1].u = glyph.texU;
-				coords[1].v = glyph.texU + glyph.height + 2 * buffer;
+				coords[1].v = glyph.texV + glyph.height + 2 * buffer;
 
 				coords[2].x = advance + glyph.width + buffer + glyph.bearingX; // bottom right
-				coords[2].y = 0 + buffer - glyph.bearingY + glyph.height;
+				coords[2].y = 0 + top - height;
 				coords[2].z = 0;
 
 				coords[2].u = glyph.texU + glyph.width + 2 * buffer;
-				coords[2].v = glyph.texU + glyph.height + 2 * buffer;
+				coords[2].v = glyph.texV + glyph.height + 2 * buffer;
 
-				coords[3].x = advance + glyph.width + buffer + + glyph.bearingX; // top right
-				coords[3].y = 0 - buffer - glyph.bearingY;
+				coords[3].x = advance + glyph.width + buffer + glyph.bearingX; // bottom right
+				coords[3].y = 0 + top - height;
 				coords[3].z = 0;
 
 				coords[3].u = glyph.texU + glyph.width + 2 * buffer;
-				coords[3].v = glyph.texV;
+				coords[3].v = glyph.texV + glyph.height + 2 * buffer;
 
-				advance += glyph.advanceX;
+				coords[4].x = advance + glyph.width + buffer + + glyph.bearingX; // top right
+				coords[4].y = 0 + top;
+				coords[4].z = 0;
+
+				coords[4].u = glyph.texU + glyph.width + 2 * buffer;
+				coords[4].v = glyph.texV;
+
+				coords[5].x = advance - buffer + glyph.bearingX; // top left
+				coords[5].y = 0 + top;
+				coords[5].z = 0;
+
+				coords[5].u = glyph.texU;
+				coords[5].v = glyph.texV;
+
+				advance += glyph.advanceX;// +buffer;
 
 				retBuffer ~= coords;
 			}
@@ -132,11 +149,18 @@ private:
 		{
 			usage = GL_DYNAMIC_DRAW;
 		}
-		
 
 		GlyphVertex_[] buffer = createTextBuffer(text);
 
+		foreach(ref GlyphVertex_ v; buffer)
+		{
+			v.u /= 512.0f;
+			v.v /= 1024.0f;
+			v.v = 1.0 - v.v;
+		}
+
 		bindBufferAndData!(GlyphVertex_)(vbo.vboIDs[0], buffer, GL_ARRAY_BUFFER, usage);
+		vbo.itemsCount[0] = cast(int)buffer.length;
 
 		// no index buffer, draw as quads
 		return buffer.length;

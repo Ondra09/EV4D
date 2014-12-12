@@ -49,8 +49,6 @@ public:
 
 		auto sceneView = objectsToRender.getView();
 
-		// inspect scene for aditional techniques
-
 		sortAndRender(sceneView, camera, &lights);
 	}
 

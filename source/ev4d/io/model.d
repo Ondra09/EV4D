@@ -123,6 +123,7 @@ bool testImport (ref VBO vbo, string filename = "")
 			indices ~= mesh.mFaces[j].mIndices[2]; 
 		}
 
+		vbo.itemsCount[i] = cast(int)indices.length;
 		bindBufferAndData!(uint)(vbo.idxIDs[i], indices, GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
 
 		// writeln(indices.length);

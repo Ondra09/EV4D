@@ -27,6 +27,7 @@ interface RenderObject(Matrices)
 
 void sortAndRender(T)(T[] view, Camera cam, Lights *lights)
 {
+	assert(cam.viewMatrix, "View Matrix was not set.");
 	mat4 m_viewMatrix = *cam.viewMatrix;
 	mat4 m_projMatrix = cam.projMatrix;
 
@@ -52,7 +53,9 @@ void sortAndRender(T)(T[] view, Camera cam, Lights *lights)
 				//bindData(a.renderData);
 				bindVBO(a.vbo);
 
-				setLight(nearestLight);
+				{
+					setLight(nearestLight);
+				}
 
 				// set matrices
 				a.material.worldMatrix(m_worldMatrix);
