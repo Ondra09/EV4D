@@ -392,7 +392,6 @@ public:
 
 	override void initMaterial()
 	{ 
-		//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 		if (renderData is null)
 			return;
 		glEnableClientState(GL_VERTEX_ARRAY);

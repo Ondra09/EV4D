@@ -9,6 +9,7 @@ import gl3n.linalg;
 
 import ev4d.io.texture;
 
+import std.string: toStringz;
 
 class SimpleShader(BindVertex) : Material
 {
@@ -529,6 +530,8 @@ Shader for text rendering
 */
 class TextShader(BindVertex) : Material
 {
+private: 
+	string textureName_;
 package:
 	// shader uniforms
 	GLint modelMatrix_u;
@@ -547,9 +550,9 @@ package:
 	GLuint texDstMap;
 
 public:
-	this()
+	this(string textureName)
 	{
-		import std.string: toStringz;
+		textureName_ = textureName;
 
 		immutable(char)* vss = (r"
 			uniform mat4 modelMatrix;
@@ -558,7 +561,7 @@ public:
 
 			void main()
 			{
-				gl_Position    = projectionMatrix * viewMatrix * modelMatrix * (gl_Vertex + vec4(250, 250, -3, 0));
+				gl_Position    = projectionMatrix * viewMatrix * modelMatrix * gl_Vertex;
 
 				gl_TexCoord[0] = gl_MultiTexCoord0;
 			}
@@ -584,8 +587,6 @@ public:
 				//f_color.rgb = u_color.rgb * step(u_buffer+0.01 , dist);
 				
 			    gl_FragColor = vec4(f_color.rgb, alpha * u_color.a);
-
-			    //gl_FragColor = vec4(1,1,1,1);
 			}
 			".toStringz());
 
@@ -607,14 +608,14 @@ public:
 		buffer_u = locations[2];
 		gamma_u = locations[3];
 
-		texDstMap = loadImage("objects/OpenSans-Regular.png");
+		texDstMap = loadImage(textureName_.toStringz());
 	}
 
 	~this()
 	{
 		destroyShader20(shader.program, shader.vshader, shader.fshader);
 
-		deleteTexture("objects/OpenSans-Regular.png");
+		deleteTexture(textureName_.toStringz());
 	}
 
 
@@ -637,7 +638,7 @@ public:
 		//
 		glUniform4f(color_u, 1, 0, 0, 1);
 		glUniform1f(buffer_u, 0.677f);
-		glUniform1f(gamma_u, 0.041f);
+		glUniform1f(gamma_u, 0.071f);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texDstMap);

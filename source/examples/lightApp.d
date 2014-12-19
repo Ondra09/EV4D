@@ -18,6 +18,7 @@ import ev4d.io.model;
 import ev4d.io.texture;
 
 import std.c.stdio;
+import std.datetime;
 
 import derelict.glfw3.glfw3;
 import derelict.opengl3.gl;
@@ -27,7 +28,9 @@ import ev4d.mesh.generator;
 import gl3n.linalg;
 
 VBO vbo; // fighter
-VBO vboText; // text0
+VBO vboText[6];
+
+Font font; // test font
 
 extern (C) nothrow 
 {
@@ -74,7 +77,7 @@ Renderer initScene()
 
     Technique!(SHGraph) tech0 = new Technique!(SHGraph)();
 
-    Camera cam = new Camera(800, 600);
+    Camera cam = new Camera(1024, 768);
     cam.createProjection(90);
 
     tech0.camera = cam; 
@@ -122,16 +125,18 @@ Renderer initScene()
     // screen space text
     Technique!(SHGraph) tech1 = new Technique!(SHGraph)();
 
-    Camera uiCam = new Camera(800, 600);
-    uiCam.createOrtho(0, 800, 0, 600, 1, 30);
+    Camera uiCam = new Camera(1024, 768);
+    uiCam.createOrtho(0, 1024, 0, 768, 1, 30);
 
     tech1.camera = uiCam;
 
     SHGraph uiSHroot = new SHGraph();
-    uiSHroot.data.translationM.translate(0, 0, 3); // 
+    SHGraph orthoCamSH = new SHGraph();
+    orthoCamSH.data.translationM.translate(0, 0, 2); // 
     tech1.scene = uiSHroot;
+    uiSHroot ~= orthoCamSH;
 
-    uiCam.viewMatrix =  &uiSHroot.data.worldMatrix;
+    uiCam.viewMatrix =  &orthoCamSH.data.worldMatrix;
 
     renderer.techniques ~= tech1;
 
@@ -140,17 +145,31 @@ Renderer initScene()
     given font, create scene node and puts it on appropriate screen loacation (transformation)
 */
     // load text file
-    Font font = new Font();
-    font.loadTextData("objects/OpenSans-Regular.json");
+    font = createFont("objects/OpenSans-Regular.json");
+    TextShader!(GlyphVertex_) textShader = new TextShader!(GlyphVertex_)("objects/OpenSans-Regular.png");
 
-    //font.createTextVBO(vboText, "sedmero krkavců ąß∂‘’łėę€œ∑´®†¥¨ˆøπø«æ…¬˚∆˙©ƒ∂ßåΩ≈ç√∫˜µ≤≥a +ěščžýáíé");
-    font.createTextVBO(vboText, "ěščžýáíé");
+    SHGraph textSH[6];
+    textSH[0] = font.createTextNode!(SHGraph)(vboText[0], "sedmero krkavců ∑´®†¥¨ˆøπø«æ…¬˚∆˙©ƒ∂ßåΩ≈ç√∫˜µ≤≥a +ěščžýáíé", textShader, true);
+    textSH[1] = font.createTextNode!(SHGraph)(vboText[1], "ěščžýáíé", textShader);
+    textSH[2] = font.createTextNode!(SHGraph)(vboText[2], "aaadsfafs", textShader);
+    textSH[3] = font.createTextNode!(SHGraph)(vboText[3], "ddsf dsfdfs dsf", textShader);
+    textSH[4] = font.createTextNode!(SHGraph)(vboText[4], "mezera mezera !1!", textShader);
+    textSH[5] = font.createTextNode!(SHGraph)(vboText[5], "**&^$%^&*", textShader);
 
-    TextShader!(GlyphVertex_) textShader = new TextShader!(GlyphVertex_)();
-    uiSHroot.data.vbo = &vboText;
-    uiSHroot.data.material = textShader;
 
-    //recomputeTransformations(uiSHroot);
+    textSH[0].data.rotationM.rotatez(30.0f/180*3.1415924);
+    textSH[1].data.rotationM.translate(100, 100, 0);
+    
+    textSH[2].data.rotationM.rotatez(-70.0f/180*3.1415924);
+    textSH[2].data.rotationM.translate(230, 133, 0);
+
+    textSH[3].data.rotationM.translate(330, 533, 0);
+    textSH[4].data.rotationM.translate(30, 533, 0);
+    textSH[5].data.rotationM.translate(630, 333, 0);
+
+    uiSHroot ~= textSH;
+
+    recomputeTransformations(uiSHroot);
 
     return renderer;
 }
@@ -222,6 +241,9 @@ printf("MSAA: buffers = %d samples = %d\n", bufs, samples);
     Renderer renderer = initScene();
     fighterNode.data.translationM = mat4.translation(0, 0.0, -1.6);
 
+    double timeStart = glfwGetTime();
+    int frameCounter = 0;
+
     //fighterNode.data.rotationM.rotatex(-105.0f/180*3.1415924);
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -253,6 +275,19 @@ printf("MSAA: buffers = %d samples = %d\n", bufs, samples);
 
         /* Poll for and process events */
         glfwPollEvents();
+
+        frameCounter++;
+
+        if ( (glfwGetTime()-timeStart) > 1)
+        {
+            timeStart = glfwGetTime();
+            //writeln("FPS: ",frameCounter);
+            // 
+            import std.conv;
+            font.createTextVBO(vboText[0], "FPS: "~to!(string)(frameCounter), true);
+
+            frameCounter = 0;
+        }
     }
     
     //a1.data.material = null;a1.data.vbo = null;

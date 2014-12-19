@@ -41,7 +41,7 @@ struct GlyphVertex_
 	Every text has now its own buffer.
 
 	OPTIM: create some buffer where all text is shared. This would pbly need to split sceenspace/3D font rendering
-	 		for optimal removing/deleting and creting new tex.
+	 		for optimal removing/deleting and creting new text.
 */
 class Font
 {
@@ -54,6 +54,10 @@ private:
 	int buffer;
 
 	Glyph[immutable(dchar)] glyphMap;
+
+	/// texture atlas size, set default size too
+	float textureWidth_ = 512.0f;
+	float textureHeight_ = 1024.0f;
 
 	/**
 	Creates buffer of vertexes for given text.
@@ -71,8 +75,8 @@ private:
 
 			if (glyph)
 			{
-				import std.stdio;
-				writeln(character, *glyph, " > ", advance, " bearingX/Y", advance + glyph.bearingX, "/", glyph.bearingY);
+				//import std.stdio;
+				//writeln(character, *glyph, " > ", advance, " bearingX/Y", advance + glyph.bearingX, "/", glyph.bearingY);
 				
 				GlyphVertex_ coords[6];
 
@@ -131,9 +135,34 @@ private:
 	}
 
 	public:
-	
 	/**
-	Crates VBO for given text rendering. Don't use Index buffer use GL_QUADS for draw instead.
+		@returns texture atlas width
+	*/
+	@property float textureWidth() pure nothrow
+	{
+		return textureWidth_;
+	}
+
+	@property float textureWidth(float width)
+	{
+		return textureWidth_ = width;
+	}
+
+	/**
+		@returns texture atlas height
+	*/
+	@property float textureHeight() pure nothrow
+	{
+		return textureHeight_;
+	}
+
+	@property float textureHeight(float height)
+	{
+		return textureHeight_ = height;
+	}
+
+	/**
+	Crates VBO for given text rendering. Don't use Index buffer use GL_TRIANGLES for draw instead.
 	@returns number of quads to render
 	*/
 	size_t createTextVBO(ref VBO vbo, inout string text, bool dynamic = false)
@@ -154,9 +183,9 @@ private:
 
 		foreach(ref GlyphVertex_ v; buffer)
 		{
-			v.u /= 512.0f;
-			v.v /= 1024.0f;
-			v.v = 1.0 - v.v;
+			v.u /= textureWidth_;
+			v.v /= textureHeight_;
+			v.v = 1.0 - v.v;	// 0,0 is bottom left
 		}
 
 		bindBufferAndData!(GlyphVertex_)(vbo.vboIDs[0], buffer, GL_ARRAY_BUFFER, usage);
@@ -166,6 +195,26 @@ private:
 		return buffer.length;
 	}
 
+}
+
+Font createFont(string fontFile)
+{
+	Font font = new Font();
+	font.loadTextData(fontFile);
+
+	return font;
+}
+
+Node createTextNode(Node)(Font font, ref VBO vboText, inout string text, Material shader, bool dynamic = false)
+{
+	font.createTextVBO(vboText, text, dynamic);
+	
+	Node textNode = new Node();
+
+	textNode.data.material = shader;
+    textNode.data.vbo = &vboText;
+
+	return textNode;
 }
 
 /**

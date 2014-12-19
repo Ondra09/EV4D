@@ -50,7 +50,6 @@ void sortAndRender(T)(T[] view, Camera cam, Lights *lights)
 				mat4 m_worldMatrix = a.worldMatrix;
 				m_worldMatrix.transpose();
 
-				//bindData(a.renderData);
 				bindVBO(a.vbo);
 
 				{
