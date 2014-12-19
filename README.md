@@ -4,10 +4,12 @@ EV4D
 D language rendering engine.
 
 Currently working on:
-* Bump shader, text shader rendering, fog shader, gamma shader integration.
+* Sorting of render queue.
+* Fog shader, gamma shader integration.
 * Multiple lights support.
 
 In near future:
+* Deffered rendering.
 * Very basic collisions
 * Input handling.
 * Tech demo0
