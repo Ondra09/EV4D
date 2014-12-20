@@ -103,9 +103,9 @@ public:
 		//glMultMatrixf(mworldMatrix.value_ptr);
 		glUseProgram(shader.program);
 
-		glUniformMatrix4fv(modelMatrix_u, 1, GL_FALSE, worldMatrix.value_ptr);
-		glUniformMatrix4fv(viewMatrix_u, 1, GL_FALSE, viewMatrix.value_ptr);
-		glUniformMatrix4fv(projectionMatrix_u, 1, GL_FALSE, projectionMatrix.value_ptr);
+		glUniformMatrix4fv(modelMatrix_u, 1, GL_TRUE, worldMatrix.value_ptr);
+		glUniformMatrix4fv(viewMatrix_u, 1, GL_TRUE, viewMatrix.value_ptr);
+		glUniformMatrix4fv(projectionMatrix_u, 1, GL_TRUE, projectionMatrix.value_ptr);
 
 		//
 		glUniform4f(customC, 1, 0, 1, 1);
@@ -432,17 +432,17 @@ public:
 		//glMultMatrixf(mworldMatrix.value_ptr);
 		glUseProgram(shader.program);
 
-		mat4 modelViewMatrix = worldMatrix * viewMatrix;
-		mat4 modelViewProjectionMatrix = worldMatrix * viewMatrix * projectionMatrix;
+		mat4 modelViewMatrix = viewMatrix * worldMatrix;
+		mat4 modelViewProjectionMatrix = projectionMatrix * viewMatrix * worldMatrix;
 
 		mat4 normalMatrix = modelViewMatrix.inverse();
 		normalMatrix.transpose();
 
-		glUniformMatrix4fv(modelViewMatrix_u, 1, GL_FALSE, modelViewMatrix.value_ptr);
-		glUniformMatrix4fv(modelViewProjectionMatrix_u, 1, GL_FALSE, modelViewProjectionMatrix.value_ptr);
+		glUniformMatrix4fv(modelViewMatrix_u, 1, GL_TRUE, modelViewMatrix.value_ptr);
+		glUniformMatrix4fv(modelViewProjectionMatrix_u, 1, GL_TRUE, modelViewProjectionMatrix.value_ptr);
 		// GL_TRUE to have transpose matrix
 		// mat4 normalMatrix = transpose(inverse(modelView));
-		glUniformMatrix4fv(normalMatrix_u, 1, GL_FALSE, normalMatrix.value_ptr);
+		glUniformMatrix4fv(normalMatrix_u, 1, GL_TRUE, normalMatrix.value_ptr);
 
 		/*import std.stdio;
 		writeln("MM: ", modelViewMatrix);
@@ -631,9 +631,9 @@ public:
 
 		glUseProgram(shader.program);
 
-		glUniformMatrix4fv(modelMatrix_u, 1, GL_FALSE, worldMatrix.value_ptr);
-		glUniformMatrix4fv(viewMatrix_u, 1, GL_FALSE, viewMatrix.value_ptr);
-		glUniformMatrix4fv(projectionMatrix_u, 1, GL_FALSE, projectionMatrix.value_ptr);
+		glUniformMatrix4fv(modelMatrix_u, 1, GL_TRUE, worldMatrix.value_ptr);
+		glUniformMatrix4fv(viewMatrix_u, 1, GL_TRUE, viewMatrix.value_ptr);
+		glUniformMatrix4fv(projectionMatrix_u, 1, GL_TRUE, projectionMatrix.value_ptr);
 
 		//
 		glUniform4f(color_u, 1, 0, 0, 1);

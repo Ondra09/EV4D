@@ -100,7 +100,7 @@ Renderer initScene()
 
     fighterNode ~= lightPivot0;
     lightPivot0 ~= light0; 
-    light0.data.translationM.translate(0, 0, -2);
+    light0.data.translationM.translate(0, 0, -3);
 
     tech0.scene = a0;
 
@@ -117,12 +117,11 @@ Renderer initScene()
 
     // lights init
     pointLight0.worldMatrix = &light0.data.worldMatrix;
-    pointLight0.color = vec3(1, 1, 0);
+    pointLight0.color = vec3(1, 1, 0.2);
 
     tech0.lights.addPointLight(&pointLight0);
 
-    // BUG: this code causes invalid memory at applicaiton exit
-    // screen space text
+    // screen space text + ui
     Technique!(SHGraph) tech1 = new Technique!(SHGraph)();
 
     Camera uiCam = new Camera(1024, 768);
@@ -239,7 +238,7 @@ printf("MSAA: buffers = %d samples = %d\n", bufs, samples);
     float sum = 0.01;
 
     Renderer renderer = initScene();
-    fighterNode.data.translationM = mat4.translation(0, 0.0, -1.6);
+    fighterNode.data.translationM = mat4.translation(0, 0.0, -2.6);
 
     double timeStart = glfwGetTime();
     int frameCounter = 0;
@@ -249,11 +248,10 @@ printf("MSAA: buffers = %d samples = %d\n", bufs, samples);
     while (!glfwWindowShouldClose(window))
     {
        	// rotate with fighter
-        //fighterNode.data.rotationM.rotatex(1.0f/180*3.1415924);
+        fighterNode.data.rotationM.rotatey(1.0f/180*3.1415924);
 
         lightPivot0.data.rotationM.rotatex(1.0f/180*3.1415924);
 
-        //
         //camNode.data.translationM.translate(0, 0, sum);
 
         translate += sum;

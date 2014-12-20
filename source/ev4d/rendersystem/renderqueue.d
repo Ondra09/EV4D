@@ -35,9 +35,9 @@ void sortAndRender(T)(T[] view, Camera cam, Lights *lights)
 	//								[ 0	   0    0    1 ]					
 	// because camera transforms are invert to model ones
 	m_viewMatrix.invert();	
-	m_viewMatrix.transpose();
+	//m_viewMatrix.transpose();
 
-	m_projMatrix.transpose();
+	//m_projMatrix.transpose();
 
 	PointLight *nearestLight = lights.getNearestLight();
 
@@ -48,7 +48,7 @@ void sortAndRender(T)(T[] view, Camera cam, Lights *lights)
 			with(a.material)
 			{
 				mat4 m_worldMatrix = a.worldMatrix;
-				m_worldMatrix.transpose();
+				//m_worldMatrix.transpose();
 
 				bindVBO(a.vbo);
 
