@@ -3,6 +3,7 @@ module ev4d.rendersystem.material;
 
 import ev4d.rendersystem.technique;
 import ev4d.rendersystem.lights;
+import ev4d.tools.reflection;
 
 // todo switch to gl2 or gl3
 import derelict.opengl3.gl;
@@ -286,6 +287,9 @@ struct Shader20
 	GLuint fshader;
 }
 
+// 
+static string[] materialsIDs;
+
 /**
 	All matrices are expected in column mayor and right format for camera. (inversion)
 */
@@ -305,12 +309,23 @@ private:
 	vec4 emission;
 
 	float shininess;
+
+	ptrdiff_t _guid = -1;
+
 package:
 	Shader20 shader;
 	PointLight *light;
 protected:
 	VBO* vbo;
 public:
+	
+	this()
+	{
+		_guid = getIDForKey(this.classinfo.toString(), materialsIDs);
+	}
+	
+	ptrdiff_t getID() pure nothrow{ return _guid; }
+
 	@property int numberOfPasses() pure nothrow { return passes; }
 	@property int numberOfPasses(int n) {return passes = n; }
 
@@ -369,6 +384,7 @@ public:
 
 	abstract void cleanUp();
 }
+
 // TODO : create general material that is binding shader values automatically based on its named variables?
 class SimpleMaterial(RenderData): Material
 {

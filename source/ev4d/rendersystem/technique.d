@@ -5,6 +5,8 @@ import ev4d.rendersystem.camera;
 import ev4d.rendersystem.rendertarget;
 import ev4d.rendersystem.renderqueue;
 
+import ev4d.tools.numeric;
+
 import derelict.opengl3.gl;
 
 import ev4d.rendersystem.lights;
@@ -48,6 +50,21 @@ public:
 		glViewport(cam.viewportX, cam.viewportY, cam.getViewportWidth, cam.getViewportHeight);
 
 		auto sceneView = objectsToRender.getView();
+
+		// create sorting keys
+		foreach (ref object; sceneView)
+		{
+			ptrdiff_t matID;
+			if (object.material)
+				matID = object.material.getID();
+
+			object.sortKey = 0;
+
+			object.sortKey = matID;
+			object.sortKey <<= 20; 
+			object.sortKey |= floatToBitsPositive!(20)(10);
+		}
+		//
 
 		sortAndRender(sceneView, camera, &lights);
 	}

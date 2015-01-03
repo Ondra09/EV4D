@@ -8,6 +8,8 @@ import ev4d.rendersystem.lights;
 
 import gl3n.linalg;
 
+import std.algorithm;
+
 // this needs to be filled in order to render
 /**
 this structure is needed for rq to render it properly, camera should return it in right format
@@ -25,9 +27,20 @@ interface RenderObject(Matrices)
 }
 */
 
+
+// TODO : we can sort across diffrent rendergin techniques as long as we render in same buffer (screen, FBO...)
+// it should be better approach than rendering by techniques
 void sortAndRender(T)(T[] view, Camera cam, Lights *lights)
 {
 	assert(cam.viewMatrix, "View Matrix was not set.");
+
+	string less = "";
+	// sort
+	//import std.stdio;
+	//writeln("Before:", view);
+	sort!("a.sortKey < b.sortKey")(view);
+	//writeln("After:", view);
+
 	mat4 m_viewMatrix = *cam.viewMatrix;
 	mat4 m_projMatrix = cam.projMatrix;
 
@@ -35,9 +48,7 @@ void sortAndRender(T)(T[] view, Camera cam, Lights *lights)
 	//								[ 0	   0    0    1 ]					
 	// because camera transforms are invert to model ones
 	m_viewMatrix.invert();	
-	//m_viewMatrix.transpose();
-
-	//m_projMatrix.transpose();
+	
 
 	PointLight *nearestLight = lights.getNearestLight();
 
@@ -48,7 +59,6 @@ void sortAndRender(T)(T[] view, Camera cam, Lights *lights)
 			with(a.material)
 			{
 				mat4 m_worldMatrix = a.worldMatrix;
-				//m_worldMatrix.transpose();
 
 				bindVBO(a.vbo);
 

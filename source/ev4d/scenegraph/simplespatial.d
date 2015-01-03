@@ -19,7 +19,7 @@ private:
     bool useDirectTransform = false;
 
 public:
-    double sortKey;
+    long sortKey;
 
     mat4 transformation = mat4.identity();
 
