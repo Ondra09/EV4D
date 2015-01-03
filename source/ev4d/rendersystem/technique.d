@@ -55,7 +55,7 @@ public:
 		foreach (ref object; sceneView)
 		{
 			ptrdiff_t matID;
-			if (object.material)
+			
 				matID = object.material.getID();
 
 			object.sortKey = 0;

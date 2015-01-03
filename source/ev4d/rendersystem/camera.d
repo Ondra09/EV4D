@@ -67,10 +67,18 @@ T.DataType*[] getView(T)(T objectsToRender)
 	if (objectsToRender is null)
 		return retArr;
 
+	auto addItemDelegate = delegate void (T a) 
+							{ 
+								if (a.data.material !is null)
+									retArr ~= &a.data;
+							};
+
 	// just get all items for now
 	traverseTree!("true", // for all items
 		// data is struct, need only pointer
-		b => retArr ~= &b.data )(objectsToRender);
+		//b => (b.data.material !is null)?retArr ~= &b.data:b) // lambda function
+		addItemDelegate
+		)(objectsToRender);
 
 	return retArr;
 }
