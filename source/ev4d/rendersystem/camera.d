@@ -58,16 +58,19 @@ public:
 }
 
 /**
-	return: all visible object from given camera.
+	Returns:
+		TODO: all visible object from given camera.
+		Now returns all objects in tree, which have material.
 */
 T.DataType*[] getView(T)(T objectsToRender)
+if (is(T == class))
 {
 	typeof(return) retArr;
 
 	if (objectsToRender is null)
 		return retArr;
 
-	auto addItemDelegate = delegate void (T a) 
+	auto addItemDelegate = delegate void (T a) // T is class
 							{ 
 								if (a.data.material !is null)
 									retArr ~= &a.data;
@@ -76,7 +79,7 @@ T.DataType*[] getView(T)(T objectsToRender)
 	// just get all items for now
 	traverseTree!("true", // for all items
 		// data is struct, need only pointer
-		//b => (b.data.material !is null)?retArr ~= &b.data:b) // lambda function
+		//b => retArr ~= &b.data) // lambda function
 		addItemDelegate
 		)(objectsToRender);
 
