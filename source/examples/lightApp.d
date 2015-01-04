@@ -63,6 +63,7 @@ struct RenderDataTest
 SHGraph sceneRoot;
 SHGraph fighterNode;
 SHGraph lightPivot0;
+SHGraph camNode;
 
 PointLight pointLight0;
 
@@ -72,7 +73,6 @@ Renderer initScene()
 
     Renderer renderer = new Renderer();
 
-	SHGraph camNode;
     SHGraph light0;
 
     Technique!(SHGraph) tech0 = new Technique!(SHGraph)();
@@ -239,6 +239,7 @@ printf("MSAA: buffers = %d samples = %d\n", bufs, samples);
 
     Renderer renderer = initScene();
     fighterNode.data.translationM = mat4.translation(0, 0.0, -2.6);
+    //camNode.data.translationM.translate(1, 0, 1);
 
     double timeStart = glfwGetTime();
     int frameCounter = 0;
@@ -248,19 +249,17 @@ printf("MSAA: buffers = %d samples = %d\n", bufs, samples);
     while (!glfwWindowShouldClose(window))
     {
        	// rotate with fighter
-        fighterNode.data.rotationM.rotatey(1.0f/180*3.1415924);
+        //fighterNode.data.rotationM.rotatey(1.0f/180*3.1415924);
 
         lightPivot0.data.rotationM.rotatex(1.0f/180*3.1415924);
-
-        //camNode.data.translationM.translate(0, 0, sum);
-
+        fighterNode.data.translationM = mat4.translation(0, 0.0, -2.6);
         translate += sum;
-        if(translate > 10)
+        if(translate > 5)
         {
             sum *= -1;
         }
 
-        if(translate < -10)
+        if(translate < -5)
         {
             sum *= -1;
         }

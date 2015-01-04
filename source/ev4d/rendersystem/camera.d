@@ -4,6 +4,8 @@ module ev4d.rendersystem.camera;
 import ev4d.scenegraph.hierarchygraph;
 import ev4d.rendersystem.material;
 import gl3n.linalg;
+import gl3n.plane;
+import gl3n.frustum;
 
 version(unittest)
 {
@@ -16,14 +18,53 @@ class Camera
 private: 
 	// view angles
 	//float fov;
+	
+	float e = 0; // focal length, used only with Projective camera, 0 for ortho camera
 
 	// Viewport
 	int viewportWidth;
 	int viewportHeight;
+
+	// frustum planes in camera space
+	Frustum frustum;
+
+	/**
+		Frustum planes extraction in camera space.
+		Different approach that in gl3n.
+	*/
+	void extractFrustumPlanes()
+	{
+		// Lengyel Mathematics for... page: 115, 116
+		/*
+		OPTIM : make working this
+
+		BUG: seems it does not work
+		float near = 0.5f; float far = 30.0f;
+		float fovy = 90;
+
+		float a = e * tan(fovy/2);
+		Plane[6] planes;
+
+		planes[Frustum.LEFT] = Plane(e, 0, -1, 0);
+		planes[Frustum.RIGHT] = Plane(-e, 0, -1, 0);
+		planes[Frustum.BOTTOM] = Plane(0, e, -a, 0);
+		planes[Frustum.TOP] = Plane(0, -e, -a, 0);
+		planes[Frustum.NEAR] = Plane(0, 0, -1, -near);
+		planes[Frustum.FAR] = Plane(0, 0, 1, far);
+
+		foreach (ref plane; planes)
+		{
+			plane.normalize();
+		}
+		*/
+
+		frustum = Frustum(projMatrix);
+	}
+
 public:
 	/**
-		@param width viewport width
-		@param height viewport height
+		Params: width viewport width
+				height viewport height
 	*/
 	this(int width, int height)
 	{
@@ -34,24 +75,36 @@ public:
 	void createOrtho(float left, float right, float bottom, float top, float near, float far)
 	{
 		projMatrix = mat4.orthographic(left, right, bottom, top, near, far);
+
+		extractFrustumPlanes();
 	}
 
 	/**
-		@param fov y field of vision
-		@param near
-		@param far
+		Params: fov y field of vision
+				near
+				far
 	*/
-	void createProjection(float fov, float near = 0.5f, float far = 30.0f)
+	void createProjection(float fovy, float near = 0.5f, float far = 30.0f)
 	{
-		projMatrix = mat4.perspective(viewportWidth, viewportHeight, fov, near, far);
+		projMatrix = mat4.perspective(viewportWidth, viewportHeight, fovy, near, far);
+
+		float fovx = fovy * viewportWidth/viewportHeight;
+		e = 1/(tan(fovx/2));
+
+		extractFrustumPlanes();
 	}
+
 	// TODO : hide implementation detail behind property
+	// OPTIM : it would have been beneficial precompute inverse of this matrix, it is used often
 	mat4 *viewMatrix;
 	mat4 projMatrix;
 
 	/// read only, camera projection is constructed from this
 	@property int getViewportWidth(){ return viewportWidth; }
 	@property int getViewportHeight(){ return viewportHeight; }
+
+	/// focal length, used only with Projective camera, 0 for ortho camera
+	@property float focalLength() { return e; }
 
 	int viewportX = 0;
 	int viewportY = 0;
@@ -62,7 +115,7 @@ public:
 		TODO: all visible object from given camera.
 		Now returns all objects in tree, which have material.
 */
-T.DataType*[] getView(T)(T objectsToRender)
+T.DataType*[] getView(T)(Camera cam, T objectsToRender)
 if (is(T == class))
 {
 	typeof(return) retArr;
@@ -70,10 +123,23 @@ if (is(T == class))
 	if (objectsToRender is null)
 		return retArr;
 
+	mat4 viewM = (*cam.viewMatrix);
+	viewM.invert();
+	mat4 vp = cam.projMatrix * viewM;
+
 	auto addItemDelegate = delegate void (T a) // T is class
 							{ 
 								if (a.data.material !is null)
-									retArr ~= &a.data;
+								{
+									
+									mat4 mvpMatrix = vp * a.data.worldMatrix;
+									Frustum f = Frustum(mvpMatrix);
+
+									if (f.intersects(a.data.aabb) > 0)
+									{
+										retArr ~= &a.data;
+									}
+								}
 							};
 
 	// just get all items for now

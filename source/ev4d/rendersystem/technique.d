@@ -7,6 +7,7 @@ import ev4d.rendersystem.renderqueue;
 
 import ev4d.tools.numeric;
 
+import gl3n.linalg;
 import derelict.opengl3.gl;
 
 import ev4d.rendersystem.lights;
@@ -49,20 +50,45 @@ public:
 	{
 		glViewport(cam.viewportX, cam.viewportY, cam.getViewportWidth, cam.getViewportHeight);
 
-		auto sceneView = objectsToRender.getView();
+		auto sceneView = cam.getView(objectsToRender);
 
 		// create sorting keys
 		foreach (ref object; sceneView)
 		{
 			ptrdiff_t matID;
 			
-				matID = object.material.getID();
+			matID = object.material.getID();
 
+			////////////////////////////////////////////////////////////
+			// compute distance to camera of object, get rough idea ...
+
+			mat4 m_viewMatrix = *cam.viewMatrix;
+			m_viewMatrix.invert();
+
+			mat4 modelViewMatrix = m_viewMatrix * object.worldMatrix;
+
+			vec4 worldPos = modelViewMatrix * vec4(0, 0, 0, 1); // use z directly to have linearized space
+			float dst = -worldPos.z;
+
+			/*
+			TODO : use this when we have correct set of items from camera : no items behind camera etc..
+			vec4 posProj = cam.projMatrix * modelViewMatrix * vec4(0, 0, 0, 1);
+			if (posProj.w != 0)
+				posProj /= posProj.w;
+
+			float dst = posProj.z + 1.0; // -1..1 to 0..2
+			*/
+
+			//import std.stdio;
+			//writeln(worldPos, " : ", posProj);
+			////////////////////////////////////////////////////////////
+
+			// reset key for to be sure
 			object.sortKey = 0;
 
 			object.sortKey = matID;
 			object.sortKey <<= 20; 
-			object.sortKey |= floatToBitsPositive!(20)(10);
+			object.sortKey |= floatToBitsPositive!(20)(dst);
 		}
 		//
 
@@ -76,7 +102,7 @@ public:
 	{
 		GeneralTechnique returnVal[];
 
-		auto sceneView = objectsToRender.getView();
+		auto sceneView = cam.getView(objectsToRender);
 
 		foreach (obj; sceneView)
 		{
