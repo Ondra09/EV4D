@@ -111,7 +111,7 @@ Renderer initScene()
     ShipMaterial!GameVertex_ simpleShader = new ShipMaterial!GameVertex_();
     fighterNode.data.material = simpleShader;
 
-    testImport(vbo);
+    testImport(vbo, fighterNode.data.aabb);
 
     fighterNode.data.vbo = &vbo;
 
@@ -252,14 +252,14 @@ printf("MSAA: buffers = %d samples = %d\n", bufs, samples);
         //fighterNode.data.rotationM.rotatey(1.0f/180*3.1415924);
 
         lightPivot0.data.rotationM.rotatex(1.0f/180*3.1415924);
-        fighterNode.data.translationM = mat4.translation(0, 0.0, -2.6);
+        fighterNode.data.translationM = mat4.translation(translate, 0.0, -2.6);
         translate += sum;
-        if(translate > 5)
+        if(translate > 7)
         {
             sum *= -1;
         }
 
-        if(translate < -5)
+        if(translate < -7)
         {
             sum *= -1;
         }

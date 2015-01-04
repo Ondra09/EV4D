@@ -2,6 +2,8 @@ module ev4d.io.model;
 
 import derelict.assimp3.assimp;
 import derelict.opengl3.gl;
+import gl3n.linalg;
+import gl3n.frustum;
 
 import ev4d.rendersystem.material;
 
@@ -42,7 +44,7 @@ struct GameVertex_
 // and one texture coords
 // seems like assimp is not loading correctly s flag = smmothing groups
 // maybe write own importer
-bool testImport (ref VBO vbo, string filename = "")
+bool testImport (ref VBO vbo, ref AABB aabb, string filename = "")
 {
 	import std.stdio;
 	import std.path;
@@ -76,6 +78,9 @@ bool testImport (ref VBO vbo, string filename = "")
 	// TODO : think more about VBO & meshes when we have more meshes in model.. or across models
 	assert (scene.mNumMeshes == 1);
 
+	AABB[] aabbs = [];
+	aabbs.reserve(scene.mNumMeshes);
+
 	foreach (uint i; 0..scene.mNumMeshes)
 	{
 		auto mmeshes = scene.mMeshes;
@@ -83,6 +88,8 @@ bool testImport (ref VBO vbo, string filename = "")
 
 		vboContent = [];
 		vboContent.reserve(mesh.mNumVertices);
+
+		AABB aabbl;
 
 		assert (mesh.mNormals);
 		assert (mesh.mTangents);
@@ -106,9 +113,13 @@ bool testImport (ref VBO vbo, string filename = "")
 			vertex.u = mesh.mTextureCoords[0][j].x; // only one texture coords at time
 			vertex.v = mesh.mTextureCoords[0][j].y;
 			//writeln(vertex.tx, " x ", vertex.ty, " x ", vertex.tz);
-			//
+			vec3 v = vec3(vertex.x, vertex.y, vertex.z);
+			aabbl.expand(v);
+
 			vboContent ~= vertex;
 		}
+
+		aabbs ~= aabbl;
 
 		bindBufferAndData!(GameVertex_)(vbo.vboIDs[i], vboContent);
 
@@ -139,5 +150,7 @@ bool testImport (ref VBO vbo, string filename = "")
 	// We're done. Release all resources associated with this import
 	aiReleaseImport( scene );
 
+	aabb = aabbs[0];
+	
 	return true;
 }
