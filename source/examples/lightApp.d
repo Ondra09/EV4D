@@ -150,9 +150,9 @@ Renderer initScene()
     SHGraph textSH[6];
     textSH[0] = font.createTextNode!(SHGraph)(vboText[0], "sedmero krkavců ∑´®†¥¨ˆøπø«æ…¬˚∆˙©ƒ∂ßåΩ≈ç√∫˜µ≤≥a +ěščžýáíé", textShader, true);
     textSH[1] = font.createTextNode!(SHGraph)(vboText[1], "ěščžýáíé", textShader);
-    textSH[2] = font.createTextNode!(SHGraph)(vboText[2], "aaadsfafs", textShader);
+    textSH[2] = font.createTextNode!(SHGraph)(vboText[2], "{}!@#$%^&*()_+", textShader);
     textSH[3] = font.createTextNode!(SHGraph)(vboText[3], "ddsf dsfdfs dsf", textShader);
-    textSH[4] = font.createTextNode!(SHGraph)(vboText[4], "mezera mezera !1!", textShader);
+    textSH[4] = font.createTextNode!(SHGraph)(vboText[4], "ç√∫˜µåß∂ƒ©˙∆!1!", textShader);
     textSH[5] = font.createTextNode!(SHGraph)(vboText[5], "**&^$%^&*", textShader);
 
 
