@@ -138,7 +138,13 @@ if (is(T == class))
 									if (f.intersects(a.data.aabb) > 0)
 									{
 										retArr ~= &a.data;
-									}
+									}/*else
+									{
+										import std.stdio;
+										static int ff = 0;
+										ff++;
+										writeln("out", ff);
+									}*/
 								}
 							};
 
