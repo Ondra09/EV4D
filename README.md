@@ -4,7 +4,7 @@ EV4D
 D language rendering engine.
 
 Currently working on:
-* Fog shader, gamma shader integration.
+* TBA
 
 Long term work:
 * Rendering q refining.

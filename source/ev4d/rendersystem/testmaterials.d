@@ -303,7 +303,7 @@ public:
 				vec3 halfV;
 			    float NdotHV;
 
-				// BUG: normals are in wrong dirrection on half of the model
+				// BUG: normals are in wrong dirrection on half of the model, pbly model problem
 				for (int i = 0; i < 3; i++)
 				{
 					vec4 lightContrib = vec4(0,0,0,0);
