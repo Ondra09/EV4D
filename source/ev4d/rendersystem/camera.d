@@ -100,11 +100,11 @@ public:
 	mat4 projMatrix;
 
 	/// read only, camera projection is constructed from this
-	@property int getViewportWidth(){ return viewportWidth; }
-	@property int getViewportHeight(){ return viewportHeight; }
+	@property int getViewportWidth() pure nothrow @safe { return viewportWidth; }
+	@property int getViewportHeight()pure nothrow @safe { return viewportHeight; }
 
 	/// focal length, used only with Projective camera, 0 for ortho camera
-	@property float focalLength() { return e; }
+	@property float focalLength() pure nothrow @safe { return e; }
 
 	int viewportX = 0;
 	int viewportY = 0;
