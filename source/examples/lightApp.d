@@ -75,7 +75,8 @@ Renderer initScene()
 
     SHGraph light0;
 
-    Technique!(SHGraph) tech0 = new Technique!(SHGraph)();
+    Technique!(SHGraph, createSortKey!(SHGraph.DataType)) tech0 = 
+                                                        new Technique!(SHGraph, createSortKey!(SHGraph.DataType))();
 
     Camera cam = new Camera(1024, 768);
     cam.createProjection(90);
@@ -122,7 +123,8 @@ Renderer initScene()
     tech0.lights.addPointLight(&pointLight0);
 
     // screen space text + ui
-    Technique!(SHGraph) tech1 = new Technique!(SHGraph)();
+    Technique!(SHGraph, createSortKey!(SHGraph.DataType)) tech1 = 
+                                                        new Technique!(SHGraph, createSortKey!(SHGraph.DataType))();
 
     Camera uiCam = new Camera(1024, 768);
     uiCam.createOrtho(0, 1024, 0, 768, 1, 30);
@@ -252,7 +254,7 @@ printf("MSAA: buffers = %d samples = %d\n", bufs, samples);
         //fighterNode.data.rotationM.rotatey(1.0f/180*3.1415924);
 
         lightPivot0.data.rotationM.rotatex(1.0f/180*3.1415924);
-        fighterNode.data.translationM = mat4.translation(translate, 0.0, -2.6);
+        fighterNode.data.translationM = mat4.translation(0, 0.0, -2.6+translate);
         translate += sum;
         if(translate > 7)
         {

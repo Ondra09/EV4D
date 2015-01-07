@@ -27,7 +27,7 @@ float expFog(float dst, float density)
 }
 
 vec3 computeFog(float dst, float density, vec4 shadeColor)
-	
+{	
 	fogFactor = expFog(dst, density);
 
 	fogFactor = clamp( fogFactor, 0.0, 1.0 );
@@ -35,4 +35,5 @@ vec3 computeFog(float dst, float density, vec4 shadeColor)
 	vec3 color = mix( fog.color, shadeColor.xyz, fogFactor );
 
 	return color;
+}
 ";

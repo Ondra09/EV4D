@@ -36,6 +36,7 @@ public:
 			techSlice = techSlice[1..$];
 		}
 
+		// TODO : move this to individual techniques
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);

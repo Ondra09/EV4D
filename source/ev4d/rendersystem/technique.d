@@ -30,9 +30,68 @@ public:
 }
 
 /**
-	Technique
+	Crates sorting key.
+	Params:
+		object = renderable object
+		cam = current camera
+	Returns: sorting key
 */
-class Technique(T) : GeneralTechnique
+long createSortKey(T)(T* object, Camera cam)
+{
+	long sortKey = 0;
+
+	ptrdiff_t matID;
+			
+	matID = object.material.getID();
+
+	////////////////////////////////////////////////////////////
+	// compute distance to camera of object, get rough idea ...
+
+	mat4 m_viewMatrix = *cam.viewMatrix;
+	m_viewMatrix.invert();
+
+	mat4 modelViewMatrix = m_viewMatrix * object.worldMatrix;
+
+	vec4 worldPos = modelViewMatrix * vec4(0, 0, 0, 1); // use z directly to have linearized space
+	float dst = -worldPos.z;
+
+	// this occurs when pivot of object behind camera, but aabb crosses camera visible frustum
+	if (dst < 0) // think about this problem more how to solve it, or maybe this one is good solution
+	{
+		dst = 0; 
+	}
+
+	/*
+	TODO : use this when we have correct set of items from camera : no items behind camera etc..
+	vec4 posProj = cam.projMatrix * modelViewMatrix * vec4(0, 0, 0, 1);
+	if (posProj.w != 0)
+		posProj /= posProj.w;
+
+	float dst = posProj.z + 1.0; // -1..1 to 0..2
+	*/
+
+	//import std.stdio;
+	//writeln(worldPos, " : ", posProj);
+	////////////////////////////////////////////////////////////
+
+	// reset key for to be sure
+	sortKey = 0;
+
+	sortKey = matID;
+	sortKey <<= 20; 
+	sortKey |= floatToBitsPositive!(20)(dst);
+
+	return sortKey;
+}
+
+/**
+	Technique
+	Params:
+		T = object to operate on
+		funCreateSortKey = function that generates sorting key 
+*/
+class Technique(T, alias funCreateSortKey) : GeneralTechnique
+if (is (typeof(funCreateSortKey)==function))
 {
 private:
 	RenderTarget * rtt;
@@ -55,40 +114,9 @@ public:
 		// create sorting keys
 		foreach (ref object; sceneView)
 		{
-			ptrdiff_t matID;
-			
-			matID = object.material.getID();
+			object.sortKey = funCreateSortKey(object, cam);
 
-			////////////////////////////////////////////////////////////
-			// compute distance to camera of object, get rough idea ...
 
-			mat4 m_viewMatrix = *cam.viewMatrix;
-			m_viewMatrix.invert();
-
-			mat4 modelViewMatrix = m_viewMatrix * object.worldMatrix;
-
-			vec4 worldPos = modelViewMatrix * vec4(0, 0, 0, 1); // use z directly to have linearized space
-			float dst = -worldPos.z;
-
-			/*
-			TODO : use this when we have correct set of items from camera : no items behind camera etc..
-			vec4 posProj = cam.projMatrix * modelViewMatrix * vec4(0, 0, 0, 1);
-			if (posProj.w != 0)
-				posProj /= posProj.w;
-
-			float dst = posProj.z + 1.0; // -1..1 to 0..2
-			*/
-
-			//import std.stdio;
-			//writeln(worldPos, " : ", posProj);
-			////////////////////////////////////////////////////////////
-
-			// reset key for to be sure
-			object.sortKey = 0;
-
-			object.sortKey = matID;
-			object.sortKey <<= 20; 
-			object.sortKey |= floatToBitsPositive!(20)(dst);
 		}
 		//
 
