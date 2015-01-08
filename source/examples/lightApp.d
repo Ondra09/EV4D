@@ -32,6 +32,11 @@ VBO vboText[6];
 
 Font font; // test font
 
+float dx = 0;
+float dy = 0;
+float dz = 0;
+immutable float speed = 0.1;
+
 extern (C) nothrow 
 {
     void errorCallback(int error, const (char)* description)
@@ -44,7 +49,75 @@ extern (C) nothrow
     void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
     {
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+        {
             glfwSetWindowShouldClose(window, GL_TRUE);
+        }
+
+        if (action == GLFW_PRESS)
+        {
+            if (key == GLFW_KEY_A)
+            {
+                dx = -speed;
+            }
+
+            if (key == GLFW_KEY_S)
+            {
+                dy = -speed;
+            }
+
+            if (key == GLFW_KEY_D)
+            {
+                dx = speed;
+            }
+
+            if (key == GLFW_KEY_W)
+            {
+                dy = speed;
+            }
+
+            if (key == GLFW_KEY_Q)
+            {
+                dz = speed;
+            }
+
+            if (key == GLFW_KEY_E)
+            {
+                dz = -speed;
+            }
+        }
+
+        if (action == GLFW_RELEASE)
+        {
+            if (key == GLFW_KEY_A)
+            {
+                dx = 0;
+            }
+
+            if (key == GLFW_KEY_S)
+            {
+                dy = 0;
+            }
+
+            if (key == GLFW_KEY_D)
+            {
+                dx = 0;
+            }
+
+            if (key == GLFW_KEY_W)
+            {
+                dy = 0;
+            }
+
+            if (key == GLFW_KEY_Q)
+            {
+                dz = 0;
+            }
+
+            if (key == GLFW_KEY_E)
+            {
+                dz = 0;
+            }
+        }
     }
 }
 
@@ -202,7 +275,7 @@ int main(string[] argv)
 
     /* Create a windowed mode window and its OpenGL context */
     //glfwWindowHint(GLFW_SAMPLES, 4);
-    window = glfwCreateWindow(800, 600, "Space Shooter 1000", null, null);
+    window = glfwCreateWindow(800, 600, "Shaders test ", null, null);
 /*
     GLint bufs, samples;
 glGetIntegerv(GL_SAMPLE_BUFFERS, &bufs);
@@ -254,8 +327,12 @@ printf("MSAA: buffers = %d samples = %d\n", bufs, samples);
         //fighterNode.data.rotationM.rotatey(1.0f/180*3.1415924);
 
         lightPivot0.data.rotationM.rotatex(1.0f/180*3.1415924);
-        fighterNode.data.translationM = mat4.translation(0, 0.0, -2.6+translate);
+        //fighterNode.data.translationM = mat4.translation(0, 0.0, -2.6+translate);
+
+        fighterNode.data.translationM.translate(dx, dy, dz);
+        
         translate += sum;
+
         if(translate > 7)
         {
             sum *= -1;
