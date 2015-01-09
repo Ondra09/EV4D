@@ -6,3 +6,6 @@
 .dub/dub.json
 .dub/
 objects
+demo-0-app
+
+light-example-app
