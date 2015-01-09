@@ -40,7 +40,31 @@
 			],
 			"excludedSourceFiles": [
 				"source/ev4d/app.d",
-				"source/examples/textApp.d"
+				"source/examples/textApp.d",
+				"source/examples/demo0App.d"
+			]
+			,
+			"versions": [
+			],
+		    "dependencies": {
+				"gl3n": "~master",
+				"derelict-glfw3": "~master",
+				"derelict-gl3": "~master",
+				"derelict-assimp3": "~master",
+				"derelict-fi": ">=1.0.0"
+			},
+		},
+		{
+			"name": "demo0-example",
+			"targetType": "executable",
+			"targetName": "demo-0-app",
+			"sourcePaths": [
+				"source"
+			],
+			"excludedSourceFiles": [
+				"source/ev4d/app.d",
+				"source/examples/textApp.d",
+				"source/examples/lightApp.d"
 			]
 			,
 			"versions": [

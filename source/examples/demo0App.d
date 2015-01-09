@@ -28,7 +28,7 @@ import ev4d.mesh.generator;
 import gl3n.linalg;
 
 VBO vbo; // fighter
-VBO vboText[6];
+VBO vboText[1];
 
 Font font; // test font
 
@@ -36,6 +36,11 @@ float dx = 0;
 float dy = 0;
 float dz = 0;
 immutable float speed = 0.1;
+
+
+// TODO : read this from config file / database
+immutable int windowWidth = 1024;
+immutable int windowHeight = 768;
 
 extern (C) nothrow 
 {
@@ -151,7 +156,7 @@ Renderer initScene()
     Technique!(SHGraph, createSortKey!(SHGraph.DataType)) tech0 = 
                                                         new Technique!(SHGraph, createSortKey!(SHGraph.DataType))();
 
-    Camera cam = new Camera(1024, 768);
+    Camera cam = new Camera(windowWidth, windowHeight);
     cam.createProjection(90);
 
     tech0.camera = cam; 
@@ -199,8 +204,8 @@ Renderer initScene()
     Technique!(SHGraph, createSortKey!(SHGraph.DataType)) tech1 = 
                                                         new Technique!(SHGraph, createSortKey!(SHGraph.DataType))();
 
-    Camera uiCam = new Camera(1024, 768);
-    uiCam.createOrtho(0, 1024, 0, 768, 1, 30);
+    Camera uiCam = new Camera(windowWidth, windowHeight);
+    uiCam.createOrtho(0, windowWidth, 0, windowHeight, 1, 30);
 
     tech1.camera = uiCam;
 
@@ -214,32 +219,16 @@ Renderer initScene()
 
     renderer.techniques ~= tech1;
 
-/*
-    TODO: add material here with text rendering and create maybe helper function that creates text from
-    given font, create scene node and puts it on appropriate screen loacation (transformation)
-*/
     // load text file
     font = createFont("objects/OpenSans-Regular.json");
     TextShader!(GlyphVertex_) textShader = new TextShader!(GlyphVertex_)("objects/OpenSans-Regular.png");
 
-    SHGraph textSH[6];
-    textSH[0] = font.createTextNode!(SHGraph)(vboText[0], "sedmero krkavců ∑´®†¥¨ˆøπø«æ…¬˚∆˙©ƒ∂ßåΩ≈ç√∫˜µ≤≥a +ěščžýáíé", textShader, true);
-    textSH[1] = font.createTextNode!(SHGraph)(vboText[1], "ěščžýáíé", textShader);
-    textSH[2] = font.createTextNode!(SHGraph)(vboText[2], "{}!@#$%^&*()_+", textShader);
-    textSH[3] = font.createTextNode!(SHGraph)(vboText[3], "ddsf dsfdfs dsf", textShader);
-    textSH[4] = font.createTextNode!(SHGraph)(vboText[4], "ç√∫˜µåß∂ƒ©˙∆!1!", textShader);
-    textSH[5] = font.createTextNode!(SHGraph)(vboText[5], "**&^$%^&*", textShader);
+    SHGraph textSH[1];
+    textSH[0] = font.createTextNode!(SHGraph)(vboText[0], "FPS: --", textShader, true);
 
 
     textSH[0].data.rotationM.rotatez(30.0f/180*3.1415924);
-    textSH[1].data.rotationM.translate(100, 100, 0);
-    
-    textSH[2].data.rotationM.rotatez(-70.0f/180*3.1415924);
-    textSH[2].data.rotationM.translate(230, 133, 0);
-
-    textSH[3].data.rotationM.translate(330, 533, 0);
-    textSH[4].data.rotationM.translate(30, 533, 0);
-    textSH[5].data.rotationM.translate(630, 333, 0);
+    textSH[0].data.rotationM.translate(10, 10, 0);
 
     uiSHroot ~= textSH;
 
@@ -275,7 +264,7 @@ int main(string[] argv)
 
     /* Create a windowed mode window and its OpenGL context */
     // glfwWindowHint(GLFW_SAMPLES, 4);
-    window = glfwCreateWindow(800, 600, "Shaders test ", null, null);
+    window = glfwCreateWindow(windowWidth, windowHeight, "Demo 0", null, null);
 /*
     GLint bufs, samples;
 glGetIntegerv(GL_SAMPLE_BUFFERS, &bufs);
@@ -309,12 +298,10 @@ printf("MSAA: buffers = %d samples = %d\n", bufs, samples);
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);
 
-    float translate = 0;
-    float sum = 0.01;
-
     Renderer renderer = initScene();
     fighterNode.data.translationM = mat4.translation(0, 0.0, -2.6);
-    //camNode.data.translationM.translate(1, 0, 1);
+    // rotate with fighter
+    fighterNode.data.rotationM.rotatex(90.0f/180*3.1415924);
 
     double timeStart = glfwGetTime();
     int frameCounter = 0;
@@ -323,26 +310,11 @@ printf("MSAA: buffers = %d samples = %d\n", bufs, samples);
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
-       	// rotate with fighter
-        //fighterNode.data.rotationM.rotatey(1.0f/180*3.1415924);
-
         lightPivot0.data.rotationM.rotatex(1.0f/180*3.1415924);
-        //fighterNode.data.translationM = mat4.translation(0, 0.0, -2.6+translate);
 
         fighterNode.data.translationM.translate(dx, dy, dz);
         
-        translate += sum;
-
-        if(translate > 7)
-        {
-            sum *= -1;
-        }
-
-        if(translate < -7)
-        {
-            sum *= -1;
-        }
-
+        //
         recomputeTransformations(sceneRoot); // for multiple roots? all techniques
         renderer.render();
 
@@ -357,7 +329,7 @@ printf("MSAA: buffers = %d samples = %d\n", bufs, samples);
         if ( (glfwGetTime()-timeStart) > 1)
         {
             timeStart = glfwGetTime();
-            //writeln("FPS: ",frameCounter);
+
             // 
             import std.conv;
             font.createTextVBO(vboText[0], "FPS: "~to!(string)(frameCounter), true);

@@ -4,13 +4,14 @@ EV4D
 D language rendering engine.
 
 Currently working on:
-* TBA
+* Tech demo0.
 
 Long term work:
 * Rendering q refining.
 
 In near future:
-* Deffered rendering.
 * Very basic collisions or physics engine integration.
 * Input handling.
-* Tech demo0.
+
+Won't work in near future:
+* Deffered rendering.
