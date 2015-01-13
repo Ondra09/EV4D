@@ -27,6 +27,7 @@ struct PointLight
 }
 
 // if passsing this to functions often use class for this container
+// TODO : class ?
 struct Lights
 {
 public:
