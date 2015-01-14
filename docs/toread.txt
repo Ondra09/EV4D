@@ -28,3 +28,7 @@ http://c0de517e.blogspot.ca
 correct bump map
 ==================
 http://www.katsbits.com/tutorials/textures/how-not-to-make-normal-maps-from-photos-or-images.php
+
+D this week in d
+=================
+http://arsdnet.net/this-week-in-d/jan-12.html - inplace allocator
