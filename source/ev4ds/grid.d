@@ -18,9 +18,14 @@ immutable size_t defautlGridSize = 4;
 	Grid contains multiple layers. One can control what layer interacts with which.
 */
 // put named enums maybe as templeta parameter here
-class Grid(int GridSize)
+class Grid(int GridSize, names...)
 {
 	Layer[GridSize] layers;
+
+	enum GridNames
+	{
+		names
+	}
 
 	this()
 	{
@@ -31,6 +36,8 @@ class Grid(int GridSize)
 			import std.stdio;
 			writeln ("layer: ", l);
 		}
+		import std.stdio;
+		writeln(layers[GridNames.HOO]);
 	}
 }
 

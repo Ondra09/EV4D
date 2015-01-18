@@ -235,8 +235,8 @@ Renderer initScene()
     recomputeTransformations(uiSHroot);
 
     import ev4ds.grid;
-    Grid!(2) grid = new Grid!(2)();
-    
+    Grid!(2) grid = new Grid!(2, "AAA, HOO")();
+
     return renderer;
 }
 
