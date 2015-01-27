@@ -5,6 +5,8 @@
 
 module ev4ds.grid;
 
+import std.typetuple;
+import std.traits;
 /**
 	Simple module spacial hashing, grid and simple detection collision.
 	2D grid.
@@ -18,26 +20,33 @@ immutable size_t defautlGridSize = 4;
 	Grid contains multiple layers. One can control what layer interacts with which.
 */
 // put named enums maybe as templeta parameter here
-class Grid(int GridSize, names...)
+class Grid(names...)
+//if (allSatisfy!(isSomeString, names))
 {
-	Layer[GridSize] layers;
+	Layer[names.length] layers;
 
-	enum GridNames
+	static string generateEnum(names...)()
 	{
-		names
+		string res = "enum GridNames{";
+		foreach (f; names)
+		{
+			res ~= f;
+			res ~= ",";
+		}
+		res ~= "}";
+		return res;
 	}
 
+	mixin(generateEnum!(names)());
+	
 	this()
 	{
-		foreach (l; layers)
+		foreach (ref l; layers)
 		{
-			//l = new Layer();
 			l.gridSize  = defautlGridSize;
 			import std.stdio;
 			writeln ("layer: ", l);
 		}
-		import std.stdio;
-		writeln(layers[GridNames.HOO]);
 	}
 }
 

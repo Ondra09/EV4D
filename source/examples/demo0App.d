@@ -235,7 +235,15 @@ Renderer initScene()
     recomputeTransformations(uiSHroot);
 
     import ev4ds.grid;
-    Grid!(2) grid = new Grid!(2, "AAA, HOO")();
+    auto grid = new Grid!("AAA", "HOO")();
+    
+
+    import std.stdio;
+    
+        writeln("GridNames: ", grid.GridNames.sizeof);
+        writeln(grid.layers[grid.GridNames.HOO] );
+        writeln(grid.layers[1].gridSize );
+        
 
     return renderer;
 }
