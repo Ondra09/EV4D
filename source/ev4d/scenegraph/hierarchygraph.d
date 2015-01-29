@@ -12,7 +12,7 @@ version(unittest)
 
 alias HierarchyGraph HGraph;
 
-class HierarchyGraph(T)
+final class HierarchyGraph(T)
 {
 	//alias opBinary(string op)(T)
 	alias DataType = T;

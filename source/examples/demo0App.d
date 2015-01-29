@@ -250,6 +250,7 @@ Renderer initScene()
 
 int main(string[] argv)
 {
+    
     DerelictGLFW3.load();
     DerelictGL.load();
 
