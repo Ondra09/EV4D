@@ -32,3 +32,8 @@ http://www.katsbits.com/tutorials/textures/how-not-to-make-normal-maps-from-phot
 D this week in d
 =================
 http://arsdnet.net/this-week-in-d/jan-12.html - inplace allocator
+
+
+Math
+=====
+http://www.randygaul.net/wp-content/uploads/2014/09/GeometricIntuition.pdf
