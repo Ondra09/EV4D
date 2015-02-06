@@ -51,11 +51,14 @@ class Grid(names...)
 }
 
 /**
+	Single layer uesed by Grid fro better granularity or stored objets.
 */
 struct Layer
 {
 private:
 	size_t gridSize_;
+	object[Tuple()] hashMap;
+
 public:
 	
 
@@ -66,5 +69,10 @@ public:
 	@property
 	size_t gridSize(size_t size) pure nothrow @safe
 					{ return gridSize_ = size; }
+
+	auto hash(float x, float y)
+	{
+		return Tuple!(x/gridSize_, y /gridSize_);
+	}
 
 }

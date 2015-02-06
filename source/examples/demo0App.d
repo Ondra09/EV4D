@@ -235,13 +235,13 @@ Renderer initScene()
     recomputeTransformations(uiSHroot);
 
     import ev4ds.grid;
-    auto grid = new Grid!("AAA", "HOO")();
+    auto grid = new Grid!("BULLET", "SHIP")();
     
 
     import std.stdio;
     
         writeln("GridNames: ", grid.GridNames.sizeof);
-        writeln(grid.layers[grid.GridNames.HOO] );
+        writeln(grid.layers[grid.GridNames.SHIP] );
         writeln(grid.layers[1].gridSize );
         
 
