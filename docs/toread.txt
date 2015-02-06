@@ -39,3 +39,5 @@ http://arsdnet.net/this-week-in-d/jan-12.html - inplace allocator
 Math
 =====
 http://www.randygaul.net/wp-content/uploads/2014/09/GeometricIntuition.pdf
+Rotations: think of left side rotation as rotation of object from local coords e.g.inverse to wrold rotation from right side
+https://78462f86-a-9277e530-s-sites.googlegroups.com/a/melax.com/www/GDC14_mathtutorial_melax.pdf?attachauth=ANoY7coI9GAp5wG7Hk5tBijqK-XUbVMBi7rX0N4mxlKvaw51bUaiAEekEqNZba67Vce5hryzSRuR7U56H0LrLjOFUPOwet-GvSwd-yxNvjQjb04Nbz7uMCq_yNzMainSUZ2Z1AFhJZRxwzfkQJYiRzETw6v0vzB0_jyVX_c4i-dvnJTi7pWKu08ORxXon3OcudbHMUVWNXRayWiV86esImwwc2JL99hlUQ%3D%3D&attredirects=0
