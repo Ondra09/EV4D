@@ -235,15 +235,38 @@ Renderer initScene()
     recomputeTransformations(uiSHroot);
 
     import ev4ds.grid;
-    auto grid = new Grid!("BULLET", "SHIP")();
+    auto layers = new Layers!(SpacialObject, "BULLET", "SHIP")();
     
+    import gl3n.aabb;
+    SpacialObject so;
+    
+    so.aabb.min = vec3(0, 0, 0);
+    so.aabb.max = vec3(23.4, 14.9, 0);
+    layers.layer[layers.GridNames.SHIP].insertObjectAABB(so);
+
+    so.aabb.min = vec3(10, 10, 0);
+    so.aabb.max = vec3(11, 10, 0);
+    layers.layer[layers.GridNames.SHIP].insertObjectAABB(so);
 
     import std.stdio;
+    writeln(layers.layer[layers.GridNames.SHIP].getObjects(300.5, 10.5));
+
+        //
+        import std.stdio;
     
-        writeln("GridNames: ", grid.GridNames.sizeof);
-        writeln(grid.layers[grid.GridNames.SHIP] );
-        writeln(grid.layers[1].gridSize );
-        
+        writeln("GridNames: ", layers.GridNames.max);
+        //writeln(layers.layer[layers.GridNames.SHIP] );
+        //writeln(layers.layer[1].gridSize );
+
+    writeln(layers.layer[layers.GridNames.SHIP]);
+    layers.layer[layers.GridNames.SHIP].clearAll();
+    writeln(layers.layer[layers.GridNames.SHIP]);
+    layers.layer[layers.GridNames.SHIP].insertObjectAABB(so);
+    layers.layer[layers.GridNames.SHIP].insertObjectAABB(so);
+    writeln(layers.layer[layers.GridNames.SHIP]);
+
+    layers.layer[layers.GridNames.SHIP].removeObject(so);
+    writeln(layers.layer[layers.GridNames.SHIP]);        
 
     return renderer;
 }
