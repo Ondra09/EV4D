@@ -9,6 +9,9 @@ http://gamemechanicexplorer.com/
 http://www.lostgarden.com/2006/10/what-are-game-mechanics.html
 http://gamesfromwithin.com/data-oriented-design-now-and-in-the-future
 ====================
+http://wiki.dlang.org/Game_Development_and_Multimedia_Libraries
+====================
+
 neco vic o tehle grafickych knihovnach:
 cinder, processing - je v jave, umoznuje multiplatformost, iphone, android, javascipt atd..
 openframeworks
