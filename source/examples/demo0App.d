@@ -240,7 +240,7 @@ Renderer initScene()
     import gl3n.aabb;
     SpacialObject so;
     
-    so.aabb.min = vec3(0, 0, 0);
+    so.aabb.min = vec3(10, 10, 0);
     so.aabb.max = vec3(23.4, 14.9, 0);
     layers.layer[layers.GridNames.SHIP].insertObjectAABB(&so);
 
@@ -267,8 +267,14 @@ Renderer initScene()
     writeln(layers.layer[layers.GridNames.SHIP]);
     writeln(layers.layer[layers.GridNames.SHIP].getObjects(10.5, 10.5));
 
+    SpacialObject so1;
+    so1.aabb.min = vec3(0, 0, 0);
+    so1.aabb.max = vec3(100, 100, 0);
+
+    writeln("objects: ", layers.layer[layers.GridNames.SHIP].getObjects(&so1),  typeid(layers.layer[layers.GridNames.SHIP].getObjects(&so1)));
+
     layers.layer[layers.GridNames.SHIP].removeObject(&so);
-    writeln(layers.layer[layers.GridNames.SHIP]);        
+    writeln(layers.layer[layers.GridNames.SHIP]);
 
     return renderer;
 }

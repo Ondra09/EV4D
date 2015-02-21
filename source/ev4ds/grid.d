@@ -97,7 +97,14 @@ public:
 		}
 	}
 
-	/// retrieve objects in same cell as objects on x, y
+	/**
+		Retrieves objects in same cell as objects on x, y.
+		Params:
+			x coord of object, y coord of object
+		Returns:
+			all objects in same grid as x,y
+
+	*/
 	Spatial[] getObjects(float x, float y)
 	{
 		Spatial[] retVal;
@@ -113,23 +120,36 @@ public:
 	}
 
 	/**
-		Retrieves objects in same cell as AABB.
-		Params:
+		Retrieves objects in same cells as Spatial with AABB.
+		And removes duplicities. Firstly sort array and than call uniq.
 
+		Params:
+			spatial objects that has AABB
 		Returns:
+			all objects in same grids
 
 	*/
-	Spatial[] getObjects(const Spatial spatial)
+	auto getObjects(const Spatial spatial)
 	{
-		Spatial[] retVal;
-		/*auto tuple = hash(x, y);
-		auto objects = (tuple in hashMap);
+		Spatial[] accumVal;
 
-		if (objects)
+		auto minT = hash(spatial.aabb.min.x, spatial.aabb.min.y);
+		auto maxT = hash(spatial.aabb.max.x, spatial.aabb.max.y);
+
+		foreach (xx; minT[0]..maxT[0]+1)
 		{
-			retVal = *objects;
-		}*/
+			foreach(yy; minT[1]..maxT[1]+1)
+			{
+				auto objects = (tuple(xx, yy) in hashMap);
 
+				if (objects)
+				{
+					accumVal ~= * objects;
+				}
+			}
+		}
+
+		auto retVal = algo.uniq(algo.sort(accumVal));
 		return retVal;
 	}
 
