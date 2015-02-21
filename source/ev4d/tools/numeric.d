@@ -37,17 +37,17 @@ unittest
 	assert (floatFlip(-5) == 4);
 	assert (floatFlip(5) == 2147483653);
 
-	f2i uni;
+	f2ui uni;
 	uni.f = 0.0f;
-	asssert (floatFlip(uni.i) == 2147483648);
+	assert (floatFlip(uni.ui) == 2147483648);
 	uni.f = -1.0f;
-	asssert (floatFlip(uni.i) == 1082130431);
+	assert (floatFlip(uni.ui) == 1082130431);
 	uni.f = 1.0f;
-	asssert (floatFlip(uni.i) == 3212836864);
+	assert (floatFlip(uni.ui) == 3212836864);
 	uni.f = -5.0f;
-	asssert (floatFlip(uni.i) == 1063256063);
+	assert (floatFlip(uni.ui) == 1063256063);
 	uni.f = 5.0f;
-	asssert (floatFlip(uni.i) == 3231711232);
+	assert (floatFlip(uni.ui) == 3231711232);
 }
 
 /**
@@ -64,15 +64,16 @@ uint inverseFloatFlip(uint f)
 
 unittest
 {
-	ff.i = inverseFloatFlip(2147483648);
+	f2ui ff;
+	ff.ui = inverseFloatFlip(2147483648);
 	assert (ff.f == 0.0f);
-	ff.i = inverseFloatFlip(1082130431);
+	ff.ui = inverseFloatFlip(1082130431);
 	assert (ff.f == -1.0f);
-	ff.i = inverseFloatFlip(3212836864);
+	ff.ui = inverseFloatFlip(3212836864);
 	assert (ff.f == 1.0f);
-	ff.i = inverseFloatFlip(1063256063);			  
+	ff.ui = inverseFloatFlip(1063256063);			  
 	assert (ff.f == -5.0f);
-	ff.i = inverseFloatFlip(3231711232);
+	ff.ui = inverseFloatFlip(3231711232);
 	assert (ff.f == 5.0f);
 }
 

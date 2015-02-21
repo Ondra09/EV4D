@@ -64,7 +64,7 @@ struct HashGrid(Spatial)
 {
 private:
 	size_t gridSize_ = defautlGridSize;
-	Spatial*[][Tuple!(int, int)] hashMap;
+	Spatial[][Tuple!(int, int)] hashMap;
 
 public:
 	@property
@@ -80,7 +80,8 @@ public:
 		return tuple(cast(int)(x/gridSize_), cast(int)(y/gridSize_));
 	}
 
-	void insertObjectAABB( ref Spatial spatial)
+	/// Inserts Spatial object into map
+	void insertObjectAABB(Spatial spatial)
 	{
 		// z-ignored here
 		auto minT = hash(spatial.aabb.min.x, spatial.aabb.min.y);
@@ -91,15 +92,15 @@ public:
 			foreach(yy; minT[1]..maxT[1]+1)
 			{
 				// TODO : use http://dlang.org/phobos/std_array.html#.Appender
-				hashMap[tuple(xx,yy)] ~= &spatial;
+				hashMap[tuple(xx,yy)] ~= spatial;
 			}
 		}
 	}
 
 	/// retrieve objects in same cell as objects on x, y
-	Spatial*[] getObjects(float x, float y)
+	Spatial[] getObjects(float x, float y)
 	{
-		Spatial*[] retVal;
+		Spatial[] retVal;
 		auto tuple = hash(x, y);
 		auto objects = (tuple in hashMap);
 
@@ -107,6 +108,27 @@ public:
 		{
 			retVal = *objects;
 		}
+
+		return retVal;
+	}
+
+	/**
+		Retrieves objects in same cell as AABB.
+		Params:
+
+		Returns:
+
+	*/
+	Spatial[] getObjects(const Spatial spatial)
+	{
+		Spatial[] retVal;
+		/*auto tuple = hash(x, y);
+		auto objects = (tuple in hashMap);
+
+		if (objects)
+		{
+			retVal = *objects;
+		}*/
 
 		return retVal;
 	}
@@ -126,11 +148,11 @@ public:
 	}
 
 	/// removes given object from the whole map
-	void removeObject(const ref Spatial obj)
+	void removeObject(const Spatial obj)
 	{
 		foreach (ref bucket; hashMap)
 		{
-			auto slice = algo.remove!(a => a == &obj)(bucket);
+			auto slice = algo.remove!(a => a == obj)(bucket);
 			bucket.length = slice.length; // not sure if this is proper way
 		}
 	}
@@ -138,6 +160,7 @@ public:
 
 unittest
 {
+	/*
 	import gl3n.aabb;
     struct SpacialObjectDebug
     {
@@ -176,5 +199,6 @@ unittest
     writeln(layers.layer[layers.GridNames.SHIP]);
 
     layers.layer[layers.GridNames.SHIP].removeObject(so);
-    writeln(layers.layer[layers.GridNames.SHIP]); 
+    writeln(layers.layer[layers.GridNames.SHIP]);
+    */
 }

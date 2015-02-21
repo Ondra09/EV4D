@@ -1,5 +1,5 @@
 import std.stdio;
-
+/+
 import ev4d.scenegraph.hierarchygraph;
 import ev4d.scenegraph.simplespatial;
 
@@ -68,8 +68,8 @@ Renderer initScene()
 
     Renderer renderer = new Renderer();
 
-    Technique!(SHGraph) tech0 = new Technique!(SHGraph)();
-    Technique!(SHGraph) tech1 = new Technique!(SHGraph)();
+    Technique!(SHGraph, createSortKey!(SHGraph.DataType)) tech0 = new Technique!(SHGraph, createSortKey!(SHGraph.DataType))();
+    Technique!(SHGraph, createSortKey!(SHGraph.DataType)) tech1 = new Technique!(SHGraph, createSortKey!(SHGraph.DataType))();
 
     Camera cam = new Camera(640, 480, 90);
     Camera cam1 = new Camera(320, 240, 120);
@@ -225,3 +225,4 @@ int main(string[] argv)
 
     return 0;
 }
++/
