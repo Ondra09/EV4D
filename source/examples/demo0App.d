@@ -33,9 +33,11 @@ VBO vboText[1];
 Font font; // test font
 
 float dx = 0;
+float drotz = 0;
 float dy = 0;
 float dz = 0;
-immutable float speed = 0.1;
+immutable float speed = 1.1;
+immutable float zanglespd = 2;
 
 
 // TODO : read this from config file / database
@@ -62,7 +64,7 @@ extern (C) nothrow
         {
             if (key == GLFW_KEY_A)
             {
-                dx = -speed;
+                drotz = zanglespd;
             }
 
             if (key == GLFW_KEY_S)
@@ -72,7 +74,7 @@ extern (C) nothrow
 
             if (key == GLFW_KEY_D)
             {
-                dx = speed;
+                drotz = -zanglespd;
             }
 
             if (key == GLFW_KEY_W)
@@ -95,7 +97,7 @@ extern (C) nothrow
         {
             if (key == GLFW_KEY_A)
             {
-                dx = 0;
+                drotz = 0;
             }
 
             if (key == GLFW_KEY_S)
@@ -105,7 +107,7 @@ extern (C) nothrow
 
             if (key == GLFW_KEY_D)
             {
-                dx = 0;
+                drotz = 0;
             }
 
             if (key == GLFW_KEY_W)
@@ -139,6 +141,7 @@ struct RenderDataTest
 }
 
 SHGraph sceneRoot;
+//SHGraph fighterRotationNode;
 SHGraph fighterNode;
 SHGraph lightPivot0;
 SHGraph camNode;
@@ -162,6 +165,7 @@ Renderer initScene()
     tech0.camera = cam; 
 
     SHGraph a0 = new SHGraph();
+    //fighterRotationNode = new SHGraph();
     fighterNode = new SHGraph();
     camNode = new SHGraph();
     lightPivot0 = new SHGraph();
@@ -175,7 +179,10 @@ Renderer initScene()
 
     // create an object for this
     a0 ~= fighterNode;
-    a0 ~= camNode;
+    //a0 ~= fighterRotationNode;
+    //fighterRotationNode ~= fighterNode;
+
+    //a0 ~= camNode;
 
     fighterNode ~= lightPivot0;
     lightPivot0 ~= light0; 
@@ -349,13 +356,32 @@ printf("MSAA: buffers = %d samples = %d\n", bufs, samples);
     double timeStart = glfwGetTime();
     int frameCounter = 0;
 
-    //fighterNode.data.rotationM.rotatex(-105.0f/180*3.1415924);
+    fighterNode.data.rotationM.rotatex(-105.0f/180*3.1415924);
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         lightPivot0.data.rotationM.rotatex(1.0f/180*3.1415924);
 
-        fighterNode.data.translationM.translate(dx, dy, dz);
+
+        vec4 vecx;
+        vecx.x = fighterNode.data.worldMatrix[0][1];
+        vecx.y = fighterNode.data.worldMatrix[1][1];
+        vecx.z = fighterNode.data.worldMatrix[2][1];
+        vecx.w = fighterNode.data.worldMatrix[3][1];
+
+        vecx.normalize();
+
+        mat4 rotM = mat4.rotation(drotz/180*3.1415924, vecx.x, vecx.y, vecx.z);
+
+        //fighterNode.data.rotationM.rotatez(drotz/180*3.1415924);
+
+        fighterNode.data.rotationM = rotM * fighterNode.data.rotationM ;
+
+        fighterNode.data.translationM.translate(0, 0, dz);
+        fighterNode.data.translationM.translate(dy*vecx.x, dy*vecx.y, dy*vecx.z);
+
+
+        
         
         //
         recomputeTransformations(sceneRoot); // for multiple roots? all techniques

@@ -23,6 +23,9 @@ D: aurora
 http://anttweakbar.sourceforge.net/doc/
 
 ==================
+https://www.iforce2d.net/rube/ .. box2d scene editor
+http://esotericsoftware.com/ .. animation editor
+
 http://stereopsis.com
 http://realtimecollisiondetection.net/blog/?p=86
 
