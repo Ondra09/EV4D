@@ -393,7 +393,7 @@ private:
 public:
 	// TODO : struct vs class make it possible to accept both
 	RenderData* renderData;
-	GeneralTechnique techniquesDep[];
+	GeneralTechnique[] techniquesDep;
 
 	this()
 	{

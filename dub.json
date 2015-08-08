@@ -3,7 +3,7 @@
 	"description": "EV4D Scene Rendering Engine",
 	"homepage": "https://github.com/Ondra09/EV4D",
 	"copyright": "Copyright © 2013, Ondrej Pokorny",
-    
+
 	"authors": [
 		"Ondrej Pokorny"
 	],
@@ -24,12 +24,12 @@
 			],
 
 			"dependencies": {
-				"gl3n": ">=1.0.0",
-				"derelict-util": ">=1.9.0",
-				"derelict-glfw3": "==~3.0",
-				"derelict-gl3": ">=1.0.12",
-				"derelict-assimp3": ">=1.0.0",
-				"derelict-fi": ">=1.0.0"
+				"gl3n": "~>1.1.0",
+				"derelict-util": "~>2.0.3",
+				"derelict-glfw3": "~>1.1.0",
+				"derelict-gl3": "~>1.0.15",
+				"derelict-assimp3": ">=1.0.1",
+				"derelict-fi": "~>2.0.2"
 			},
 		},
 		{
@@ -48,12 +48,12 @@
 			"versions": [
 			],
 		    "dependencies": {
-				"gl3n": ">=1.0.0",
-				"derelict-util": ">=1.9.0",
-				"derelict-glfw3": "==~3.0",
-				"derelict-gl3": ">=1.0.12",
-				"derelict-assimp3": ">=1.0.0",
-				"derelict-fi": ">=1.0.0"
+				"gl3n": "~>1.1.0",
+				"derelict-util": "~>2.0.3",
+				"derelict-glfw3": "~>1.1.0",
+				"derelict-gl3": "~>1.0.15",
+				"derelict-assimp3": ">=1.0.1",
+				"derelict-fi": "~>2.0.2"
 			},
 		},
 		{
@@ -72,12 +72,12 @@
 			"versions": [
 			],
 		    "dependencies": {
-				"gl3n": ">=1.0.0",
-				
-				"derelict-glfw3": "==~3.0",
-				"derelict-gl3": ">=1.0.12",
-				"derelict-assimp3": ">=1.0.0",
-				"derelict-fi": ">=1.0.0"
+				"gl3n": "~>1.1.0",
+
+				"derelict-glfw3": "~>1.1.0",
+				"derelict-gl3": "~>1.0.15",
+				"derelict-assimp3": ">=1.0.1",
+				"derelict-fi": "~>2.0.2"
 			},
 		},
 	]

@@ -78,7 +78,7 @@ private:
 				//import std.stdio;
 				//writeln(character, *glyph, " > ", advance, " bearingX/Y", advance + glyph.bearingX, "/", glyph.bearingY);
 				
-				GlyphVertex_ coords[6];
+				GlyphVertex_[6] coords;
 
 				float top = buffer + glyph.bearingY;
 				float height = glyph.height + buffer * 2;

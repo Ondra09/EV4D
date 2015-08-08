@@ -28,7 +28,7 @@ import ev4d.mesh.generator;
 import gl3n.linalg;
 
 VBO vbo; // fighter
-VBO vboText[1];
+VBO[1] vboText;
 
 Font font; // test font
 
@@ -131,13 +131,13 @@ extern (C) nothrow
 // pbly struct better
 struct RenderDataTest
 {
-    float vertexes[];
-    float normals[];
-    GLubyte indices[];
+    float[] vertexes;
+    float[] normals;
+    GLubyte[] indices;
 
     int indicesCount = 0;
 
-    ubyte color[];
+    ubyte[] color;
 }
 
 SHGraph sceneRoot;
@@ -230,7 +230,7 @@ Renderer initScene()
     font = createFont("objects/OpenSans-Regular.json");
     TextShader!(GlyphVertex_) textShader = new TextShader!(GlyphVertex_)("objects/OpenSans-Regular.png");
 
-    SHGraph textSH[1];
+    SHGraph[1] textSH;
     textSH[0] = font.createTextNode!(SHGraph)(vboText[0], "FPS: --", textShader, true);
 
 

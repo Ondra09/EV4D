@@ -90,7 +90,7 @@ private:
 	int trisEmited = 0;
 public:
 	// this could be used directly as index array
-	T indices[36] = [ 	0, 2, 1, 1, 2, 3,
+	T[36] indices = [ 	0, 2, 1, 1, 2, 3,
 						3, 2, 7, 7, 2, 6,
 						6, 2, 4, 4, 2, 0,
 						4, 0, 5, 5, 0, 1,
@@ -121,7 +121,7 @@ private:
 	int normalsEmited = 0;
 public:
 
-	T indexes[18] = [ 	0, 0, -1,
+	T[18] indexes = [ 	0, 0, -1,
 						0, 1, 0,
 						-1, 0, 0,
 						0, -1, 0,

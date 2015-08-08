@@ -26,7 +26,7 @@ module ev4d.tools.reflection;
 */
 int[string] generateMapOfChildrenClassesWithID(T)()
 {
-	int result[string];
+	int[string] result;
 
 	int counter = 0;
 	foreach(mod; ModuleInfo)

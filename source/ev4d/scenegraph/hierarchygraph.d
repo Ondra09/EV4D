@@ -179,7 +179,7 @@ unittest
 	traverseTree!("a.leaf < 10")(a);	
 	traverseTree!(b => b.leaf > compval)(a);
 	
-	HierarchyGraph!float finalArray[];
+	HierarchyGraph!float[] finalArray;
 	traverseTree!("true", b => finalArray ~= b )(a);
 
 	assert(finalArray.length == 10);

@@ -128,7 +128,7 @@ public:
 	*/
 	override GeneralTechnique[] getRequiredTechniques()
 	{
-		GeneralTechnique returnVal[];
+		GeneralTechnique[] returnVal;
 
 		auto sceneView = cam.getView(objectsToRender);
 
