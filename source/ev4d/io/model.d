@@ -7,6 +7,8 @@ import gl3n.frustum;
 
 import ev4d.rendersystem.material;
 
+import std.experimental.logger;
+
 // not used for now
 enum FighterVBODescr
 {
@@ -59,7 +61,7 @@ bool testImport (ref VBO vbo, ref AABB aabb, string filename = "")
 	// If the import failed, report it
 	if( !scene )
 	{
-		writeln("Error loading map file: ", absolutePath(filename));
+		critical("Error loading map file: ", absolutePath(filename));
 		//DoTheErrorLogging( aiGetErrorString());
 		return false;
 	}

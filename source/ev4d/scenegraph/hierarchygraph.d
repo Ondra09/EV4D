@@ -5,6 +5,8 @@ import std.range;
 import std.container;
 import std.functional;
 
+import std.experimental.logger;
+
 version(unittest)
 {
 	import std.stdio;
@@ -239,18 +241,18 @@ unittest
 							{ 
 								version(unittest)
 								{
-									writeln(a.leaf);
+									log(a.leaf);
 								}
 							};
 
-	writeln("Pre order traversal");
+	info("Pre order traversal");
 	traverseTree!("true", wrtln, TreeTraversalOrder.PRE_ORDER)(a);
-	writeln("Pre order traversal, expanding only nodes < 25");
+	info("Pre order traversal, expanding only nodes < 25");
 	traverseTree!("a.leaf < 25", wrtln, TreeTraversalOrder.PRE_ORDER)(a);
 
-	writeln("Post order traversal");
+	info("Post order traversal");
 	traverseTree!("true", wrtln, TreeTraversalOrder.POST_ORDER)(a);
-	writeln("Post order traversal, expanding only nodes < 25");
+	info("Post order traversal, expanding only nodes < 25");
 	traverseTree!("a.leaf < 25", wrtln, TreeTraversalOrder.POST_ORDER)(a);
 }
 

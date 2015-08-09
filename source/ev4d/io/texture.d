@@ -4,6 +4,9 @@ module ev4d.io.texture;
 import derelict.opengl3.gl;
 import derelict.freeimage.freeimage;
 
+import std.experimental.logger;
+
+
 /**
 Module handles very basic of loading textures.
 */
@@ -21,8 +24,15 @@ static ~this()
 {
 	debug
 	{
-		import std.stdio;
-		writeln("Texture buffer count: ", textureList.length);
+		log("Texture buffer count: ", textureList.length);
+
+		if (textureList.length > 0)
+		{
+			// clear all
+			warning("Clearing nonempty texture buffer.");
+			clearAllTextures();
+			assert(textureList.length == 0);
+		}
 	}
 }
 
@@ -36,6 +46,9 @@ struct TexInfo
 // this is global over whole application, we don't have same texture twice
 TexInfo[string] textureList;
 
+// this texture will load as default, when wanted texture does not exist.
+// and log this as error
+char* defaultTexture = null;
 
 public:
 /**
@@ -57,9 +70,7 @@ GLuint loadImage(const char* texName, bool generateMipMaps = false)
 
 		debug 
 		{
-			import std.stdio;
-
-			writeln("Read Texture: ", texNameSd);	
+			info("Read Texture: ", texNameSd);	
 		}
 
 		if( texLookup !is null )
@@ -68,7 +79,7 @@ GLuint loadImage(const char* texName, bool generateMipMaps = false)
 
 			debug
 			{
-				writeln("Found in Buffer. Count: ", (*texLookup).count);
+				info("Found in Buffer. Count: ", (*texLookup).count);
 			}
 			
 			return (*texLookup).textID;
@@ -76,29 +87,36 @@ GLuint loadImage(const char* texName, bool generateMipMaps = false)
 	}
 	
 	{
-	    FIBITMAP* bitmap = FreeImage_Load(FreeImage_GetFileType(texName, 0),texName, PNG_DEFAULT);
-	    assert(bitmap);
+	    FIBITMAP* bitmap = FreeImage_Load(FreeImage_GetFileType(texName, 0), texName, PNG_DEFAULT);
+	    
+	    if (bitmap == null && defaultTexture != null)
+	    {
+	    	// try to load default
+	    	bitmap = FreeImage_Load(FreeImage_GetFileType(defaultTexture, 0), defaultTexture, PNG_DEFAULT);
+	    }
 
-	    glGenTextures(1, &texture);
+	    if (bitmap)
+	    {
 
-	    glBindTexture(GL_TEXTURE_2D, texture);
-	    // TODO: use mipmaps!
-	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		    FIBITMAP *pImage = FreeImage_ConvertTo32Bits(bitmap);
 
-	    FIBITMAP *pImage = FreeImage_ConvertTo32Bits(bitmap);
+			int nWidth = FreeImage_GetWidth(pImage);
+			int nHeight = FreeImage_GetHeight(pImage);
 
-		int nWidth = FreeImage_GetWidth(pImage);
-		int nHeight = FreeImage_GetHeight(pImage);
+			texture = createTexture(cast(void*)FreeImage_GetBits(pImage), nWidth, nHeight, generateMipMaps);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, nWidth, nHeight,
-		    0, GL_BGRA, GL_UNSIGNED_BYTE, cast
-		    (void*)FreeImage_GetBits(pImage));
-
-		if(generateMipMaps)
-			glGenerateMipmap(GL_TEXTURE_2D); 
-
-	    FreeImage_Unload(bitmap);
+		    FreeImage_Unload(bitmap);
+	    }
+	    else
+	    {
+	    	int nWidth = 1;
+	    	int nHeight = 1;
+	    	char[4] img = [255, 0, 255, 255];
+	    	
+	    	log("ERROR :: Texture loading failed: ", texNameSd);
+	    	
+	    	texture = createTexture(cast(void*)img, nWidth, nHeight, generateMipMaps);
+	    }
 
 	    TexInfo tInfo;
 	    tInfo.textID = texture;
@@ -133,7 +151,7 @@ void deleteTexture(const char* texName)
 				debug
 				{
 					import std.stdio;
-					writeln("Deleting texture: ", texNameSd, " GLuint: ", (*texLookup).textID);
+					info("Deleting texture: ", texNameSd, " GLuint: ", (*texLookup).textID);
 				}
 
 				// delete texture from OpenGL
@@ -150,9 +168,55 @@ void deleteTexture(const char* texName)
 	}
 }
 
+void clearAllTextures()
+{
+	foreach (ref TexInfo item; textureList.byValue())
+	{
+		(item).count = 0;
+		deleteTexture((item).textID);
+		item.textID = 0;
+	}
+
+	foreach (key; textureList.keys)
+	{
+        textureList.remove(key);
+    }
+}
+
+public:
+//@property
+void setDefaultTexture(char* defaultTex)
+{
+	defaultTexture = defaultTex;
+}
+
+char* getDefaultTexture()
+{
+	return defaultTexture;
+}
 
 private:
 void deleteTexture(const GLuint id)
 {
 	glDeleteTextures(1, &id);
+}
+
+GLuint createTexture(void* data, int width, int height, bool generateMipMaps)
+{
+	GLuint texture;
+
+	glGenTextures(1, &texture);
+
+    glBindTexture(GL_TEXTURE_2D, texture);
+    // TODO: use mipmaps!
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height,
+			    0, GL_BGRA, GL_UNSIGNED_BYTE, data);
+
+    if(generateMipMaps)
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+	return texture;
 }

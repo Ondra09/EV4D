@@ -6,6 +6,8 @@ import ev4d.rendersystem.material;
 import gl3n.linalg;
 import gl3n.frustum;
 
+import std.experimental.logger;
+
 version(unittest)
 {
     import std.stdio;
@@ -75,7 +77,7 @@ void recomputeTransformations(SpacialHierarchyGraph root)
 
 unittest
 {
-    writeln(__FUNCTION__);
+    log(__FUNCTION__);
     //create dummy tree
     // a
     // |

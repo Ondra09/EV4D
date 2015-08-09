@@ -389,7 +389,7 @@ public:
 		texSpecular_u = locations[3];
 		lightColors_u = locations[4];
 
-		texColor = loadImage("objects/work/Space Frigate 6/space_frigate_6/space_frigate_6_color.png");
+		texColor = loadImage("objects/work/Space Frigate 6/space_frigate_6/space_frigate_6_coloer.png");
 		texNormal = loadImage("objects/work/Space Frigate 6/space_frigate_6/space_frigate_6 NRM.png");
 		texIllum = loadImage("objects/work/Space Frigate 6/space_frigate_6/space_frigate_6_illumination.png");
 		texSpecular = loadImage("objects/work/Space Frigate 6/space_frigate_6/space_frigate_6_specular.png");

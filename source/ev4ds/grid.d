@@ -12,6 +12,8 @@ import algo = std.algorithm;
 
 import gl3n.aabb;
 
+import std.experimental.logger;
+
 /**
 	Simple module spacial hashing, grid and simple detection collision.
 	2D grid.
@@ -50,7 +52,7 @@ class Layers(Spatial, names...)
 		{
 			l.gridSize  = defautlGridSize;
 			import std.stdio;
-			writeln ("layer: ", l);
+			log ("layer: ", l);
 		}
 	}
 }
