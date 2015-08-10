@@ -27,6 +27,8 @@ import ev4d.mesh.generator;
 
 import gl3n.linalg;
 
+import core.time;
+
 VBO vbo; // fighter
 VBO[1] vboText;
 
@@ -354,33 +356,39 @@ printf("MSAA: buffers = %d samples = %d\n", bufs, samples);
     fighterNode.data.rotationM.rotatex(90.0f/180*3.1415924);
 
     double timeStart = glfwGetTime();
+    double loopTime = glfwGetTime();
+    double loopTimeDiff = 0;
     int frameCounter = 0;
 
     fighterNode.data.rotationM.rotatex(-105.0f/180*3.1415924);
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
-        lightPivot0.data.rotationM.rotatex(1.0f/180*3.1415924);
+        double deltaTime = loopTimeDiff * 30;
+        {
+            lightPivot0.data.rotationM.rotatex(deltaTime*1.0f/180*3.1415924);
 
 
-        vec4 vecx;
-        vecx.x = fighterNode.data.worldMatrix[0][1];
-        vecx.y = fighterNode.data.worldMatrix[1][1];
-        vecx.z = fighterNode.data.worldMatrix[2][1];
-        vecx.w = fighterNode.data.worldMatrix[3][1];
+            vec4 vecx;
+            vecx.x = fighterNode.data.worldMatrix[0][1];
+            vecx.y = fighterNode.data.worldMatrix[1][1];
+            vecx.z = fighterNode.data.worldMatrix[2][1];
+            vecx.w = fighterNode.data.worldMatrix[3][1];
 
-        vecx.normalize();
+            vecx.normalize();
 
-        mat4 rotM = mat4.rotation(drotz/180*3.1415924, vecx.x, vecx.y, vecx.z);
+            mat4 rotM = mat4.rotation(deltaTime*drotz/180*3.1415924, vecx.x, vecx.y, vecx.z);
 
-        //fighterNode.data.rotationM.rotatez(drotz/180*3.1415924);
+            //fighterNode.data.rotationM.rotatez(drotz/180*3.1415924);
 
-        fighterNode.data.rotationM = rotM * fighterNode.data.rotationM ;
+            fighterNode.data.rotationM = rotM * fighterNode.data.rotationM ;
 
-        fighterNode.data.translationM.translate(0, 0, dz);
-        fighterNode.data.translationM.translate(dy*vecx.x, dy*vecx.y, dy*vecx.z);
+            fighterNode.data.translationM.translate(0, 0, deltaTime*dz);
+            fighterNode.data.translationM.translate(deltaTime*dy*vecx.x,
+                                                    deltaTime*dy*vecx.y,
+                                                    deltaTime*dy*vecx.z);
 
-
+        }
         
         
         //
@@ -405,6 +413,12 @@ printf("MSAA: buffers = %d samples = %d\n", bufs, samples);
 
             frameCounter = 0;
         }
+
+        loopTimeDiff = glfwGetTime() - loopTime;
+        if (loopTimeDiff > 1)
+            loopTimeDiff = 1/60.0;
+        
+        loopTime = glfwGetTime();
     }
     
     //a1.data.material = null;a1.data.vbo = null;
