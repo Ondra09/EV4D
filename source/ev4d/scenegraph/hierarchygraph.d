@@ -334,11 +334,9 @@ if (is(typeof(unaryFun!pred))
 						buffer.removeBack();
 					}
 				}
-
 			}
 
 			prev = currentItem;
 		}
-
 	}
 }
