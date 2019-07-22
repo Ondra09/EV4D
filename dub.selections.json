@@ -1,11 +1,11 @@
 {
 	"fileVersion": 1,
 	"versions": {
-		"gl3n": "1.1.0",
-		"derelict-util": "2.0.3",
-		"derelict-assimp3": "1.0.1",
-		"derelict-glfw3": "1.1.0",
-		"derelict-fi": "2.0.2",
-		"derelict-gl3": "1.0.15"
+		"derelict-assimp3": "1.3.0",
+		"derelict-fi": "2.0.3",
+		"derelict-gl3": "1.0.24",
+		"derelict-glfw3": "1.1.1",
+		"derelict-util": "2.0.6",
+		"gl3n": "1.3.1"
 	}
 }

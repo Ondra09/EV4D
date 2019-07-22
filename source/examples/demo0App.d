@@ -17,7 +17,7 @@ import ev4d.rendersystem.text;
 import ev4d.io.model;
 import ev4d.io.texture;
 
-import std.c.stdio;
+import core.stdc.stdio;
 import std.datetime;
 
 import derelict.glfw3.glfw3;
@@ -26,6 +26,7 @@ import derelict.opengl3.gl;
 import ev4d.mesh.generator;
 
 import gl3n.linalg;
+import gl3n.aabb;
 
 import core.time;
 
@@ -245,8 +246,7 @@ Renderer initScene()
 
     import ev4ds.grid;
     auto layers = new Layers!(SpacialObject*, "BULLET", "SHIP")();
-    
-    import gl3n.aabb;
+        
     SpacialObject so;
     
     so.aabb.min = vec3(10, 10, 0);

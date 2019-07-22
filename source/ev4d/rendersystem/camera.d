@@ -7,6 +7,8 @@ import gl3n.linalg;
 import gl3n.plane;
 import gl3n.frustum;
 
+import std.math : tan;
+
 version(unittest)
 {
 	import ev4d.scenegraph.hierarchygraph;
