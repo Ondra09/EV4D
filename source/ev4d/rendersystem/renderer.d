@@ -1,7 +1,7 @@
 
 module ev4d.rendersystem.renderer;
 
-import derelict.opengl;
+import derelict.opengl3.gl;
 
 import ev4d.rendersystem.technique;
 

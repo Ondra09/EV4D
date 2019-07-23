@@ -6,7 +6,7 @@ import ev4d.rendersystem.lights;
 import ev4d.tools.reflection;
 
 // todo switch to gl2 or gl3
-import derelict.opengl;
+import derelict.opengl3.gl;
 import gl3n.linalg;
 
 struct VBO
@@ -78,12 +78,11 @@ void bindVertexAttrib20(Vertex, string field)(int attribLocation, bool normalize
 // you should bind attrib yourself
 void setVBOVertexPointers20(Vertex)()
 {
-/*
 	static if (__traits(hasMember, Vertex, "x"))
 	{
 
     // todo: change from depracated to current api glenableclienstate -> glenablevertexattribarray
-		glEnableVertexAttribArray(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(__traits(getAttributes, Vertex.x)[0],
 						__traits(getAttributes, Vertex.x)[1],
 						Vertex.sizeof, cast(void*)(Vertex.x.offsetof));
@@ -112,13 +111,11 @@ void setVBOVertexPointers20(Vertex)()
 							__traits(getAttributes, Vertex.u)[1],
 							Vertex.sizeof, cast(const void*)(Vertex.u.offsetof) );
 	}
-    */
 }
 
 //
 void cleanUpVBOPointers20(Vertex)()
 {
-/*
 	static if (__traits(hasMember, Vertex, "x"))
 	{
 		glDisableClientState(GL_VERTEX_ARRAY);
@@ -138,7 +135,6 @@ void cleanUpVBOPointers20(Vertex)()
 	{
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
-    */
 }
 
 void printInfoLog(string type)(GLuint obj,  string file = __FILE__, int line = __LINE__)

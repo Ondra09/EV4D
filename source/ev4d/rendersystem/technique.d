@@ -8,7 +8,7 @@ import ev4d.rendersystem.renderqueue;
 import ev4d.tools.numeric;
 
 import gl3n.linalg;
-import derelict.opengl;
+import derelict.opengl3.gl;
 
 import ev4d.rendersystem.lights;
 

@@ -3,7 +3,7 @@ module ev4d.rendersystem.text;
 
 import std.utf;
 // todo remove gl from this file and GlyphVertex_
-import derelict.opengl;
+import derelict.opengl3.gl;
 import ev4d.rendersystem.material;
 
 /**

@@ -21,7 +21,7 @@ import core.stdc.stdio;
 import std.datetime;
 
 import derelict.glfw3.glfw3;
-import derelict.opengl;
+import derelict.opengl3.gl;
 
 import ev4d.mesh.generator;
 
@@ -292,7 +292,7 @@ int main(string[] argv)
 {
 
     DerelictGLFW3.load();
-    DerelictGL3.load();
+    DerelictGL.load();
 
     import derelict.assimp3.assimp;
     // Load the Assimp3 library.
@@ -340,7 +340,7 @@ printf("MSAA: buffers = %d samples = %d\n", bufs, samples);
 
     glfwSetKeyCallback( window, &keyCallback);
 
-    DerelictGL3.reload();
+    DerelictGL.reload();
 
     debug
     {

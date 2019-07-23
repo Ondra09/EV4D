@@ -4,7 +4,7 @@ module ev4d.rendersystem.testmaterials;
 import ev4d.rendersystem.material;
 import ev4d.rendersystem.technique;
 
-import derelict.opengl;
+import derelict.opengl3.gl;
 import gl3n.linalg;
 
 import ev4d.io.texture;

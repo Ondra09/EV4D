@@ -1,7 +1,7 @@
 
 module ev4d.io.texture;
 
-import derelict.opengl;
+import derelict.opengl3.gl;
 import derelict.util.exception : ShouldThrow;
 
 import derelict.freeimage.freeimage;

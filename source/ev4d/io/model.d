@@ -1,7 +1,7 @@
 module ev4d.io.model;
 
 import derelict.assimp3.assimp;
-import derelict.opengl;
+import derelict.opengl3.gl;
 import gl3n.aabb;
 import gl3n.linalg;
 import gl3n.frustum;
