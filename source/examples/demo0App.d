@@ -21,7 +21,7 @@ import core.stdc.stdio;
 import std.datetime;
 
 import derelict.glfw3.glfw3;
-import derelict.opengl3.gl;
+import derelict.opengl;
 
 import ev4d.mesh.generator;
 
@@ -47,7 +47,7 @@ immutable float zanglespd = 2;
 immutable int windowWidth = 1024;
 immutable int windowHeight = 768;
 
-extern (C) nothrow 
+extern (C) nothrow
 {
     void errorCallback(int error, const (char)* description)
     {
@@ -159,13 +159,13 @@ Renderer initScene()
 
     SHGraph light0;
 
-    Technique!(SHGraph, createSortKey!(SHGraph.DataType)) tech0 = 
+    Technique!(SHGraph, createSortKey!(SHGraph.DataType)) tech0 =
                                                         new Technique!(SHGraph, createSortKey!(SHGraph.DataType))();
 
     Camera cam = new Camera(windowWidth, windowHeight);
     cam.createProjection(90);
 
-    tech0.camera = cam; 
+    tech0.camera = cam;
 
     SHGraph a0 = new SHGraph();
     //fighterRotationNode = new SHGraph();
@@ -188,7 +188,7 @@ Renderer initScene()
     //a0 ~= camNode;
 
     fighterNode ~= lightPivot0;
-    lightPivot0 ~= light0; 
+    lightPivot0 ~= light0;
     light0.data.translationM.translate(0, 0, -3);
 
     tech0.scene = a0;
@@ -211,7 +211,7 @@ Renderer initScene()
     tech0.lights.addPointLight(&pointLight0);
 
     // screen space text + ui
-    Technique!(SHGraph, createSortKey!(SHGraph.DataType)) tech1 = 
+    Technique!(SHGraph, createSortKey!(SHGraph.DataType)) tech1 =
                                                         new Technique!(SHGraph, createSortKey!(SHGraph.DataType))();
 
     Camera uiCam = new Camera(windowWidth, windowHeight);
@@ -221,7 +221,7 @@ Renderer initScene()
 
     SHGraph uiSHroot = new SHGraph();
     SHGraph orthoCamSH = new SHGraph();
-    orthoCamSH.data.translationM.translate(0, 0, 2); // 
+    orthoCamSH.data.translationM.translate(0, 0, 2); //
     tech1.scene = uiSHroot;
     uiSHroot ~= orthoCamSH;
 
@@ -246,9 +246,9 @@ Renderer initScene()
 
     import ev4ds.grid;
     auto layers = new Layers!(SpacialObject*, "BULLET", "SHIP")();
-        
+
     SpacialObject so;
-    
+
     so.aabb.min = vec3(10, 10, 0);
     so.aabb.max = vec3(23.4, 14.9, 0);
     layers.layer[layers.GridNames.SHIP].insertObjectAABB(&so);
@@ -262,7 +262,7 @@ Renderer initScene()
 
         //
         import std.stdio;
-    
+
         writeln("GridNames: ", layers.GridNames.max);
         //writeln(layers.layer[layers.GridNames.SHIP] );
         //writeln(layers.layer[1].gridSize );
@@ -290,17 +290,17 @@ Renderer initScene()
 
 int main(string[] argv)
 {
-    
+
     DerelictGLFW3.load();
-    DerelictGL.load();
+    DerelictGL3.load();
 
     import derelict.assimp3.assimp;
     // Load the Assimp3 library.
     DerelictASSIMP3.load(); // should not be here pbly
-    
+
     // window initialization & callbacks
     GLFWwindow* window;
-    
+
     /* Initialize the library */
     if (!glfwInit())
     {
@@ -340,7 +340,7 @@ printf("MSAA: buffers = %d samples = %d\n", bufs, samples);
 
     glfwSetKeyCallback( window, &keyCallback);
 
-    DerelictGL.reload();
+    DerelictGL3.reload();
 
     debug
     {
@@ -389,8 +389,8 @@ printf("MSAA: buffers = %d samples = %d\n", bufs, samples);
                                                     deltaTime*dy*vecx.z);
 
         }
-        
-        
+
+
         //
         recomputeTransformations(sceneRoot); // for multiple roots? all techniques
         renderer.render();
@@ -407,7 +407,7 @@ printf("MSAA: buffers = %d samples = %d\n", bufs, samples);
         {
             timeStart = glfwGetTime();
 
-            // 
+            //
             import std.conv;
             font.createTextVBO(vboText[0], "FPS: "~to!(string)(frameCounter), true);
 
@@ -417,10 +417,10 @@ printf("MSAA: buffers = %d samples = %d\n", bufs, samples);
         loopTimeDiff = glfwGetTime() - loopTime;
         if (loopTimeDiff > 1)
             loopTimeDiff = 1/60.0;
-        
+
         loopTime = glfwGetTime();
     }
-    
+
     //a1.data.material = null;a1.data.vbo = null;
     fighterNode = null;
 

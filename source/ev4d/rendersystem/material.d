@@ -6,7 +6,7 @@ import ev4d.rendersystem.lights;
 import ev4d.tools.reflection;
 
 // todo switch to gl2 or gl3
-import derelict.opengl3.gl;
+import derelict.opengl;
 import gl3n.linalg;
 
 struct VBO
@@ -49,7 +49,7 @@ Binds data array to apropriate bufferID
 @param target same as in glBufferData target.
 @param usage same as in glBufferData usage.
 */
-void bindBufferAndData(Vertex)(	GLuint vboId, Vertex[] vArray, 
+void bindBufferAndData(Vertex)(	GLuint vboId, Vertex[] vArray,
 								GLenum target = GL_ARRAY_BUFFER, GLenum usage = GL_STATIC_DRAW)
 {
 	glBindBuffer(target, vboId);
@@ -78,28 +78,30 @@ void bindVertexAttrib20(Vertex, string field)(int attribLocation, bool normalize
 // you should bind attrib yourself
 void setVBOVertexPointers20(Vertex)()
 {
+/*
 	static if (__traits(hasMember, Vertex, "x"))
 	{
 
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(__traits(getAttributes, Vertex.x)[0], 
-						__traits(getAttributes, Vertex.x)[1], 
+    // todo: change from depracated to current api glenableclienstate -> glenablevertexattribarray
+		glEnableVertexAttribArray(GL_VERTEX_ARRAY);
+		glVertexPointer(__traits(getAttributes, Vertex.x)[0],
+						__traits(getAttributes, Vertex.x)[1],
 						Vertex.sizeof, cast(void*)(Vertex.x.offsetof));
 	}
 
 	static if (__traits(hasMember, Vertex, "cx"))
 	{
 		glEnableClientState(GL_COLOR_ARRAY);
-		glColorPointer(	__traits(getAttributes, Vertex.cx)[0], 
-						__traits(getAttributes, Vertex.cx)[1], 
+		glColorPointer(	__traits(getAttributes, Vertex.cx)[0],
+						__traits(getAttributes, Vertex.cx)[1],
 						Vertex.sizeof, cast(const void*)(Vertex.cx.offsetof) );
 	}
 
 	static if (__traits(hasMember, Vertex, "nx"))
 	{
 		glEnableClientState(GL_NORMAL_ARRAY);
-		glNormalPointer( 
-						__traits(getAttributes, Vertex.nx)[1], 
+		glNormalPointer(
+						__traits(getAttributes, Vertex.nx)[1],
 						Vertex.sizeof, cast(const void*)(Vertex.nx.offsetof) );
 	}
 
@@ -107,14 +109,16 @@ void setVBOVertexPointers20(Vertex)()
 	{
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		glTexCoordPointer(	__traits(getAttributes, Vertex.u)[0],
-							__traits(getAttributes, Vertex.u)[1], 
+							__traits(getAttributes, Vertex.u)[1],
 							Vertex.sizeof, cast(const void*)(Vertex.u.offsetof) );
 	}
+    */
 }
 
 //
 void cleanUpVBOPointers20(Vertex)()
 {
+/*
 	static if (__traits(hasMember, Vertex, "x"))
 	{
 		glDisableClientState(GL_VERTEX_ARRAY);
@@ -134,6 +138,7 @@ void cleanUpVBOPointers20(Vertex)()
 	{
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
+    */
 }
 
 void printInfoLog(string type)(GLuint obj,  string file = __FILE__, int line = __LINE__)
@@ -157,7 +162,7 @@ void printInfoLog(string type)(GLuint obj,  string file = __FILE__, int line = _
 
         char* infoLog = cast(char*) GC.malloc(infologLength);
         scope(exit) GC.free(infoLog);
-        
+
         static if(type == "shader")
         {
         	glGetShaderInfoLog(obj, infologLength, &charsWritten, infoLog);
@@ -251,14 +256,14 @@ void obtainLocations20(string type, T...)(GLuint program)
 {
 	static assert((T.length % 2) == 0,
                   "Members must be specified as pairs.");
-	
+
 	import std.string: toStringz;
 
 	foreach (i, const arg; T)
 	{
 		static if ( i % 2 == 1 ) // odd
 		{
-		}else // 
+		}else //
 		{
 			static assert (is (typeof(arg) == string),
                            "Member name " ~ arg.stringof ~
@@ -287,7 +292,7 @@ struct Shader20
 	GLuint fshader;
 }
 
-// 
+//
 static string[] materialsIDs;
 
 /**
@@ -318,12 +323,12 @@ package:
 protected:
 	VBO* vbo;
 public:
-	
+
 	this()
 	{
 		_guid = getIDForKey(this.classinfo.toString(), materialsIDs);
 	}
-	
+
 	ptrdiff_t getID() pure nothrow{ return _guid; }
 
 	@property int numberOfPasses() pure nothrow { return passes; }
@@ -389,7 +394,7 @@ public:
 class SimpleMaterial(RenderData): Material
 {
 private:
-	
+
 public:
 	// TODO : struct vs class make it possible to accept both
 	RenderData* renderData;
@@ -407,7 +412,7 @@ public:
 	}
 
 	override void initMaterial()
-	{ 
+	{
 		if (renderData is null)
 			return;
 		glEnableClientState(GL_VERTEX_ARRAY);
@@ -427,7 +432,7 @@ public:
 	}
 
 	override void renderPass(int num)
-	{ 
+	{
 
 		if (renderData is null)
 			return;

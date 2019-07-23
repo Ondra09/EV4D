@@ -1,22 +1,45 @@
 
 module ev4d.io.texture;
 
-import derelict.opengl3.gl;
+import derelict.opengl;
+import derelict.util.exception : ShouldThrow;
+
 import derelict.freeimage.freeimage;
 
 import std.experimental.logger;
+
+import std.algorithm;
 
 
 /**
 Module handles very basic of loading textures.
 */
 
+ShouldThrow myMissingSymCB( string symbolName )
+{
+    string[] ignoreList = ["FreeImage_JPEGTransform", "FreeImage_JPEGTransformU",
+    "FreeImage_JPEGCrop", "FreeImage_JPEGCropU",
+    "FreeImage_JPEGTransformFromHandle", "FreeImage_JPEGTransformFromHandleU"
+
+    ];
+
+    if (ignoreList.find(symbolName))
+    {
+        return ShouldThrow.No;
+    }
+    else
+    {
+        return ShouldThrow.Yes;
+    }
+}
+
 /*
-Basically global variables, I think it is ok for now. 
+Basically global variables, I think it is ok for now.
 We don't want to have multiple copies of texture in applicaiton anywhere across all scenes.
 */
 static this()
 {
+    DerelictFI.missingSymbolCallback = &myMissingSymCB;
 	DerelictFI.load();
 }
 
@@ -65,12 +88,12 @@ GLuint loadImage(const char* texName, bool generateMipMaps = false)
 
 	{	// texture lookup
 		TexInfo* texLookup;
-		
+
 		texLookup = (texNameSd in textureList);
 
-		debug 
+		debug
 		{
-			info("Read Texture: ", texNameSd);	
+			info("Read Texture: ", texNameSd);
 		}
 
 		if( texLookup !is null )
@@ -81,14 +104,14 @@ GLuint loadImage(const char* texName, bool generateMipMaps = false)
 			{
 				info("Found in Buffer. Count: ", (*texLookup).count);
 			}
-			
+
 			return (*texLookup).textID;
 		}
 	}
-	
+
 	{
 	    FIBITMAP* bitmap = FreeImage_Load(FreeImage_GetFileType(texName, 0), texName, PNG_DEFAULT);
-	    
+
 	    if (bitmap == null && defaultTexture != null)
 	    {
 	    	// try to load default
@@ -112,9 +135,9 @@ GLuint loadImage(const char* texName, bool generateMipMaps = false)
 	    	int nWidth = 1;
 	    	int nHeight = 1;
 	    	char[4] img = [255, 0, 255, 255];
-	    	
+
 	    	log("ERROR :: Texture loading failed: ", texNameSd);
-	    	
+
 	    	texture = createTexture(cast(void*)img, nWidth, nHeight, generateMipMaps);
 	    }
 
@@ -138,9 +161,9 @@ void deleteTexture(const char* texName)
 
 	{	// texture lookup
 		TexInfo* texLookup;
-		
+
 		texLookup = (texNameSd in textureList);
-		
+
 		if( texLookup !is null )
 		{
 			// decrease usage count

@@ -4,7 +4,7 @@ module ev4d.rendersystem.testmaterials;
 import ev4d.rendersystem.material;
 import ev4d.rendersystem.technique;
 
-import derelict.opengl3.gl;
+import derelict.opengl;
 import gl3n.linalg;
 
 import ev4d.io.texture;
@@ -87,12 +87,12 @@ public:
 	}
 
 	override void initMaterial()
-	{ 
+	{
 		//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 		glDisable(GL_CULL_FACE);
 
 		glBindBuffer(GL_ARRAY_BUFFER, vbo.vboIDs[0]);
-		
+
 		setVBOVertexPointers20!(BindVertex)();
 		bindVertexAttrib20!(BindVertex, "tx")(tangentsAttribID);
 
@@ -116,8 +116,8 @@ public:
 	}
 
 	override void renderPass(int num)
-	{ 
-		
+	{
+
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo.idxIDs[0]); // remove this bind pbly
 		glDrawElements(GL_TRIANGLES, 894, GL_UNSIGNED_INT, null);
 
@@ -149,14 +149,14 @@ public:
 }
 
 /**
-	Material for ships.	
+	Material for ships.
 */
 class ShipMaterial(BindVertex) : Material
 {
 private:
 package:
 	// shader uniforms
-	
+
 	GLint modelViewMatrix_u = -1;
 	GLint modelViewProjectionMatrix_u = -1;
 	GLint normalMatrix_u = -1;
@@ -190,7 +190,7 @@ public:
 			uniform mat4 modelViewMatrix;
 			uniform mat4 modelViewProjectionMatrix;
 			uniform mat4 normalMatrix;
-			
+
 			// in world coordinates
 			uniform mat3 lightPositions;
 
@@ -202,34 +202,34 @@ public:
 			varying mat3 halfVecs;
 
 
-			struct PointLight 
-			{ 
+			struct PointLight
+			{
 			   vec3 vColor; // Color of that point light
-			   vec3 vPosition; 
-			    
-			   float fAmbient; 
+			   vec3 vPosition;
 
-			   float fConstantAtt; 
-			   float fLinearAtt; 
-			   float fExpAtt; 
+			   float fAmbient;
+
+			   float fConstantAtt;
+			   float fLinearAtt;
+			   float fExpAtt;
 			};
 
 			void main()
-			{	
+			{
 				gl_Position    = modelViewProjectionMatrix * gl_Vertex;
 				gl_FrontColor  = gl_Color;
 				gl_TexCoord[0] = gl_MultiTexCoord0;
 
 				diffuse = gl_FrontMaterial.diffuse * gl_LightSource[0].diffuse;
 				diffuse = vec4(0.7, 0.7, 0.7, 1.0);
-			    
+
 			    ambient = gl_FrontMaterial.ambient * gl_LightSource[0].ambient;
 			    ambient += gl_FrontMaterial.ambient * gl_LightModel.ambient;
 				ambient = vec4(0.1, 0.1, 0.1, 1.0);
 
 			    // gl_NormalMatrix - 3x3 Matrix representing the inverse transpose model-view matrix
 				// mat4 normalMatrix = transpose(inverse(modelView));
-				// OPTIM : 
+				// OPTIM :
 				// if matrix contains only rotation or uniform scale than normalMatrix == modelViewMatrix;
 
 				vec4 vertexPosition_w = modelViewMatrix *  gl_Vertex;
@@ -318,7 +318,7 @@ public:
 				        halfV = normalize(halfVecs[i]);
 
 				        NdotHV = clamp(dot(n, halfV),0.0, 1.0);
-					
+
 				        lightContrib += pow(NdotHV, 128.0) * specularTex;
 				        		//gl_FrontMaterial.specular *
 				                //gl_LightSource[0].specular *
@@ -333,16 +333,16 @@ public:
 
 				return color;
 			}
-			
+
 			void main()
 			{
 				vec4 colorTex = texture2D(texColor, gl_TexCoord[0].st);
 				vec4 illumTex = texture2D(texIllum, gl_TexCoord[0].st);
 				vec4 specularTex = texture2D(texSpecular, gl_TexCoord[0].st);
-			
+
 				//vec3 normalTex = compute_bump_normal();
 				vec3 normalTex = read_normal_map();
-			 
+
 			    /* The ambient term will always be present */
 			    // emmisive term ommited
 			    vec4 color = diffuse * colorTex * ambient; // ambient term
@@ -376,7 +376,7 @@ public:
 		modelViewProjectionMatrix_u = locations[1];
 		normalMatrix_u = locations[2];
 		lightPositionsMatrix_u = locations[3];
-		
+
 
 		obtainLocations20!("attributes", "tangent", tangent_a)(shader.program);
 
@@ -418,12 +418,12 @@ public:
 	}
 
 	override void initMaterial()
-	{ 
+	{
 		//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 		glDisable(GL_CULL_FACE);
 
 		glBindBuffer(GL_ARRAY_BUFFER, vbo.vboIDs[0]);
-		
+
 		setVBOVertexPointers20!(BindVertex)();
 		bindVertexAttrib20!(BindVertex, "tx")(tangent_a);
 
@@ -467,7 +467,7 @@ public:
 		glUniform1i(texSpecular_u, 3);
 
 		//glEnable(GL_MULTISAMPLE);
-		
+
 	}
 	mat3 lights = mat3(	0, 2, 0, 	// first light
 						1, 0, 0,  	// second light
@@ -479,7 +479,7 @@ public:
 
 	override void initPass(int num)
 	{
-		
+
 		vec4 loc = vec4(0, 0, 0, 1);
 		if (light)
 		{
@@ -495,7 +495,7 @@ public:
 		    lightColors[0][1] = light.color.y;
 		    lightColors[0][2] = light.color.z;
 		}
-		
+
 		//lights = mat3(0, 0, 0, 0, 0, 0, 0, 0, 0);
 		glUniformMatrix3fv(lightPositionsMatrix_u, 1, GL_FALSE, lights.value_ptr);
 
@@ -503,11 +503,11 @@ public:
 	}
 
 	override void renderPass(int num)
-	{ 
+	{
 
 		//lights[0][1] += 0.1;
 
-		////////////////////////////////////////////////////////////////////////////////	
+		////////////////////////////////////////////////////////////////////////////////
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo.idxIDs[0]); //
 		glDrawElements(GL_TRIANGLES, vbo.itemsCount[0], GL_UNSIGNED_INT, null);
 	}
@@ -530,7 +530,7 @@ Shader for text rendering
 */
 class TextShader(BindVertex) : Material
 {
-private: 
+private:
 	string textureName_;
 package:
 	// shader uniforms
@@ -577,7 +577,7 @@ public:
 
 			//varying vec2 v_texcoord;
 
-			void main() 
+			void main()
 			{
 			    float dist = texture2D(u_texture, gl_TexCoord[0].st).r;
 			    float alpha = smoothstep(u_buffer - u_gamma, u_buffer + u_gamma, dist);
@@ -585,7 +585,7 @@ public:
 
 				// black halo
 				//f_color.rgb = u_color.rgb * step(u_buffer+0.01 , dist);
-				
+
 			    gl_FragColor = vec4(f_color.rgb, alpha * u_color.a);
 			}
 			".toStringz());
@@ -625,8 +625,8 @@ public:
 	}
 
 	override void initMaterial()
-	{ 
-		glBindBuffer(GL_ARRAY_BUFFER, vbo.vboIDs[0]);	
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, vbo.vboIDs[0]);
 		setVBOVertexPointers20!(BindVertex)();
 
 		glUseProgram(shader.program);
@@ -646,7 +646,7 @@ public:
 
 		glEnable (GL_BLEND);
 		glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		
+
 		//glDisable(GL_DEPTH_TEST);
 		glDepthMask(GL_FALSE);
 	}
@@ -656,7 +656,7 @@ public:
 	}
 
 	override void renderPass(int num)
-	{ 		
+	{
 		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo.idxIDs[0]);
 		//glDrawElements(GL_TRIANGLES, 894, GL_UNSIGNED_INT, null);
 

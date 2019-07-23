@@ -3,7 +3,7 @@ module ev4d.rendersystem.text;
 
 import std.utf;
 // todo remove gl from this file and GlyphVertex_
-import derelict.opengl3.gl;
+import derelict.opengl;
 import ev4d.rendersystem.material;
 
 /**
@@ -77,7 +77,7 @@ private:
 			{
 				//import std.stdio;
 				//writeln(character, *glyph, " > ", advance, " bearingX/Y", advance + glyph.bearingX, "/", glyph.bearingY);
-				
+
 				GlyphVertex_[6] coords;
 
 				float top = buffer + glyph.bearingY;
@@ -208,7 +208,7 @@ Font createFont(string fontFile)
 Node createTextNode(Node)(Font font, ref VBO vboText, inout string text, Material shader, bool dynamic = false)
 {
 	font.createTextVBO(vboText, text, dynamic);
-	
+
 	Node textNode = new Node();
 
 	textNode.data.material = shader;
@@ -221,13 +221,13 @@ Node createTextNode(Node)(Font font, ref VBO vboText, inout string text, Materia
 	Loads text data.
 */
 void loadTextData(Font font, in string fileName)
-{   
+{
     import std.file;
     import std.json;
     import std.conv;
 
     string json = readText(fileName);
-    
+
     JSONValue[string] jsv = parseJSON(json).object;
 
     font.family = jsv["family"].str;

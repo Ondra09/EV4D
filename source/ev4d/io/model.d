@@ -1,7 +1,7 @@
 module ev4d.io.model;
 
 import derelict.assimp3.assimp;
-import derelict.opengl3.gl;
+import derelict.opengl;
 import gl3n.aabb;
 import gl3n.linalg;
 import gl3n.frustum;
@@ -52,8 +52,8 @@ bool testImport (ref VBO vbo, ref AABB aabb, string filename = "")
 	import std.stdio;
 	import std.path;
 
-	const aiScene * scene = aiImportFile( "objects/work/Space Frigate 6/space_frigate_6/space_frigate_6.obj", 
-										    	aiProcess_CalcTangentSpace       | 
+	const aiScene * scene = aiImportFile( "objects/work/Space Frigate 6/space_frigate_6/space_frigate_6.obj",
+										    	aiProcess_CalcTangentSpace       |
 										        aiProcess_Triangulate            |
 										        //aiProcess_JoinIdenticalVertices  |
 										        aiProcess_SortByPType
@@ -134,7 +134,7 @@ bool testImport (ref VBO vbo, ref AABB aabb, string filename = "")
 			assert (mesh.mFaces[j].mNumIndices == 3);
 			indices ~= mesh.mFaces[j].mIndices[0];
 			indices ~= mesh.mFaces[j].mIndices[1];
-			indices ~= mesh.mFaces[j].mIndices[2]; 
+			indices ~= mesh.mFaces[j].mIndices[2];
 		}
 
 		vbo.itemsCount[i] = cast(int)indices.length;
@@ -143,7 +143,7 @@ bool testImport (ref VBO vbo, ref AABB aabb, string filename = "")
 		// writeln(indices.length);
 	}
 
-	
+
 	//writeln(vboContent);
 	//writeln(vboContent.indices.length);
 
@@ -154,6 +154,6 @@ bool testImport (ref VBO vbo, ref AABB aabb, string filename = "")
 	aiReleaseImport( scene );
 
 	aabb = aabbs[0];
-	
+
 	return true;
 }

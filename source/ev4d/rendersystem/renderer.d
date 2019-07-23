@@ -1,7 +1,7 @@
 
 module ev4d.rendersystem.renderer;
 
-import derelict.opengl3.gl;
+import derelict.opengl;
 
 import ev4d.rendersystem.technique;
 
@@ -14,7 +14,7 @@ private:
 protected:
 public:
 	GeneralTechnique[] techniques;
-	
+
 	void render()
 	{
 		// let's go through all techniques and solve dependencies
@@ -48,7 +48,7 @@ public:
 			{
 				t.setupCamera();
 			}
-			
+
 			t.render();
 		}
 

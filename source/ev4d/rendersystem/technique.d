@@ -8,7 +8,7 @@ import ev4d.rendersystem.renderqueue;
 import ev4d.tools.numeric;
 
 import gl3n.linalg;
-import derelict.opengl3.gl;
+import derelict.opengl;
 
 import ev4d.rendersystem.lights;
 
@@ -41,7 +41,7 @@ long createSortKey(T)(T* object, Camera cam)
 	long sortKey = 0;
 
 	ptrdiff_t matID;
-			
+
 	matID = object.material.getID();
 
 	////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ long createSortKey(T)(T* object, Camera cam)
 	// this occurs when pivot of object behind camera, but aabb crosses camera visible frustum
 	if (dst < 0) // think about this problem more how to solve it, or maybe this one is good solution
 	{
-		dst = 0; 
+		dst = 0;
 	}
 
 	/*
@@ -78,7 +78,7 @@ long createSortKey(T)(T* object, Camera cam)
 	sortKey = 0;
 
 	sortKey = matID;
-	sortKey <<= 20; 
+	sortKey <<= 20;
 	sortKey |= floatToBitsPositive!(20)(dst);
 
 	return sortKey;
@@ -88,7 +88,7 @@ long createSortKey(T)(T* object, Camera cam)
 	Technique
 	Params:
 		T = object to operate on
-		funCreateSortKey = function that generates sorting key 
+		funCreateSortKey = function that generates sorting key
 */
 class Technique(T, alias funCreateSortKey) : GeneralTechnique
 if (is (typeof(funCreateSortKey)==function))
@@ -166,8 +166,8 @@ public:
 			// column mayor to row mayor
 			viewMat.transpose();
 
-			// OPTIM : could be done with 	[ R^T | -Translate ] too 
-			//								[ 0	   0    0    1 ]					
+			// OPTIM : could be done with 	[ R^T | -Translate ] too
+			//								[ 0	   0    0    1 ]
 			// because camera transforms are invert to model ones
 			viewMat.invert();
 			glMultMatrixf(viewMat.value_ptr);
